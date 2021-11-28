@@ -1,0 +1,22 @@
+﻿[*.vb]
+
+# BC42358: Because this call is not awaited, execution of the current method continues before the call is completed
+dotnet_diagnostic.BC42358.severity = silent
+
+# BC42104: Variable is used before it has been assigned a value
+dotnet_diagnostic.BC42104.severity = silent
+
+# BC42025: Access of shared member, constant member, enum member or nested type through an instance
+dotnet_diagnostic.BC42025.severity = silent
+
+# BC42356: This async method lacks 'Await' operators and so will run synchronously
+dotnet_diagnostic.BC42356.severity = silent
+
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = silent
+
+# BC42105: Function doesn't return a value on all code paths
+dotnet_diagnostic.BC42105.severity = silent
+
+# BC42030: Variable is passed by reference before it has been assigned a value
+dotnet_diagnostic.BC42030.severity = none
