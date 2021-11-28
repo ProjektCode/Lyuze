@@ -6,7 +6,7 @@ An multi-purpose discord bot written in VB.Net Core
 
  There are some things you need to do to set up this discord bot for yourself:
 
-* ***API Keys:*** You wi
+* ***API Keys:*** Knowing what is farmable each day from characters to weapons
 * ***Builds(Coming Soon):*** Don't know how to build your character? Well, this has some builds you can get an idea from!
 * ***Exp Calculator(Coming Soon):*** Don't know how many books it takes to get to a certain level? Here's how.
 * ***Character Info(Coming Soon):*** Want to know more about a character? Their skills? Lisa's Birthday? Let it be known who you simp for.
