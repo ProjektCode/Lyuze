@@ -44,10 +44,10 @@ End Class
 
 
 
-Partial Public Class _Settings
+Partial Public Class Settings
 	Public Shared Function Data() As Settings
 		Dim basePath = AppDomain.CurrentDomain.BaseDirectory
-		Dim filePath = $"{basePath}Resources\Settings\test.json"
+		Dim filePath = $"{basePath}Resources\Settings\settings.json"
 		Dim json = File.ReadAllText(filePath)
 		Return JsonConvert.DeserializeObject(Of Settings)(json, Converter.Settings)
 	End Function

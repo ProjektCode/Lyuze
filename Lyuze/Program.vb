@@ -2,7 +2,6 @@ Imports System.IO
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'-Transition from the old settings to the new settings
 '-Finish the genshin fan-made api integration
 '-Find some other cool apis to use
 '-Transition the mod commands into it's service class

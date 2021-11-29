@@ -8,7 +8,6 @@ Imports Microsoft.Extensions.DependencyInjection
 <Summary("Commands only for admins.")>
 Public Class Admin
     Inherits InteractiveBase(Of SocketCommandContext)
-    Private _settings As settingsHandler
     Private ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     <Command("purge")>
@@ -89,8 +88,8 @@ Public Class Admin
 
         Try
 
-            _settings = settingsHandler.Load
-            Dim channel = Context.Guild.GetTextChannel(_settings.kickID)
+            Dim settings = Lyuze.Settings.Data
+            Dim channel = Context.Guild.GetTextChannel(settings.IDs.KickId)
             If reason Is Nothing Then
                 reason = "No reason given."
             End If
@@ -115,14 +114,14 @@ Public Class Admin
 
     <Command("kick")>
     <Summary("Kicks the mentioned user.")>
-    <RequireUserPermission(GuildPermission.BanMembers)>
-    <RequireBotPermission(GuildPermission.BanMembers)>
+    <RequireUserPermission(GuildPermission.KickMembers)>
+    <RequireBotPermission(GuildPermission.KickMembers)>
     <Remarks("\kick @user <reason> | reason is optional")>
     Public Async Function cmdKickMember(user As IGuildUser, <Remainder> Optional reason As String = Nothing) As Task
 
         Try
-            _settings = settingsHandler.Load
-            Dim channel = Context.Guild.GetTextChannel(_settings.kickID)
+            Dim settings = Lyuze.Settings.Data
+            Dim channel = Context.Guild.GetTextChannel(settings.IDs.KickId)
             If reason Is Nothing Then
                 reason = "No reason given."
             End If
@@ -179,16 +178,16 @@ End Class
 <Summary("Commands only for the bot owner.")>
 Public Class Owner
     Inherits ModuleBase(Of SocketCommandContext)
-    Private ReadOnly _utils As New MasterUtils
-    Private _settings As settingsHandler
+    Private ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     <Command("hide")>
     <Summary("Hides command window.")>
     <RequireOwner>
     Public Async Function cmdHide() As Task
         Dim author = Context.Message.Author
-        _settings = settingsHandler.Load
-        If DirectCast(author, SocketGuildUser).Id = _settings.ownerID Then
+        Dim settings = Lyuze.Settings.Data
+
+        If DirectCast(author, SocketGuildUser).Id = settings.IDs.OwnerId Then
             _utils.winHide()
 
             Await Context.Channel.SendMessageAsync($"Don't worry I'll still be here.")
@@ -202,8 +201,9 @@ Public Class Owner
     <RequireOwner>
     Public Async Function cmdShow() As Task
         Dim author = Context.Message.Author
-        _settings = settingsHandler.Load
-        If DirectCast(author, SocketGuildUser).Id = _settings.ownerID Then
+        Dim settings = Lyuze.Settings.Data
+
+        If DirectCast(author, SocketGuildUser).Id = Settings.IDs.OwnerId Then
             _utils.winShow()
 
             Await Context.Channel.SendMessageAsync($"{author.Mention} hello again :smiley:.")
@@ -217,8 +217,9 @@ Public Class Owner
     <RequireOwner>
     Public Async Function cmdKill() As Task
         Dim author = Context.Message.Author
-        _settings = settingsHandler.Load
-        If DirectCast(author, SocketGuildUser).Id = _settings.ownerID Then
+        Dim settings = Lyuze.Settings.Data
+
+        If DirectCast(author, SocketGuildUser).Id = Settings.IDs.OwnerId Then
             For Each p As Process In Process.GetProcesses
                 If p.ProcessName = "javaw" Then
                     Try

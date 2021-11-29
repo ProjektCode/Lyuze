@@ -5,9 +5,8 @@ Imports Tenor
 Imports Tenor.Schema
 
 NotInheritable Class TenorService
-    Private Shared _settings As settingsHandler
     Public Shared Async Function animeGif(tag As String) As Task(Of String)
-        _settings = settingsHandler.Load
+        Dim settings = Lyuze.Settings.Data
         Dim horny As String() = {
             "oppai",
             "boobs",
@@ -27,7 +26,7 @@ NotInheritable Class TenorService
 
         Try
             Dim config = New TenorConfiguration With {
-            .ApiKey = _settings.tenorAPIKey,
+            .ApiKey = settings.ApIs.Tenor,
             .AspectRatio = AspectRatio.All,
             .ContentFilter = ContentFilter.Off,
             .Locale = CultureInfo.GetCultureInfo("en"),

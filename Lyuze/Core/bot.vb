@@ -47,7 +47,7 @@ Public Class bot
     End Sub
 
     Public Async Function mainAsync() As Task
-        Dim settings = _Settings.Data
+        Dim settings = Lyuze.Settings.Data
         bot()
 
         Await commandHandler.loadCommandsAsync

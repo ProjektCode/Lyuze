@@ -12,8 +12,6 @@ Public Class imageManipulation
     Inherits InteractiveBase(Of SocketCommandContext)
     Private Shared ReadOnly _img As Images = serviceHandler.provider.GetRequiredService(Of Images)
 
-    Private _settings As settingsHandler
-
     <Command("crop", RunMode.Async)>
     <Summary("Crops an image into a given dimension.")>
     <Remarks("\crop https://i.imgur.com/LdiD7hb.png | \crop <image attachment>")>
@@ -99,10 +97,10 @@ Public Class imageManipulation
     <[Alias]("mc")>
     <Summary("mc | Owner only command - mass crops images from a list.")>
     Public Async Function imgMassCrop() As Task
-        _settings = settingsHandler.Load
+        Dim settings = Lyuze.Settings.Data
 
         Try
-            If Context.User.Id = _settings.ownerID Then
+            If Context.User.Id = settings.IDs.OwnerId Then
                 For Each wall As String In Wallpapers.images
                     Dim path = Await _img.createImageAsync(1100, 450, wall)
                     Await Context.Channel.SendFileAsync(path)

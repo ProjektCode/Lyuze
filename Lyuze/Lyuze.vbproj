@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>VB_Lyuze</RootNamespace>
+    <RootNamespace>Lyuze</RootNamespace>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>LyuzeBOT</AssemblyName>
   </PropertyGroup>

@@ -14,7 +14,6 @@ NotInheritable Class eventHandler
     Private Shared ReadOnly _images As Images = serviceHandler.provider.GetRequiredService(Of Images)
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
-    Private settings As settingsHandler
     Private t As Timer
 
     Public Function loadEvents() As Task
@@ -34,8 +33,7 @@ NotInheritable Class eventHandler
     Private Async Function logAsync(msg As LogMessage) As Task
         Await (loggingHandler.LogAsync(msg.Source, msg.Severity, msg.Message))
     End Function
-    Private Async Function onReady() As Task 'Place custom game event here once masterClass is made
-        settings = settingsHandler.Load
+    Private Async Function onReady() As Task
 
         If Not _lavaNode.IsConnected Then
             Try
@@ -57,7 +55,7 @@ NotInheritable Class eventHandler
     Private Async Function messageRecieved(arg As SocketMessage) As Task
         Dim message = TryCast(arg, SocketUserMessage)
         Dim context = New SocketCommandContext(_client, message)
-        settings = settingsHandler.Load
+        Dim settings = Lyuze.Settings.Data
 
         If message.Author.IsBot OrElse TypeOf message.Channel Is IDMChannel Then
             Return
@@ -73,7 +71,7 @@ NotInheritable Class eventHandler
 
         Dim argPos As Integer = 0
 
-        If Not (message.HasStringPrefix(settings.prefix, argPos) OrElse message.HasMentionPrefix(_client.CurrentUser, argPos)) Then
+        If Not (message.HasStringPrefix(settings.Discord.Prefix, argPos) OrElse message.HasMentionPrefix(_client.CurrentUser, argPos)) Then
             Return
         End If
 
@@ -88,9 +86,9 @@ NotInheritable Class eventHandler
 
     End Function
     Private Async Function onUserJoined(arg As SocketGuildUser) As Task
-        settings = settingsHandler.Load
+        Dim settings = Lyuze.Settings.Data
         Try
-            Dim channel = arg.Guild.GetTextChannel(settings.welcomeID)
+            Dim channel = arg.Guild.GetTextChannel(settings.IDs.WelcomeId)
             Dim path = Await _images.createWelcomeImageAsync(arg)
             Await channel.SendFileAsync(path, String.Empty)
 

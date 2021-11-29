@@ -117,7 +117,7 @@ Public Class General
     <Command("test")>
     Public Async Function test() As Task
         Try
-            Dim settings = _Settings.Data
+            Dim settings = Lyuze.Settings.Data
 
             Dim t = If(settings.IDs.ReportId.ToString, "n/a")
             Await ReplyAsync(t)
