@@ -44,4 +44,12 @@ Public Class Genshin
         Await ReplyAsync(embed:=GenshinService.GetEnemy(name).Result)
     End Function
 
+    <Command("elements")>
+    <[Alias]("ele")>
+    <Summary("Gives information for enemies")>
+    <Remarks("/genshin ene <slime> | can leave empty to get a list of available enemies.")>
+    Public Async Function GenshinElements(<Remainder> Optional name As String = "default") As Task
+        Await ReplyAsync(embed:=GenshinService.GetElement(name).Result)
+    End Function
+
 End Class

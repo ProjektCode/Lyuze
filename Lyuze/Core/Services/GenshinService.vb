@@ -12,26 +12,33 @@ NotInheritable Class GenshinService
     Private Shared ReadOnly _img As Images = serviceHandler.provider.GetRequiredService(Of Images)
 
     Public Shared Async Function GenshinTypes() As Task(Of Embed)
-        Dim httpClient = _httpClientFactory.CreateClient
-        Dim response = Await httpClient.GetStringAsync("https://api.genshin.dev")
-        Dim types = GenshinImpactBase.FromJson(response)
-        Dim description As String
 
-        If types Is Nothing Then
-            Return embedHandler.errorEmbed("Genshin - Types", "an error as occurred, please try again later.").Result
-        End If
+        Try
 
-        For Each type In types.Types
-            description += $"{type}{Environment.NewLine}"
-        Next
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim response = Await httpClient.GetStringAsync("https://api.genshin.dev")
+            Dim types = GenshinImpactBase.FromJson(response)
+            Dim description As String
 
-        Dim embed = New EmbedBuilder With {
-            .Title = "Available Types",
-            .Description = description,
-            .Color = New Color(_utils.randomEmbedColor)
-        }
+            If types Is Nothing Then
+                Return embedHandler.errorEmbed("Genshin - Types", "an error as occurred, please try again later.").Result
+            End If
 
-        Return embed.Build
+            For Each type In types.Types
+                description += $"{type}{Environment.NewLine}"
+            Next
+
+            Dim embed = New EmbedBuilder With {
+                .Title = "Available Types",
+                .Description = description,
+                .Color = New Color(_utils.randomEmbedColor)
+            }
+
+            Return embed.Build
+
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Genshin - Types", ex.Message).Result
+        End Try
 
     End Function
 
@@ -178,7 +185,7 @@ NotInheritable Class GenshinService
 
                     If w.Contains("-s-") Then
                         weaList += $"*{w.Replace("-s-", "'s ")}* **|** "
-                    Else
+                    ElseIf w.Contains("-") Then
                         weaList += $"*{w.Replace("-", " ")}* **|** "
                     End If
                 Next
@@ -244,6 +251,7 @@ NotInheritable Class GenshinService
                 Return embedHandler.errorEmbed("Genshin - Artifact", "An error has occurred, please try again later.").Result
             End If
 
+            'Retuns a list of all available artifacts
             If name = "default" Then
                 Dim embed = New EmbedBuilder With {
                     .Title = "Available Weapons",
@@ -262,7 +270,7 @@ NotInheritable Class GenshinService
 
                     If a.Contains("-s-") Then
                         artList += $"*{a.Replace("-s-", "'s ")}* **|** "
-                    Else
+                    ElseIf a.Contains("-") Then
                         artList += $"*{a.Replace("-", " ")}* **|** "
                     End If
                 Next
@@ -327,7 +335,7 @@ NotInheritable Class GenshinService
             Dim listNum As Integer = 1
 
             If enemies Is Nothing Then
-                Return embedHandler.errorEmbed("Genshin - Artifact", "An error has occurred, please try again later.").Result
+                Return embedHandler.errorEmbed("Genshin - Enemies", "An error has occurred, please try again later.").Result
             End If
 
             'If the name is default return a list of available enemies
@@ -349,7 +357,7 @@ NotInheritable Class GenshinService
 
                     If e.Contains("-s-") Then
                         eneList += $"*{e.Replace("-s-", "'s ")}* **|** "
-                    Else
+                    ElseIf e.Contains("-") Then
                         eneList += $"*{e.Replace("-", " ")}* **|** "
                     End If
                 Next
@@ -375,13 +383,25 @@ NotInheritable Class GenshinService
                             elementBuilder.Append($"{ele},{Environment.NewLine}")
                         Next
                         elementBuilder.Remove(elementBuilder.Length - 3, 3)
+                        Dim dropsBuilder As New StringBuilder
+                        For Each drop In enemy.Drops
+                            dropsBuilder.Append($"{drop.Rarity}: {drop.Name}{Environment.NewLine}")
+                        Next
+                        dropsBuilder.Remove(dropsBuilder.Length - 3, 3)
 
 #End Region
 
                         Dim embed = New EmbedBuilder With {
-                            .Title = enemy.Name
+                            .Title = enemy.Name,
+                            .ThumbnailUrl = Await GenshinUtils.GetImage("ene", newName, "icon"),
+                            .Color = New Color(Await _img.RandomColorFromURL(Await GenshinUtils.GetImage("ene", newName, "icon")))
                         }
-                        embed.AddField("Elements", elementBuilder.ToString)
+                        embed.AddField("Region", enemy.Region, True)
+                        embed.AddField("Type", enemy.Type, True)
+                        embed.AddField("Family", enemy.Family, True)
+                        embed.AddField("Elements", elementBuilder.ToString, True)
+                        embed.AddField("Drops", dropsBuilder.ToString, True)
+                        embed.AddField("Description", enemy.Description)
 
                         Return embed.Build
                     Catch ex As Exception
@@ -393,6 +413,49 @@ NotInheritable Class GenshinService
         Catch ex As Exception
             Return embedHandler.errorEmbed("Genshin Enemy", ex.Message).Result
         End Try
+    End Function
+
+    Public Shared Async Function GetElement(name As String) As Task(Of Embed)
+
+        Try
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim response = Await httpClient.GetStringAsync($"https://api.genshin.dev/elements/{ name}")
+            Dim ele = GenshinElements.FromJson(response)
+
+
+
+            Dim txtInfo As TextInfo = New CultureInfo("en-us", False).TextInfo
+            Dim url = Await GenshinUtils.GetImage("ele", ele.Name, "icon")
+
+            If ele Is Nothing Then
+                Return embedHandler.errorEmbed("Genshin - Elements", "An error has occurred, please try again later.").Result
+            End If
+
+            Dim embed = New EmbedBuilder With {
+                .Title = ele.Name,
+                .ThumbnailUrl = url,
+                .Color = New Color(Await _img.RandomColorFromURL(url)),
+                .Footer = New EmbedFooterBuilder With {
+                    .IconUrl = url,
+                    .Text = $"{ele.Name} information"
+                }
+            }
+
+            For Each e In ele.Reactions
+                embed.AddField(e.Elements.First, $"**{e.Name} -** *{e.Description}*")
+            Next
+            Return embed.Build
+        Catch ex As Exception
+            Dim message As String
+            If ex.Message.Contains("Response status code does not indicate success: 404 (Not Found)") Then
+                message = $"Element with {name} was not found."
+            Else
+                message = ex.Message
+            End If
+
+            Return embedHandler.errorEmbed("Genshin - Elements", message).Result
+        End Try
+
     End Function
 
 End Class

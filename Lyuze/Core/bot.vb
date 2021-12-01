@@ -1,11 +1,11 @@
 ﻿Imports Discord
-Imports Discord.WebSocket
 Imports Discord.Commands
+Imports Discord.WebSocket
 Imports Discord.Addons.Interactive
+Imports Discord.Net.Providers.WS4Net
 Imports Microsoft.Extensions.DependencyInjection
 Imports Victoria
 Imports System.Threading
-Imports Discord.Net.Providers.WS4Net
 Imports JikanDotNet
 
 Public Class bot
@@ -56,8 +56,5 @@ Public Class bot
         Await _client.StartAsync
         Await Task.Delay(Timeout.Infinite)
     End Function
-
-
-
 
 End Class

@@ -5,7 +5,6 @@ Imports System.IO
 Imports Microsoft.Extensions.DependencyInjection
 
 <Name("Image")>
-<Group("image")>
 <Summary("Sorta manipulate, to a certain extent, any image.")>
 Public Class imageManipulation
 
@@ -43,7 +42,7 @@ Public Class imageManipulation
 
 
                 If width <= 0 Or height <= 0 Then
-                    Await ReplyAndDeleteAsync("Please make sure your width and height are positive numbers.", timeout:=New TimeSpan(0, 0, 10))
+                    Await ReplyAndDeleteAsync("Please make sure your width and height are greater than zero.", timeout:=New TimeSpan(0, 0, 10))
                     Return
                 End If
 
@@ -71,12 +70,13 @@ Public Class imageManipulation
                 If widthReply Is Nothing Then
                     Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given timeframe.")
                 End If
+                Context.Message.DeleteAsync()
                 Await ReplyAndDeleteAsync("What is your desired height?", timeout:=New TimeSpan(0, 0, 15))
                 Dim heightReply = Await NextMessageAsync(timeout:=New TimeSpan(0, 0, 10))
                 If heightReply Is Nothing Then
                     Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given timeframe.")
                 End If
-
+                Context.Message.DeleteAsync()
                 Dim width = Convert.ToInt32(widthReply.ToString)
                 Dim height = Convert.ToInt32(heightReply.ToString)
 

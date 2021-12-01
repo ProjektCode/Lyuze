@@ -2,11 +2,14 @@ Imports System.IO
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'-Finish the genshin fan-made api integration
 '-Find some other cool apis to use
-'-Transition the mod commands into it's service class
-'-Change the blacklisted roles into a list from a text file and just cycle the mentioned role through the list to check if they mentioned said role.
-'+In roles list position is reversed
+'-[Admin]Transition the mod commands into it's service class
+'-[Roles]Change the blacklisted roles into a list from a text file(or use the settings) and just cycle the mentioned role through the list to check if they mentioned said role.
+'+[Roles]In roles list position is reversed
+'-Transition errors into either text log or discord log depending if there's a given error log channel ID.
+'-[Info]Transition code into its service
+'-[Backgrounds]Transition code into its service
+'-[Settings]Disable API commands by determing if the value is "Disable"
 #End Region
 
 Module Program
@@ -21,8 +24,9 @@ Module Program
     End Sub
 
     Private Async Function setUp() As Task
-        Console.Title = "Lyuze - Multi-Purpose Discord Bot"
-        _Utils.setBanner("/ Lyuze Bot \", "#FFC0CB", ConsoleColor.Green)
+        Dim settings = Lyuze.Settings.Data
+        Console.Title = $"{settings.Discord.Name} - Multi-Purpose Discord Bot"
+        _Utils.setBanner($"/ {settings.Discord.Name} Bot \", "#FFC0CB", ConsoleColor.Green)
         Await loggingHandler.LogSetupAsync("setup", "Looking for Lavalink server...")
         If Not File.Exists(lavalink) Or Not File.Exists(app) Then
             Await loggingHandler.LogCriticalAsync("setup", "After the program closes please add your Lavalink.jar and application.yml file into the correct folder.")

@@ -15,15 +15,26 @@ End Class
 Partial Public Class ApIs
 	<JsonProperty("Tenor")>
 	Public Property Tenor() As String
+
+	<JsonProperty("UnsplashAccess")>
+	Public Property UnsplashAccess() As String
+
+	<JsonProperty("UnsplashSecret")>
+	Public Property UnsplashSecret() As String
 End Class
 
+
 Partial Public Class _Discord
+	<JsonProperty("Name")>
+	Public Property Name() As String
+
 	<JsonProperty("Token")>
 	Public Property Token() As String
 
 	<JsonProperty("Prefix")>
 	Public Property Prefix() As String
 End Class
+
 
 Partial Public Class IDs
 	<JsonProperty("Owner ID")>

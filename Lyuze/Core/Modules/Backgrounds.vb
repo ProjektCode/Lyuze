@@ -1,5 +1,7 @@
-﻿Imports Discord
+﻿Imports System.Net.Http
+Imports Discord
 Imports Discord.Commands
+Imports Microsoft.Extensions.DependencyInjection
 
 <Name("Wallpapers")>
 <Group("wall")>
@@ -7,7 +9,7 @@ Imports Discord.Commands
 Public Class Backgrounds
     Inherits ModuleBase(Of SocketCommandContext)
 
-    ReadOnly _Utils As New MasterUtils
+    Private ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     <Command("search")>
     <Summary("Returns a link of wallpapers with your chosen keyword [Will be reworked since some websites don't have any results on a given keyword]")>
@@ -70,6 +72,12 @@ Public Class Backgrounds
         embed.AddField($"List #{row + 1}", words, True)
 
         Await m.Channel.SendMessageAsync(embed:=embed.Build())
+    End Function
+
+    <Command("unsplash")>
+    <Summary("Get a random high-quality wallpaper with a given keyword from unsplash.com")>
+    Public Async Function UnsplashRandomImage(<Remainder> tag As String) As Task
+        Await ReplyAsync(embed:=BackgroundService.UnsplashRandomImage(tag).Result)
     End Function
 
 End Class

@@ -7,10 +7,17 @@ NotInheritable Class InformationService
 
     Private Shared ReadOnly _imgs As Images = serviceHandler.provider.GetRequiredService(Of Images)
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+    Private Shared ReadOnly rand As New Random
 
     Public Shared Async Function GetProfile(user As IGuildUser, ctx As SocketCommandContext) As Task(Of Embed)
+        Dim profileList As String() = {
+            "1.png?token=AFU5U6UQZD74W4NDJIKFEM3BVWVQE",
+            "2.png?token=AFU5U6TBB4DN3ZCRFH6AIPDBVWVQ4",
+            "3.png?token=AFU5U6TDBAAFLSSUTJI4VATBVWVRM"
+        }
+        Dim profileBanner As String = rand.Next(profileList.Length)
 
-        Dim url As String = "https://raw.githubusercontent.com/Projekt-Dev/Projekt-Dev/main/Profile.png"
+        Dim url As String = $"https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Assets/Images/Banner-User-{ profileList(profileBanner)}"
         Try
 
             Dim embed As New EmbedBuilder With {
@@ -46,21 +53,28 @@ NotInheritable Class InformationService
     End Function
 
     Public Shared Async Function GetServer(g As IGuild, ctx As SocketCommandContext) As Task(Of Embed)
-        Dim url As String = "https://raw.githubusercontent.com/Projekt-Dev/Projekt-Dev/main/Profile.png"
+        Dim serverList As String() = {
+            "1.png?token=AFU5U6QEHUY4FLRXL6YKGXLBV3V3W",
+            "2.png?token=AFU5U6S2VSHNIRRAUVCDII3BV3V4E",
+            "3.png?token=AFU5U6SB4ULQZF4K6GSSN5LBV3V4M"
+        }
+        Dim serverBanner As String = rand.Next(serverList.Length)
+
+        Dim url As String = $"https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Assets/Images/Banner-Server-{ serverList(serverBanner)}"
 
         Try
 
             Dim embed As New EmbedBuilder With {
-    .Title = $"{g.Name}'s information",
-    .ImageUrl = url,
-    .Color = New Color(_imgs.RandomColorFromURL(url).Result),
-    .ThumbnailUrl = g.IconUrl,
-    .Timestamp = ctx.Message.Timestamp,
-    .Footer = New EmbedFooterBuilder With {
-            .Text = "Server Data",
-            .IconUrl = g.IconUrl
-        }
-    }
+                .Title = $"{g.Name}'s information",
+                .ImageUrl = url,
+                .Color = New Color(_imgs.RandomColorFromURL(url).Result),
+                .ThumbnailUrl = g.IconUrl,
+                .Timestamp = ctx.Message.Timestamp,
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = "Server Data",
+                    .IconUrl = g.IconUrl
+                }
+            }
 
             embed.AddField("Server's Creation Date", g.CreatedAt.DateTime.ToShortDateString(), True)
             embed.AddField("Preferred Locale", g.PreferredLocale, True)
