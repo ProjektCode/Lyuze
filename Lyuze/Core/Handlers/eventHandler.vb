@@ -14,8 +14,6 @@ NotInheritable Class eventHandler
     Private Shared ReadOnly _images As Images = serviceHandler.provider.GetRequiredService(Of Images)
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
-    Private t As Timer
-
     Public Function loadEvents() As Task
         AddHandler _client.Log, AddressOf logAsync
         AddHandler _cmdService.Log, AddressOf logAsync
@@ -24,6 +22,7 @@ NotInheritable Class eventHandler
         AddHandler _lavaNode.OnTrackEnded, AddressOf audioService.trackEnded
         AddHandler _lavaNode.OnTrackStarted, AddressOf audioService.trackStart
         AddHandler _client.UserJoined, AddressOf onUserJoined
+        AddHandler _client.UserLeft, AddressOf onUserLeave
 
         Return Task.CompletedTask
     End Function
@@ -31,7 +30,7 @@ NotInheritable Class eventHandler
 #Region "Discord Events"
 
     Private Async Function logAsync(msg As LogMessage) As Task
-        Await (loggingHandler.LogAsync(msg.Source, msg.Severity, msg.Message))
+        Await loggingHandler.LogAsync(msg.Source, msg.Severity, msg.Message)
     End Function
     Private Async Function onReady() As Task
 
@@ -45,11 +44,10 @@ NotInheritable Class eventHandler
 
         Await _client.SetStatusAsync(UserStatus.Online)
 
-
-        t = New Timer(Async Sub(__)
-                          Await _client.SetGameAsync(_utils.sList.ElementAtOrDefault(_utils.sIndex), type:=ActivityType.Watching)
-                          _utils.sIndex = If(_utils.sIndex + 1 = _utils.sList.Count, 0, _utils.sIndex + 1)
-                      End Sub, Nothing, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(120))
+        Dim t = New Timer(Async Sub(__)
+                              Await _client.SetGameAsync(_utils.sList.ElementAtOrDefault(_utils.sIndex), type:=ActivityType.Watching)
+                              _utils.sIndex = If(_utils.sIndex + 1 = _utils.sList.Count, 0, _utils.sIndex + 1)
+                          End Sub, Nothing, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(120))
         SystemSounds.Asterisk.Play()
     End Function
     Private Async Function messageRecieved(arg As SocketMessage) As Task
@@ -61,6 +59,7 @@ NotInheritable Class eventHandler
             Return
         End If
 
+        'Anti-Discord invite
         If message.Content.Contains("https://discord.gg/") Then
             If Not TryCast(message.Channel, SocketGuildChannel).Guild.GetUser(message.Author.Id).GuildPermissions.Administrator Then
                 Await message.DeleteAsync
@@ -89,12 +88,28 @@ NotInheritable Class eventHandler
         Dim settings = Lyuze.Settings.Data
         Try
             Dim channel = arg.Guild.GetTextChannel(settings.IDs.WelcomeId)
-            Dim path = Await _images.createWelcomeImageAsync(arg)
+            Dim msg = $"{arg.Username}#{arg.Discriminator} has joined the server"
+            Dim submsg = arg.Guild.MemberCount
+            Dim path = Await _images.CreateBannerImageAsync(arg, msg, submsg)
             Await channel.SendFileAsync(path, String.Empty)
 
             File.Delete(path)
         Catch ex As Exception
             loggingHandler.ErrorLog("UserJoined", ex.Message)
+        End Try
+    End Function
+    Private Async Function onUserLeave(arg As SocketGuildUser) As Task
+        Dim settings = Lyuze.Settings.Data
+        Try
+            Dim channel = arg.Guild.GetTextChannel(settings.IDs.LeaveId)
+            Dim msg = $"{arg.Username}#{arg.Discriminator} Has left the server"
+            Dim submsg = $"May thy user have thy peace"
+            Dim path = Await _images.CreateBannerImageAsync(arg, msg, submsg)
+            Await channel.SendFileAsync(path, String.Empty)
+
+            File.Delete(path)
+        Catch ex As Exception
+            loggingHandler.ErrorLog("UserLeave", ex.Message)
         End Try
     End Function
 

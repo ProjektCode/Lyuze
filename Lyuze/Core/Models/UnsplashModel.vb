@@ -209,3 +209,14 @@ Partial Public Class Unsplash
 		Return JsonConvert.DeserializeObject(Of Unsplash)(json, Converter.Settings)
 	End Function
 End Class
+
+Partial Public Class UnsplashDownloadUrl
+	<JsonProperty("url")>
+	Public Property Url() As Uri
+End Class
+
+Partial Public Class UnsplashDownloadUrl
+	Public Shared Function FromJson(ByVal json As String) As UnsplashDownloadUrl
+		Return JsonConvert.DeserializeObject(Of UnsplashDownloadUrl)(json, Converter.Settings)
+	End Function
+End Class

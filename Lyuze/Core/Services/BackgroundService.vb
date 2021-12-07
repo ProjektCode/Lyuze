@@ -21,6 +21,10 @@ NotInheritable Class BackgroundService
             Dim response = Await httpClient.GetStringAsync($"https://api.unsplash.com/photos/random?client_id={ settings.ApIs.UnsplashAccess}&query={newTag}")
             Dim unsplash = Lyuze.Unsplash.FromJson(response)
 
+            Dim dlink = unsplash.Links.DownloadLocation.AbsoluteUri
+            Dim downloadResponse = Await httpClient.GetStringAsync($"{dlink}?client_id={settings.ApIs.UnsplashAccess}")
+            Dim download = Lyuze.UnsplashDownloadUrl.FromJson(downloadResponse)
+
             If unsplash Is Nothing Then
                 Return embedHandler.errorEmbed("Background - Unsplash", "An error occurred please try again later.").Result
             End If
@@ -28,10 +32,10 @@ NotInheritable Class BackgroundService
 
             Dim embed = New EmbedBuilder With {
                 .Title = $"{unsplash.User.Name} - {unsplash.Width}x{unsplash.Height}",
-                .ImageUrl = unsplash.Links.Download.AbsoluteUri,
-                .Url = unsplash.Urls.Small.AbsoluteUri,
+                .ImageUrl = download.Url.AbsoluteUri,
+                .Url = download.Url.AbsoluteUri,
                 .Footer = New EmbedFooterBuilder With {
-                    .Text = $"ID: {unsplash.Id} - ⬆️{unsplash.Likes} - ⏬{unsplash.Downloads}"
+                    .Text = $"ID: {unsplash.Id} - ⬆️{unsplash.Likes} - ⏬{unsplash.Downloads} - Powered by Unsplash.com"
                 }
             }
             Return embed.Build

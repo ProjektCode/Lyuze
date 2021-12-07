@@ -9,7 +9,7 @@ Imports System.Globalization
 Public Class Images
 
     'Returns a image with the user's avatar and a welcome message
-    Public Async Function createWelcomeImageAsync(user As SocketGuildUser) As Task(Of String)
+    Public Async Function CreateBannerImageAsync(user As SocketGuildUser, msg As String, submsg As String) As Task(Of String)
         Dim avatar = Await fetchImageAsync(If(user.GetAvatarUrl(Discord.ImageFormat.Png, 2048), user.GetDefaultAvatarUrl))
         Dim background = Await fetchImageAsync(Wallpapers.returnImage.Result)
 
@@ -22,7 +22,7 @@ Public Class Images
         bmap?.MakeTransparent()
 
         Dim banner = copyRegionIntoBanner(bmap, amap, background)
-        banner = drawTextToImage(banner, $"{user.Username}#{user.Discriminator} has joined the server.", $"Member #{user.Guild.MemberCount}")
+        banner = drawTextToImage(banner, msg, submsg)
 
         Dim path As String = $"{Guid.NewGuid}.png"
         banner.Save(path)

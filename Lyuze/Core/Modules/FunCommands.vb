@@ -3,6 +3,8 @@ Imports Discord
 Imports Discord.Commands
 Imports Newtonsoft.Json.Linq
 Imports Microsoft.Extensions.DependencyInjection
+Imports HtmlAgilityPack
+Imports System.Net
 
 <Name("Gifs")>
 <Summary("Get a random anime gif.")>
@@ -323,6 +325,7 @@ Public Class Fun
 
     <Command("test")>
     Public Async Function testCMD() As Task
+
 
     End Function
 

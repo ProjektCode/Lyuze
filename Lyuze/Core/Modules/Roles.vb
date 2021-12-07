@@ -44,7 +44,7 @@ Public Class Roles 'Change messages from string to embeds.
         Dim role = Context.Guild.GetRole(Context.Message.MentionedRoles.First.Id)
         Dim bots = Context.Guild.GetRole(729128623818276947)
         Dim god = Context.Guild.GetRole(691099101172858982)
-        Dim loli = Context.Guild.GetRole(711113596272115712)
+        Dim [mod] = Context.Guild.GetRole(711113596272115712)
         Dim _user = Context.Guild.GetUser(Context.User.Id)
 
         Try
@@ -63,7 +63,7 @@ Public Class Roles 'Change messages from string to embeds.
                 Context.Channel.SendMessageAsync("This role is only for bots.")
                 Return
             End If
-            If role Is god Or role Is loli Then
+            If role Is god Or role Is [mod] Then
                 If Not _user.GuildPermissions.BanMembers Then
                     Context.Channel.SendMessageAsync($"You can not add {role.Name} to {user.Mention}.")
                     Return
@@ -117,12 +117,9 @@ Public Class Roles 'Change messages from string to embeds.
     <Summary("Creates a role if you have the required permissions.")>
     <Remarks("\grole @role")>
     <RequireBotPermission(GuildPermission.ManageRoles)>
+    <RequireUserPermission(GuildPermission.ManageRoles)>
     Public Async Function createRole(<Remainder> name As String) As Task
         Dim user = Context.Guild.GetUser(Context.User.Id)
-        If Not user.GuildPermissions.ManageRoles Then
-            Await Context.Channel.SendMessageAsync("You do not have the required permissions for this command.")
-            Return
-        End If
 
         Await Context.Guild.CreateRoleAsync(name, Nothing, Color.Gold, False, Nothing, Nothing)
         Await Context.Channel.SendMessageAsync($"Created role named {name}")

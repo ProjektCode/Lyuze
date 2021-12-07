@@ -114,16 +114,4 @@ Public Class General
         Await ReplyAsync(embed:=ModService.Report(id, Context).Result)
     End Function
 
-    <Command("test")>
-    Public Async Function test() As Task
-        Try
-            Dim settings = Lyuze.Settings.Data
-
-            Dim t = If(settings.IDs.ReportId.ToString, "n/a")
-            Await ReplyAsync(t)
-        Catch ex As Exception
-            ReplyAsync(ex.Message)
-        End Try
-    End Function
-
 End Class

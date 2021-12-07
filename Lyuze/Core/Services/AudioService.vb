@@ -3,7 +3,6 @@ Imports System.Threading
 Imports System.Collections.Concurrent
 Imports Discord
 Imports Discord.Commands
-Imports Discord.WebSocket
 Imports Discord.Addons.Interactive
 Imports Victoria
 Imports Victoria.Enums

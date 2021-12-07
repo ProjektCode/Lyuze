@@ -10,6 +10,11 @@ Imports System.Threading.Thread
 '-[Info]Transition code into its service
 '-[Backgrounds]Transition code into its service
 '-[Settings]Disable API commands by determing if the value is "Disable"
+'-Determine if the bot should be public with a 24/7 host or have everyone self-host.
+'-[Settings]Add welcome and goodbye messages for more customization
+'-[Roles]For adding the role find a better way to check if the role is not an admin role for it to be added to non-mod users
+'-[Images]Come up with a better name for the bannerimageasync function.
+'-[Roles] For role creation have a param for hex color code for role color.
 #End Region
 
 Module Program

@@ -8,7 +8,7 @@ Imports Microsoft.Extensions.DependencyInjection
 <Summary("Commands only for admins.")>
 Public Class Admin
     Inherits InteractiveBase(Of SocketCommandContext)
-    Private ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+
 
     <Command("purge")>
     <Summary("Purge messages from the last 14 days.")>
@@ -67,16 +67,7 @@ Public Class Admin
     <RequireBotPermission(GuildPermission.ManageChannels)>
     <Remarks("\slowmode 5 | slowmode with a 5 second interval - leave empty to remove slowmode.")>
     Public Async Function slowMode(Optional interval As Integer = 0) As Task
-        Await TryCast(Context.Channel, SocketTextChannel).ModifyAsync(Sub(x) x.SlowModeInterval = interval)
-        Dim description = If(interval = 0, ":clock1: slowmode has been removed", $":clock1: Slowmode interval has been adjusted to {interval} seconds")
-        Dim embed = New EmbedBuilder With {
-            .Title = "Slowmode interval adjustment",
-            .Description = description,
-            .Color = Color.Green,
-            .ThumbnailUrl = Context.Client.CurrentUser.GetAvatarUrl
-        }
-
-        Await ReplyAsync(embed:=embed.Build)
+        Await ReplyAsync(embed:=ModService.Slowmode(interval, Context).Result)
     End Function
 
     <Command("ban")>
@@ -94,18 +85,7 @@ Public Class Admin
                 reason = "No reason given."
             End If
 
-            Await Context.Guild.AddBanAsync(user, 1, reason)
-            Dim embed As New EmbedBuilder With {
-                .Description = $":hammer: {user.Mention} was banned by {Context.User.Mention}.{Environment.NewLine} **Reason** {reason}",
-                .ThumbnailUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl),
-                .Color = Color.DarkRed,
-                .Footer = New EmbedFooterBuilder With {
-                    .Text = "User Ban Log"
-                }
-            }
-
-            channel.SendMessageAsync(embed:=embed.Build)
-
+            Await ReplyAsync(embed:=ModService.Ban(user, reason, Context).Result)
         Catch ex As Exception
             ReplyAsync(ex.Message)
         End Try
@@ -117,27 +97,13 @@ Public Class Admin
     <RequireUserPermission(GuildPermission.KickMembers)>
     <RequireBotPermission(GuildPermission.KickMembers)>
     <Remarks("\kick @user <reason> | reason is optional")>
-    Public Async Function cmdKickMember(user As IGuildUser, <Remainder> Optional reason As String = Nothing) As Task
-
+    Public Async Function cmdKickMember(user As IGuildUser, <Remainder> Optional reason As String = "No reason given.") As Task
         Try
             Dim settings = Lyuze.Settings.Data
             Dim channel = Context.Guild.GetTextChannel(settings.IDs.KickId)
-            If reason Is Nothing Then
-                reason = "No reason given."
-            End If
 
             Await user.KickAsync(reason)
-            Dim embed As New EmbedBuilder With {
-                .Description = $":athletic_shoe: {user.Mention} was kicked by {Context.User.Mention}.{Environment.NewLine} **Reason** {reason}",
-                .ThumbnailUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl),
-                .Color = Color.Red,
-                .Footer = New EmbedFooterBuilder With {
-                    .Text = "User Kick Log"
-                }
-            }
-
-            channel.SendMessageAsync(embed:=embed.Build)
-
+            Await ReplyAsync(embed:=ModService.Kick(user, reason, Context).Result)
         Catch ex As Exception
             ReplyAsync(ex.Message)
         End Try
@@ -149,27 +115,7 @@ Public Class Admin
     <RequireUserPermission(GuildPermission.KickMembers)>
     <Remarks("\id @user")>
     Public Async Function getId(user As IGuildUser) As Task
-        Dim m = Context.Message
-        Dim u = Context.User
-        Dim g = Context.Guild
-        Dim embed As New EmbedBuilder With {
-            .Author = New EmbedAuthorBuilder With {
-                .IconUrl = u.GetAvatarUrl,
-                .Name = u.Username
-            },
-                .Title = $"{user.Username}'s Id",
-                .Description = user.Id,
-                .Color = New Color(_utils.randomEmbedColor),
-                .ThumbnailUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl),
-                .Timestamp = m.Timestamp,
-                .Footer = New EmbedFooterBuilder With {
-                        .Text = "ID Data",
-                        .IconUrl = g.IconUrl
-                    }
-            }
-
-        Await Context.Message.Author.SendMessageAsync("", False, embed.Build())
-
+        Await ReplyAsync(embed:=ModService.ID(user, Context).Result)
     End Function
 
 End Class

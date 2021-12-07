@@ -5,7 +5,7 @@ Imports Microsoft.Extensions.DependencyInjection
 
 <Name("Wallpapers")>
 <Group("wall")>
-<Summary("To get all your wallpaper needs.")>
+<Summary("To get all your wallpaper needs. [Getting reworked]")>
 Public Class Backgrounds
     Inherits ModuleBase(Of SocketCommandContext)
 
