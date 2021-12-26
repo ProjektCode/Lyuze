@@ -10,6 +10,16 @@ Partial Public Class Settings
 
 	<JsonProperty("APIs")>
 	Public Property ApIs() As ApIs
+
+	<JsonProperty("Image Links")>
+	Public Property ImageLinks() As List(Of Uri)
+
+	<JsonProperty("Welcome Message")>
+	Public Property WelcomeMessage() As List(Of String)
+
+	<JsonProperty("Goodby Message")>
+	Public Property GoodbyMessage() As List(Of String)
+
 End Class
 
 Partial Public Class ApIs

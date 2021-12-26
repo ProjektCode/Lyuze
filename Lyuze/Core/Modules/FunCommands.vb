@@ -3,8 +3,7 @@ Imports Discord
 Imports Discord.Commands
 Imports Newtonsoft.Json.Linq
 Imports Microsoft.Extensions.DependencyInjection
-Imports HtmlAgilityPack
-Imports System.Net
+Imports System.Text
 
 <Name("Gifs")>
 <Summary("Get a random anime gif.")>
@@ -240,7 +239,7 @@ Public Class Fun
         If neko >= 1 And neko < 10 Then
             image = $"000{neko}"
 
-        ElseIf neko > 10 And neko < 100 Then
+        ElseIf neko >= 10 And neko < 100 Then
             image = $"00{neko}"
         Else
             image = $"0{neko}"
@@ -323,9 +322,88 @@ Public Class Fun
 
     End Function
 
-    <Command("test")>
-    Public Async Function testCMD() As Task
+    <Command("dictionary")>
+    <[Alias]("dic")>
+    <Summary("Gives you the first definition of the provided word.")>
+    <Remarks("\dic hello")>
+    Public Async Function GetDefinition(word As String) As Task
+        Try
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim response = Await httpClient.GetStringAsync($"https://api.dictionaryapi.dev/api/v2/entries/en/{ word}")
+            Dim dic = Dictionary.FromJson(response)
 
+            Dim synonymsBuilder = New StringBuilder
+            Dim synCount As Integer = dic.First.Meanings.First.Definitions.First.Synonyms.Count
+            Dim num As Integer = 0
+
+            For Each syn In dic.First.Meanings.First.Definitions.First.Synonyms
+                If synCount > 10 Then
+                    If num = 10 Then
+                        Exit For
+                    Else
+                        synonymsBuilder.Append($"*{syn}*,")
+                        num += 1
+                    End If
+                Else
+                    synonymsBuilder.Append($"*{syn}*,")
+                End If
+            Next
+            synonymsBuilder.Remove(synonymsBuilder.Length - 1, 1)
+
+            Dim embed = New EmbedBuilder With {
+                .Title = $"First Definition for {word}",
+                .Color = New Color(_utils.randomEmbedColor),
+                .ThumbnailUrl = If(Context.Client.CurrentUser.GetAvatarUrl, Context.Client.CurrentUser.GetDefaultAvatarUrl)
+            }
+            embed.AddField("Definition", dic.First.Meanings.First.Definitions.First.DefinitionDefinition)
+            embed.AddField("Part of Speech", dic.First.Meanings.First.PartOfSpeech, True)
+            embed.AddField("Synonyms", synonymsBuilder.ToString, True)
+
+            Await ReplyAsync(embed:=embed.Build)
+        Catch ex As Exception
+
+        End Try
+
+    End Function
+
+    <Command("test")>
+    Public Async Function testCMD(word As String) As Task
+        Try
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim response = Await httpClient.GetStringAsync($"https://api.dictionaryapi.dev/api/v2/entries/en/{ word}")
+            Dim dic = Dictionary.FromJson(response)
+
+            Dim synonymsBuilder = New StringBuilder
+            Dim synCount As Integer = dic.First.Meanings.First.Definitions.First.Synonyms.Count
+            Dim num As Integer = 0
+
+            For Each syn In dic.First.Meanings.First.Definitions.First.Synonyms
+                If synCount > 10 Then
+                    If num = 10 Then
+                        Exit For
+                    Else
+                        synonymsBuilder.Append($"*{syn}*,")
+                        num += 1
+                    End If
+                Else
+                    synonymsBuilder.Append($"*{syn}*,")
+                End If
+            Next
+            synonymsBuilder.Remove(synonymsBuilder.Length - 1, 1)
+
+            Dim embed = New EmbedBuilder With {
+                .Title = $"First Result for {word}",
+                .Color = New Color(_utils.randomEmbedColor),
+                .ThumbnailUrl = Context.Guild.CurrentUser.GetAvatarUrl
+            }
+            embed.AddField("Definition", dic.First.Meanings.First.Definitions.First.DefinitionDefinition)
+            embed.AddField("Part of Speech", dic.First.Meanings.First.PartOfSpeech, True)
+            embed.AddField("Synonyms", synonymsBuilder.ToString, True)
+
+            Await ReplyAsync(embed:=embed.Build)
+        Catch ex As Exception
+
+        End Try
 
     End Function
 

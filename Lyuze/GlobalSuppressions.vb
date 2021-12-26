@@ -5,5 +5,5 @@
 
 Imports System.Diagnostics.CodeAnalysis
 
-<Assembly: SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification:="<Pending>", Scope:="member", Target:="~F:VB_Lyuze.bot._util")>
-<Assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification:="<Pending>", Scope:="member", Target:="~M:VB_Lyuze.imageManipulation.imgTest(System.String)~System.Threading.Tasks.Task")>
+<Assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification:="<Pending>", Scope:="member", Target:="~M:Lyuze.Roles.addRole(Discord.WebSocket.SocketRole,Discord.WebSocket.SocketGuildUser)~System.Threading.Tasks.Task")>
+<Assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification:="<Pending>", Scope:="member", Target:="~M:Lyuze.Roles.removeRole(Discord.WebSocket.SocketRole,Discord.WebSocket.SocketGuildUser)~System.Threading.Tasks.Task")>
