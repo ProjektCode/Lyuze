@@ -13,9 +13,9 @@
     "Leave ID": 123456789123456789
   },
   "APIs": {
-    "Tenor": "Tenor API",
-    "Unsplash Access": "Unsplash Access Key",
-    "Unsplash Secret": "Unsplash Secret Key"
+    "Tenor": "Disable",
+    "Unsplash Access": "Disable",
+    "Unsplash Secret": "Disable"
   },
   "Image Links":[
     "https://i.imgur.com/14Rf5rb.jpeg",

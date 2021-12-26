@@ -78,9 +78,7 @@ Module Program
             Dim settingsPath = $"{Settings}settings.json"
             Dim lavalinkPath = $"{Victoria}Lavalink.jar"
             Dim applicationPath = $"{Victoria}application.yaml"
-            Dim jsonString As String = String.Empty
-            Dim appString As String = String.Empty
-            Dim settingsURL As String = "https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Assets/settings.json?token=AFU5U6XFMZXK44JYEM2PIT3B2FDEM"
+            Dim settingsURL As String = "https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Assets/settings.json?token=AFU5U6WEZ2ADGJRTKWBVRWLB2FJ6W"
             Dim lavalinkURL As String = "https://www.dropbox.com/s/ofe51ep1ow94u9c/Lavalink.jar?dl=1"
             Dim applicationURL As String = "https://www.dropbox.com/s/ny0zvsxc3w7unv9/application.yaml?dl=1"
 
@@ -92,21 +90,10 @@ Module Program
             End If
             loggingHandler.LogInformationAsync("setup", "Downloading and setting up file structure for the first time... Please wait.")
             Using client As New WebClient
-                jsonString = client.DownloadString(settingsURL)
-                appString = client.DownloadString(applicationURL)
+                client.DownloadFile(settingsURL, settingsPath)
+                client.DownloadFile(applicationURL, applicationPath)
                 client.DownloadFile(lavalinkURL, lavalinkPath)
             End Using
-
-            If Not jsonString = String.Empty Then
-                Using writer As New StreamWriter(settingsPath, True)
-                    writer.Write(jsonString)
-                End Using
-            End If
-            If Not appString = String.Empty Then
-                Using writer As New StreamWriter(applicationPath, True)
-                    writer.Write(appString)
-                End Using
-            End If
 
         Catch ex As Exception
             loggingHandler.LogCriticalAsync("setup", ex.Message)
