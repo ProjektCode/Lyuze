@@ -17,11 +17,23 @@ Module Program
     ReadOnly dir = $"{basePath}Resources\Victoria\"
     ReadOnly lavalink = $"{dir}Lavalink.jar"
     ReadOnly app = $"{dir}application.yaml"
+    'Bin File Structure
+    ReadOnly Resources = basePath + "Resources\"
+    ReadOnly Logging = Resources + "Logging\"
+    ReadOnly Victoria = Resources + "Victoria\"
+    ReadOnly Settings = Resources + "Settings\"
+
     ReadOnly _Utils As New MasterUtils
     ReadOnly process As New Process
     Dim createDir As New List(Of String)
 
     Sub Main()
+        If Not Directory.Exists(Resources) Then
+            BotSetup()
+            loggingHandler.LogCriticalAsync("setup", "File structure has been created... Now go into Resources/Settings and open settings.json and fill in the required fields.")
+            Sleep(5000)
+            Environment.Exit(0)
+        End If
         Call setUp().GetAwaiter.GetResult()
     End Sub
 
@@ -45,27 +57,28 @@ Module Program
             process.StartInfo.Arguments = $"-jar {lavalink}"
             process.Start()
             Sleep(3000)
-            Await loggingHandler.LogSetupAsync("setup", "Sever is setup now setting up file structure...")
+            Await loggingHandler.LogSetupAsync("setup", "Sever is setup now checking settings file...")
             Sleep(500)
+            If Lyuze.Settings.Data.Discord.Token = "Token Here" Then
+                loggingHandler.LogCriticalAsync("setup", "Please go into the settings file and configure the bot.")
+                Environment.Exit(0)
+            End If
             Await loggingHandler.LogSetupAsync("setup", "Downloading settings file....")
             Call New bot().mainAsync().GetAwaiter().GetResult()
 
         End If
     End Function
 
-    Private Sub FileStructure()
+    Private Sub BotSetup()
         Try
-            Dim path = AppDomain.CurrentDomain.BaseDirectory
-            Dim Resources = path + "Resources\"
-            Dim Logging = Resources + "Logging\"
-            Dim Victoria = Resources + "Victoria\"
-            Dim Settings = Resources + "Settings\"
             Dim settingsPath = $"{Settings}settings.json"
+            Dim lavalinkPath = $"{Victoria}Lavalink.jar"
+            Dim applicationPath = $"{Victoria}application.yaml"
             Dim jsonString As String = String.Empty
-            Dim settingsURL As String = "https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Core/Models/WaifuPicsModel.vb?token=AFU5U6QDITHG7QETOXDKSMTBZ7WGK"
-            Using client As New WebClient
-                jsonString = client.DownloadString(settingsURL)
-            End Using
+            Dim appString As String = String.Empty
+            Dim settingsURL As String = "https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Assets/settings.json?token=AFU5U6XFMZXK44JYEM2PIT3B2FDEM"
+            Dim lavalinkURL As String = "https://www.dropbox.com/s/ofe51ep1ow94u9c/Lavalink.jar?dl=1"
+            Dim applicationURL As String = "https://www.dropbox.com/s/ny0zvsxc3w7unv9/application.yaml?dl=1"
 
             If Not Directory.Exists(Resources) Then
                 Directory.CreateDirectory(Resources)
@@ -73,10 +86,23 @@ Module Program
                 Directory.CreateDirectory(Victoria)
                 Directory.CreateDirectory(Settings)
             End If
-
-            Using writer As New StreamWriter(settingsPath, True)
-                writer.Write(jsonString)
+            loggingHandler.LogInformationAsync("setup", "Downloading and setting up file structure for the first time... Please wait.")
+            Using client As New WebClient
+                jsonString = client.DownloadString(settingsURL)
+                appString = client.DownloadString(applicationURL)
+                client.DownloadFile(lavalinkURL, lavalinkPath)
             End Using
+
+            If Not jsonString = String.Empty Then
+                Using writer As New StreamWriter(settingsPath, True)
+                    writer.Write(jsonString)
+                End Using
+            End If
+            If Not appString = String.Empty Then
+                Using writer As New StreamWriter(applicationPath, True)
+                    writer.Write(appString)
+                End Using
+            End If
 
         Catch ex As Exception
             loggingHandler.LogCriticalAsync("setup", ex.Message)
