@@ -28,6 +28,8 @@ Module Program
     Dim createDir As New List(Of String)
 
     Sub Main()
+        Console.Title = "Discord Bot - Multi-Purpose Discord Bot"
+        _Utils.setBanner("/ Discord Bot \", "#FFC0CB", ConsoleColor.Green)
         If Not Directory.Exists(Resources) Then
             BotSetup()
             loggingHandler.LogCriticalAsync("setup", "File structure has been created... Now go into Resources/Settings and open settings.json and fill in the required fields.")
@@ -38,10 +40,16 @@ Module Program
     End Sub
 
     Private Async Function setUp() As Task
-        'All sleep timers are there only for aesthetic no real reason for them to be there.
         Dim settings = Lyuze.Settings.Data
+        Console.Clear()
         Console.Title = $"{settings.Discord.Name} - Multi-Purpose Discord Bot"
         _Utils.setBanner($"/ {settings.Discord.Name} Bot \", "#FFC0CB", ConsoleColor.Green)
+        'All sleep timers are there only for aesthetic no real reason for them to be there.
+        If settings.Discord.Token = "Token Here" Then
+            loggingHandler.LogCriticalAsync("setup", "Please go into the settings file and configure the bot.")
+            Sleep(5000)
+            Environment.Exit(0)
+        End If
         Await loggingHandler.LogSetupAsync("setup", "Looking for Lavalink server...")
         If Not File.Exists(lavalink) Or Not File.Exists(app) Then
             Await loggingHandler.LogCriticalAsync("setup", "After the program closes please add your Lavalink.jar and application.yml file into the correct folder.")
@@ -59,10 +67,6 @@ Module Program
             Sleep(3000)
             Await loggingHandler.LogSetupAsync("setup", "Sever is setup now checking settings file...")
             Sleep(500)
-            If Lyuze.Settings.Data.Discord.Token = "Token Here" Then
-                loggingHandler.LogCriticalAsync("setup", "Please go into the settings file and configure the bot.")
-                Environment.Exit(0)
-            End If
             Await loggingHandler.LogSetupAsync("setup", "Downloading settings file....")
             Call New bot().mainAsync().GetAwaiter().GetResult()
 
