@@ -12,10 +12,6 @@ Public Class General
     Inherits InteractiveBase(Of SocketCommandContext)
     Private ReadOnly _utils As MasterUtils
 
-    Public Sub New(utils As MasterUtils)
-        _utils = utils
-    End Sub
-
     <Command("nickname")>
     <[Alias]("nick")>
     <RequireBotPermission(GuildPermission.ManageNicknames)>
@@ -58,7 +54,14 @@ Public Class General
             Await m.SendMessageAsync($"{user.Mention}'s Nickname has been changed.")
 
         Catch ex As Exception
-            loggingHandler.ErrorLog("Misc", ex.Message)
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync("general", ex.Message)
+            Else
+                Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed("General", ex.Message).Result)
+            End If
         End Try
 
     End Function
@@ -74,17 +77,17 @@ Public Class General
         Try
 
             Dim embed As New EmbedBuilder With {
-    .Title = $"All guild emotes for usage do :EmoteName:",
-    .ImageUrl = "https://i.imgur.com/vc241Ku.jpeg",
-    .Description = "The full list of our custom guild emotes",
-    .Color = New Color(_utils.randomEmbedColor),
-    .ThumbnailUrl = g.IconUrl,
-    .Timestamp = Context.Message.Timestamp,
-    .Footer = New EmbedFooterBuilder With {
-            .Text = "Emote Data",
-            .IconUrl = g.IconUrl
-        }
-    }
+                .Title = $"All guild emotes for usage do :EmoteName:",
+                .ImageUrl = "https://i.imgur.com/vc241Ku.jpeg",
+                .Description = "The full list of our custom guild emotes",
+                .Color = New Color(_utils.randomEmbedColor),
+                .ThumbnailUrl = g.IconUrl,
+                .Timestamp = Context.Message.Timestamp,
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = "Emote Data",
+                    .IconUrl = g.IconUrl
+                }
+            }
 
 
             Dim emotes As String = ""
@@ -104,12 +107,21 @@ Public Class General
             Await Context.Message.Channel.SendMessageAsync("", False, embed.Build())
 
         Catch ex As Exception
-            ReplyAsync(ex.Message)
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync($"general", ex.Message)
+            Else
+                Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"General", ex.Message).Result)
+            End If
         End Try
 
     End Function
 
     <Command("report")>
+    <Summary("Report messages.")>
+    <Remarks("\report @messageid")>
     Public Async Function Report(id As ULong) As Task
         Await ReplyAsync(embed:=ModService.Report(id, Context).Result)
     End Function

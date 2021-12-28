@@ -25,11 +25,9 @@ NotInheritable Class RolesService
         Catch ex As Exception
 
             If settings.IDs.ErrorId = 0 Then
-                loggingHandler.ErrorLog("Roles", ex.Message)
+                loggingHandler.LogCriticalAsync("roles", ex.Message)
             Else
-                If ex.Message.Contains("Forbidden") Then
-                    errorChnl.SendMessageAsync(embed:=embedHandler.errorEmbed("Roles - AddRole", "Attempting to add a forbidden role.").Result)
-                End If
+                errorChnl.SendMessageAsync(embed:=embedHandler.errorEmbed("Roles - AddRole", "Attempting to add a forbidden role.").Result)
             End If
 
         End Try
@@ -56,7 +54,7 @@ NotInheritable Class RolesService
         Catch ex As Exception
 
             If settings.IDs.ErrorId = 0 Then
-                loggingHandler.ErrorLog("Roles", ex.Message)
+                loggingHandler.LogCriticalAsync("roles", ex.Message)
             Else
                 errorChnl.SendMessageAsync(embed:=embedHandler.errorEmbed("Roles - GetRole", ex.Message).Result)
             End If

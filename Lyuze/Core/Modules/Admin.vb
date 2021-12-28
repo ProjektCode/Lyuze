@@ -54,7 +54,14 @@ Public Class Admin
                 Return Ok()
             End If
         Catch ex As Exception
-            loggingHandler.ErrorLog("admin", ex.Message)
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync("Admin", ex.Message)
+            Else
+                Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed("Admin - Purge", ex.Message).Result)
+            End If
             Return Ok()
         End Try
 
@@ -174,10 +181,13 @@ Public Class Owner
                         Continue For
                     End Try
                 End If
+            Next
+            For Each p As Process In Process.GetProcesses
                 If p.ProcessName = "LyuzeBOT" Then
                     Try
                         Await Context.Channel.SendMessageAsync("Goodbye for now.")
                         p.Kill()
+
                     Catch ex As Exception
                         Continue For
                     End Try

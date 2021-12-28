@@ -126,14 +126,19 @@ Line1:
             End If
             'if the current ID does not exist it will increase the number to find the closest existing ID.
             If ex.Message.Contains("System.Net.Http.HttpConnectionResponseContent") Then
-                'loggingHandler.ErrorLog("Anime", ex.Message, id)
+                loggingHandler.LogCriticalAsync("jikan", ex.Message)
                 id += 1
                 retryLimit += 1
                 GoTo Line1
             Else
-                'chnl.SendMessageAsync(embedHandler.errorEmbed($"{id}", $"{ex.Message}").ToString)
-                'loggingHandler.ErrorLog("Anime", ex.Message, id)
-                Return embedHandler.errorEmbed("Anime", $"{ex.Message}").Result
+                Dim _settings = Lyuze.Settings.Data
+
+                If _settings.IDs.ErrorId = 0 Then
+                    loggingHandler.LogCriticalAsync("jikan", ex.Message)
+                Else
+                    Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                    chnl.SendMessageAsync(embed:=embedHandler.errorEmbed("jikan", ex.Message).Result)
+                End If
             End If
 
         End Try
@@ -232,14 +237,26 @@ Line1:
             End If
             'if the current ID does not exist it will increase the number to find the closest existing ID.
             If ex.Message.Contains("System.Net.Http.HttpConnectionResponseContent") Then
-                loggingHandler.ErrorLog("Manga", ex.Message, id)
+                Dim _settings = Lyuze.Settings.Data
+
+                If _settings.IDs.ErrorId = 0 Then
+                    loggingHandler.LogCriticalAsync("jikan - Manga", ex.Message)
+                Else
+                    Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                    chnl.SendMessageAsync(embed:=embedHandler.errorEmbed("jikan", ex.Message).Result)
+                End If
                 id += 1
                 retryLimit += 1
                 GoTo Line1
             Else
-                'chnl.SendMessageAsync(embedHandler.errorEmbed($"{id}", $"{ex.Message}").ToString)
-                loggingHandler.ErrorLog("Manga", ex.Message, id)
-                Return embedHandler.errorEmbed($"Manga - {id}", $"{ex.Message}").Result
+                Dim _settings = Lyuze.Settings.Data
+
+                If _settings.IDs.ErrorId = 0 Then
+                    loggingHandler.LogCriticalAsync($"jikan", ex.Message)
+                Else
+                    Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                    chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"jikan", ex.Message).Result)
+                End If
             End If
 
         End Try
@@ -334,9 +351,14 @@ Line1:
                 retryLimit += 1
                 GoTo Line1
             Else
-                'chnl.SendMessageAsync(embedHandler.errorEmbed($"{id}", $"{ex.Message}").ToString)
-                'loggingHandler.ErrorLog("Manga", ex.Message, id)
-                Return embedHandler.errorEmbed($"Manga - {id}", $"{ex.Message}").Result
+                Dim _settings = Lyuze.Settings.Data
+
+                If _settings.IDs.ErrorId = 0 Then
+                    loggingHandler.LogCriticalAsync($"jikan", ex.Message)
+                Else
+                    Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                    chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"jikan", ex.Message).Result)
+                End If
             End If
 
         End Try
@@ -397,7 +419,14 @@ Line1:
             Next
 
         Catch ex As Exception
-            Return embedHandler.errorEmbed("Top Anime", ex.Message).Result
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync($"jikan", ex.Message)
+            Else
+                Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"jikan", ex.Message).Result)
+            End If
         End Try
     End Function
 
@@ -456,7 +485,14 @@ Line1:
             Next
 
         Catch ex As Exception
-            Return embedHandler.errorEmbed("Top Manga", ex.Message).Result
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync($"jikan", ex.Message)
+            Else
+                Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"jikan", ex.Message).Result)
+            End If
         End Try
     End Function
 
@@ -482,7 +518,14 @@ Line1:
             Next
 
         Catch ex As Exception
-            Return embedHandler.errorEmbed("Top Characters", ex.Message).Result
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync($"jikan", ex.Message)
+            Else
+                Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Jikan", ex.Message).Result)
+            End If
         End Try
     End Function
 
@@ -508,7 +551,14 @@ Line1:
             Next
 
         Catch ex As Exception
-            Return embedHandler.errorEmbed("Top People", ex.Message).Result
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync($"jikan", ex.Message)
+            Else
+                Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Jikan", ex.Message).Result)
+            End If
         End Try
     End Function
 
@@ -538,7 +588,14 @@ Line1:
             Next
 
         Catch ex As Exception
-            Return embedHandler.errorEmbed("Season Anime", ex.Message).Result
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync($"jikan", ex.Message)
+            Else
+                Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Jikan", ex.Message).Result)
+            End If
         End Try
 
     End Function

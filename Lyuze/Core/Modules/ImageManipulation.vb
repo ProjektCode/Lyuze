@@ -20,7 +20,7 @@ Public Class imageManipulation
 
         Try
 
-            'Checks if the url in an attachment is a actual image. - Not added
+            'Checks if the URL in an attachment is a actual image. - Not added
             If Context.Message.Attachments.Count = 1 Then
                 'Interactive response to get width with a 15sec timer
                 Await ReplyAndDeleteAsync("What is your desired width?", timeout:=New TimeSpan(0, 0, 15))
@@ -86,7 +86,15 @@ Public Class imageManipulation
             End If
 
         Catch ex As Exception
-            loggingHandler.ErrorLog("Image", ex.Message)
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync("image", ex.Message)
+            Else
+                Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed("image - Crop", ex.Message).Result)
+            End If
+
         End Try
 
 #End Region
@@ -110,7 +118,14 @@ Public Class imageManipulation
                 Await Context.Channel.SendMessageAsync("This is only for the bot owner.")
             End If
         Catch ex As Exception
-            loggingHandler.ErrorLog("Image", ex.Message)
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync($"image", ex.Message)
+            Else
+                Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Image - Masscrop", ex.Message).Result)
+            End If
         End Try
 
     End Function

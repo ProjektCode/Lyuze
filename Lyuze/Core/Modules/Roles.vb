@@ -66,7 +66,14 @@ Public Class Roles 'Change messages from string to embeds.
             Await Context.Channel.SendMessageAsync($"Removed *{role.Name}* from {user.Mention}")
 
         Catch ex As Exception
-            loggingHandler.ErrorLog("Roles", ex.Message)
+            Dim _settings = Lyuze.Settings.Data
+
+            If _settings.IDs.ErrorId = 0 Then
+                loggingHandler.LogCriticalAsync($"Roles - Remove", ex.Message)
+            Else
+                Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Roles - Remove", ex.Message).Result)
+            End If
         End Try
 
     End Function

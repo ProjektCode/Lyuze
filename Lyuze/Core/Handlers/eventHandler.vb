@@ -32,6 +32,7 @@ NotInheritable Class eventHandler
     Private Async Function logAsync(msg As LogMessage) As Task
         Await loggingHandler.LogAsync(msg.Source, msg.Severity, msg.Message)
     End Function
+
     Private Async Function onReady() As Task
 
         If Not _lavaNode.IsConnected Then
@@ -50,6 +51,7 @@ NotInheritable Class eventHandler
                           End Sub, Nothing, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(120))
         SystemSounds.Asterisk.Play()
     End Function
+
     Private Async Function messageRecieved(arg As SocketMessage) As Task
         Dim message = TryCast(arg, SocketUserMessage)
         Dim context = New SocketCommandContext(_client, message)
@@ -84,6 +86,7 @@ NotInheritable Class eventHandler
 
 
     End Function
+
     Private Async Function onUserJoined(arg As SocketGuildUser) As Task
         Dim settings = Lyuze.Settings.Data
         Try
@@ -95,9 +98,10 @@ NotInheritable Class eventHandler
 
             File.Delete(path)
         Catch ex As Exception
-            loggingHandler.ErrorLog("UserJoined", ex.Message)
+            loggingHandler.LogCriticalAsync("bot", ex.Message)
         End Try
     End Function
+
     Private Async Function onUserLeave(arg As SocketGuildUser) As Task
         Dim settings = Lyuze.Settings.Data
         Try
@@ -109,7 +113,7 @@ NotInheritable Class eventHandler
 
             File.Delete(path)
         Catch ex As Exception
-            loggingHandler.ErrorLog("UserLeave", ex.Message)
+            loggingHandler.LogCriticalAsync("bot", ex.Message)
         End Try
     End Function
 

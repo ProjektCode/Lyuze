@@ -36,7 +36,7 @@ NotInheritable Class loggingHandler
         Return LogAsync(source, LogSeverity.Critical, message, exc)
     End Function
 
-    ' The Way To Log Basic Infomation 
+    ' The Way To Log Basic Information 
     Public Shared Function LogInformationAsync(ByVal source As String, ByVal message As String) As Task
         Return LogAsync(source, LogSeverity.Info, message)
     End Function
@@ -80,6 +80,16 @@ NotInheritable Class loggingHandler
                 Return "CMMND"
             Case "database"
                 Return "DBASE"
+            Case "roles"
+                Return "ROLES"
+            Case "jikan"
+                Return "JIKAN"
+            Case "image"
+                Return "IMAGE"
+            Case "fun"
+                Return "FUNCS"
+            Case "general"
+                Return "GENRL"
             Case Else
                 Return src
         End Select
@@ -124,27 +134,6 @@ NotInheritable Class loggingHandler
                 Return ConsoleColor.White
         End Select
     End Function
-
-#End Region
-
-#Region "Custom Logging" 'Add function to replace error codes with shorten error codes.
-
-    Public Shared Sub ErrorLog(source As String, msg As String, Optional id As Integer = Nothing)
-
-        If Not File.Exists(_path + _file) Then
-            File.CreateText(_path + _file)
-        End If
-
-        Using writer As New StreamWriter(save, True)
-            If id = Nothing Then
-                writer.WriteLine($"Source: [{source}] - {msg}")
-            Else
-                writer.WriteLine($"Source: [{source}] - ID: [{id}] - {msg}")
-            End If
-
-        End Using
-    End Sub
-
 
 #End Region
 
