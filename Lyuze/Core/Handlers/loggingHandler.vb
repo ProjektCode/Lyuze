@@ -90,6 +90,10 @@ NotInheritable Class loggingHandler
                 Return "FUNCS"
             Case "general"
                 Return "GENRL"
+            Case "backgrounds"
+                Return "BACKG"
+            Case "gifs"
+                Return "GIFSS"
             Case Else
                 Return src
         End Select

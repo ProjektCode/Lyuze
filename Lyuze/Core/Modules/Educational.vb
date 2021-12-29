@@ -11,20 +11,7 @@ Public Class Educational
     <Summary("add | Add two numbers together.")>
     <Remarks("\add 1 4")>
     Public Async Function cmdAdd(num1 As Integer, num2 As Integer) As Task
-
-        Dim sum = num1 + num2
-
-        Dim embed = New EmbedBuilder With {
-            .Title = $"Problem {num1} + {num2}",
-            .Description = $"Total: {sum}",
-            .Color = Color.Purple,
-            .Footer = New EmbedFooterBuilder With {
-                .Text = "Addition"
-            }
-        }
-
-        Await ReplyAsync(embed:=embed.Build)
-
+        Await ReplyAsync(embed:=Await EdService.Addition(num1, num2))
     End Function
 
     <Command("subtract")>
@@ -32,22 +19,7 @@ Public Class Educational
     <Summary(" sub | Subtract two numbers.")>
     <Remarks("\sub 1 4")>
     Public Async Function cmdSub(num1 As Integer, num2 As Integer) As Task
-
-        Dim sum = num1 - num2
-        Dim user = Context.User
-
-
-        Dim embed = New EmbedBuilder With {
-            .Title = $"Problem {num1} - {num2}",
-            .Description = $"Total: {sum}",
-            .Color = Color.Purple,
-            .Footer = New EmbedFooterBuilder With {
-                .Text = "Subtraction"
-            }
-        }
-
-        Await ReplyAsync(embed:=embed.Build)
-
+        Await ReplyAsync(embed:=Await EdService.Subtraction(num1, num2))
     End Function
 
     <Command("multiply")>
@@ -55,51 +27,15 @@ Public Class Educational
     <Summary("multi | Multiply two numbers together.")>
     <Remarks("\multi 1 4")>
     Public Async Function cmdMulti(num1 As Integer, num2 As Integer) As Task
-
-        If num1 = 0 Or num2 = 0 Then
-            Await ReplyAsync("Anything multiplied by zero is zero.")
-            Return
-        End If
-        Dim sum = num1 * num2
-
-        Dim embed = New EmbedBuilder With {
-            .Title = $"Problem {num1} * {num2}",
-            .Description = $"Total: {sum}",
-            .Color = Color.Purple,
-            .Footer = New EmbedFooterBuilder With {
-                .Text = "Multiplication"
-            }
-        }
-
-        Await ReplyAsync(embed:=embed.Build)
-
+        Await ReplyAsync(embed:=Await EdService.Multiplication(num1, num2))
     End Function
 
     <Command("divide")>
     <[Alias]("div")>
-    <Summary("dib | Divide two numbers together.")>
+    <Summary("div | Divide two numbers together.")>
     <Remarks("\div 4 1")>
     Public Async Function cmdDivide(num1 As Integer, num2 As Integer) As Task
-
-        Dim sum = num1 / num2
-        Dim user = Context.User
-
-        If num1 = 0 Or num2 = 0 Then
-            Await ReplyAsync("Cannot divide anything by zero.")
-            Return
-        End If
-
-        Dim embed = New EmbedBuilder With {
-                .Title = $"Problem {num1} / {num2}",
-                .Description = $"Total: {sum}",
-                .Color = Color.Purple,
-                .Footer = New EmbedFooterBuilder With {
-                    .Text = "Division"
-                }
-        }
-
-        Await ReplyAsync(embed:=embed.Build)
-
+        Await ReplyAsync(embed:=Await EdService.Division(num1, num2))
     End Function
 
 End Class

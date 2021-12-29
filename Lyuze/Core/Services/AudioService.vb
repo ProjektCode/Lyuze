@@ -148,7 +148,7 @@ NotInheritable Class audioService
                 End If
             Else
                 Return $"Command can not be used in **{channel.Name}**"
-                'Return embedHandler.victoriaInvalidUsageEmbed(channel).Result
+                'Return embedHandler.victoriaInvalidUsageEmbed(channel)
 
             End If
 

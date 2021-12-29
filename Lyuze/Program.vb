@@ -3,12 +3,8 @@ Imports System.Net
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'-[Backgrounds]Transition code into its service
-'-[Settings]Disable API commands by determining if the value is "Disable"
-'-[Images]Come up with a better name for the bannerimageasync function.
-'-[Roles] For role creation have a param for hex color code for role color.
-'-[FunCommands] Move commands into its own service
-'-[All] Move all commands into its own service
+'-[All] Go through and fix all spelling mistakes
+'-[Anime APIs] move to it's own service
 #End Region
 
 Module Program

@@ -1,12 +1,13 @@
 ﻿Imports Discord
 Imports Discord.Commands
 Imports Discord.WebSocket
+Imports Microsoft.Extensions.DependencyInjection
 
 <Name("Roles")>
 <Summary("Get information on roles and get/remove roles.")>
 Public Class Roles 'Change messages from string to embeds.
     Inherits ModuleBase(Of SocketCommandContext)
-
+    Dim _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     <Command("getrole")>
     <[Alias]("grole")>
@@ -15,7 +16,7 @@ Public Class Roles 'Change messages from string to embeds.
     <RequireBotPermission(GuildPermission.ManageRoles)>
     Public Async Function getRole() As Task
         Dim role = Context.Guild.GetRole(Context.Message.MentionedRoles.First.Id)
-        Await ReplyAsync(embed:=RolesService.GetRole(role, Context).Result)
+        Await ReplyAsync(embed:=Await RolesService.GetRole(role, Context))
     End Function
 
     <Command("addrole")>
@@ -37,7 +38,7 @@ Public Class Roles 'Change messages from string to embeds.
             user = Context.Guild.GetUser(Context.Message.Author.Id)
         End If
 
-        Await ReplyAsync(embed:=RolesService.AddRole(user, role, Context).Result)
+        Await ReplyAsync(embed:=Await RolesService.AddRole(user, role, Context))
     End Function
 
     <Command("removerole")>
@@ -49,33 +50,17 @@ Public Class Roles 'Change messages from string to embeds.
         role = Context.Guild.GetRole(Context.Message.MentionedRoles.First.Id)
         Dim _user = Context.Guild.GetUser(Context.User.Id)
 
-        Try
-
-            If _user.GuildPermissions.ManageRoles Then
-                If user Is Nothing Then
-                    user = Context.Guild.GetUser(Context.Message.Author.Id)
-                Else
-                    user = Context.Guild.GetUser(Context.Message.MentionedUsers.First.Id)
-                End If
-            Else
+        If _user.GuildPermissions.ManageRoles Then
+            If user Is Nothing Then
                 user = Context.Guild.GetUser(Context.Message.Author.Id)
-            End If
-
-
-            Await user.RemoveRoleAsync(role)
-            Await Context.Channel.SendMessageAsync($"Removed *{role.Name}* from {user.Mention}")
-
-        Catch ex As Exception
-            Dim _settings = Lyuze.Settings.Data
-
-            If _settings.IDs.ErrorId = 0 Then
-                loggingHandler.LogCriticalAsync($"Roles - Remove", ex.Message)
             Else
-                Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
-                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Roles - Remove", ex.Message).Result)
+                user = Context.Guild.GetUser(Context.Message.MentionedUsers.First.Id)
             End If
-        End Try
+        Else
+            user = Context.Guild.GetUser(Context.Message.Author.Id)
+        End If
 
+        Await ReplyAsync(embed:=Await RolesService.RemoveRole(user, role, Context))
     End Function
 
     <Command("createrole")>
@@ -84,12 +69,8 @@ Public Class Roles 'Change messages from string to embeds.
     <Remarks("\grole @role")>
     <RequireBotPermission(GuildPermission.ManageRoles)>
     <RequireUserPermission(GuildPermission.ManageRoles)>
-    Public Async Function createRole(<Remainder> name As String) As Task
-        Dim user = Context.Guild.GetUser(Context.User.Id)
-
-        Await Context.Guild.CreateRoleAsync(name, Nothing, Color.Gold, False, Nothing, Nothing)
-        Await Context.Channel.SendMessageAsync($"Created role named {name}")
-
+    Public Async Function createRole(color As String, <Remainder> name As String) As Task
+        Await ReplyAsync(embed:=Await RolesService.CreateRole(name, color, Context))
     End Function
 
 End Class
