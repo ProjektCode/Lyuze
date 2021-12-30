@@ -1,6 +1,7 @@
 Imports System.IO
 Imports System.Net
 Imports System.Threading.Thread
+Imports Microsoft.Extensions.DependencyInjection
 
 #Region "-To-Do List / +Found Bugs"
 '-[Backgrounds]Transition code into its service
@@ -9,6 +10,7 @@ Imports System.Threading.Thread
 '-[Roles] For role creation have a param for hex color code for role color.
 '-[FunCommands] Move commands into its own service
 '-[All] Move all commands into its own service
+'-[All] change .result to await in most functions. DO SO MANUALLY and slowly any new commands should follow this getup.
 
 '+[Music Queue] Returns null. Convert it into a embed. Add song URL back into it. Add max of 7 fields.(Should this be configurable?
 #End Region
@@ -22,7 +24,7 @@ Module Program
     ReadOnly Victoria = $"{Resources}Victoria\"
     ReadOnly Settings = $"{Resources}Settings\"
 
-    ReadOnly _Utils As New MasterUtils
+    ReadOnly _Utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
     ReadOnly process As New Process
 
     Sub Main()
@@ -79,6 +81,7 @@ Module Program
             Dim lavalinkURL As String = "https://www.dropbox.com/s/ofe51ep1ow94u9c/Lavalink.jar?dl=1"
             Dim applicationURL As String = "https://www.dropbox.com/s/ny0zvsxc3w7unv9/application.yaml?dl=1"
 
+            'Checks if the Resources directory exists if not it will create the file structure.
             If Not Directory.Exists(Resources) Then
                 Directory.CreateDirectory(Resources)
                 Directory.CreateDirectory(Victoria)
