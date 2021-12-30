@@ -13,166 +13,160 @@ Public Class Gifs
     <Command("hi")>
     <Summary("Get a random gif from Tenor.com")>
     Public Async Function hiGif() As Task
-        Await ReplyAsync(GifService.TenorGif("hi").Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, "hi"))
     End Function
 
     <Command("bye")>
     <Summary("Get a random gif from Tenor.com")>
     Public Async Function byeGif() As Task
-        Await ReplyAsync(GifService.TenorGif("bye").Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, "bye"))
     End Function
 
     <Command("sad")>
     <Summary("Get a random gif from Tenor.com")>
     Public Async Function sadGif() As Task
-        Await ReplyAsync(GifService.TenorGif("sad").Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, "sad"))
     End Function
 
     <Command("angry")>
     <Summary("Get a random gif from Tenor.com")>
     Public Async Function angryGif() As Task
-        Await ReplyAsync(GifService.TenorGif("angry").Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, "angry"))
     End Function
 
     <Command("laugh")>
     <[Alias]("lol")>
     <Summary("Get a random gif from Tenor.com")>
     Public Async Function laughGif() As Task
-        Await ReplyAsync(GifService.TenorGif("laugh").Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, "laugh"))
     End Function
 
     <Command("funny")>
     <Summary("Get a random gif from Tenor.com")>
     Public Async Function funnyGif() As Task
-        Await ReplyAsync(GifService.TenorGif("funny").Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, "funny"))
     End Function
 
     <Command("rage")>
     <Summary("Get a random gif from Tenor.com")>
     Public Async Function rageGif() As Task
-        Await ReplyAsync(GifService.TenorGif("rage").Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, "rage"))
     End Function
 
     <Command("horny")>
     <Summary("Get a random gif from Tenor.com")>
     Public Async Function hornyGif() As Task
-        Await ReplyAsync(GifService.TenorGif("horny").Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, "horny"))
     End Function
-
-    '<Command("blush")>
-    '<Summary("Get a random gif from Tenor.com")>
-    'Public Async Function blushGif() As Task
-    '    Await ReplyAsync(GifService.TenorGif("blush").Result)
-    'End Function
 
     <Command("search")>
     <Summary("Get a random anime gif with the provided keyword.")>
     <Remarks("\search <keyword> or \search <code geass>")>
     Public Async Function searchGif(<Remainder> tag As String) As Task
-        Await ReplyAsync(GifService.TenorGif(tag).Result)
+        Await ReplyAsync(Await GifService.TenorGif(Context, tag))
     End Function
 
     <Command("cry")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function cryGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("cry").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("cry"))
     End Function
 
     <Command("hug")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function hugGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("hug").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("hug"))
     End Function
 
     <Command("smug")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function smugGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("smug").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("smug"))
     End Function
 
     <Command("bonk")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function bonkGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("bonk").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("bonk"))
     End Function
 
     <Command("yeet")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function yeetGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("yeet").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("yeet"))
     End Function
 
     <Command("blush")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function blushGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("blush").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("blush"))
     End Function
 
     <Command("smile")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function smileGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("smile").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("smile"))
     End Function
 
     <Command("wave")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function waveGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("wave").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("wave"))
     End Function
 
     <Command("highfive")>
     <[Alias]("h5")>
     <Summary("h5 | Get a random gif from waifu.pics")>
     Public Async Function highfiveGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("highfive").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("highfive"))
     End Function
 
     <Command("slap")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function slapGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("slap").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("slap"))
     End Function
 
     <Command("kill")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function killGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("kill").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("kill"))
     End Function
 
     <Command("kick")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function kickGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("kick").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("kick"))
     End Function
 
     <Command("happy")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function happyGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("happy").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("happy"))
     End Function
 
     <Command("wink")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function winkGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("wink").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("wink"))
     End Function
 
     <Command("poke")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function pokwGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("poke").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("poke"))
     End Function
 
     <Command("dance")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function danceGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("dance").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("dance"))
     End Function
 
     <Command("cringe")>
     <Summary("Get a random gif from waifu.pics")>
     Public Async Function cringeGif() As Task
-        Await ReplyAsync(GifService.WaifuPicsSFW("cringe").Result)
+        Await ReplyAsync(Await GifService.WaifuPicsSFW("cringe"))
     End Function
 
 End Class
@@ -189,137 +183,33 @@ Public Class Fun
     <[Alias]("ameme")>
     <Summary("Get a meme from a random Anime subreddit")>
     Public Async Function animeRedditMeme() As Task
-        Dim client = New HttpClient()
-        Dim result = Await client.GetStringAsync("https://reddit.com/r/" + _utils.getAnimeMeme + "/random.json?limit=1")
-        Dim arr As JArray = JArray.Parse(result)
-        Dim post As JObject = JObject.Parse(arr(0)("data")("children")(0)("data").ToString())
-
-        Dim embed = New EmbedBuilder With {
-            .Title = post("title").ToString,
-        .ImageUrl = post("url").ToString,
-        .Color = New Color(_utils.randomEmbedColor),
-        .Url = "https://reddit.com" + post("permalink").ToString,
-        .Footer = New EmbedFooterBuilder With {
-                .Text = $"🗨{post("num_comments")} ⬆️{post("ups")}",
-                .IconUrl = Context.Guild.IconUrl
-            }
-        }
-        Context.Channel.SendMessageAsync(embed:=embed.Build)
+        Await ReplyAsync(embed:=Await FunService.AnimeReddit(Context))
     End Function
 
     <Command("regularmememe")>
     <[Alias]("rmeme")>
     <Summary("Get a meme from a random Meme subreddit")>
     Public Async Function regularRedditMeme() As Task
-        Dim client = New HttpClient()
-        Dim result = Await client.GetStringAsync("https://reddit.com/r/" + _utils.getMeme + "/random.json?limit=1")
-        Dim arr As JArray = JArray.Parse(result)
-        Dim post As JObject = JObject.Parse(arr(0)("data")("children")(0)("data").ToString())
-
-        Dim embed = New EmbedBuilder With {
-            .Title = post("title").ToString,
-        .ImageUrl = post("url").ToString,
-        .Color = New Color(_utils.randomEmbedColor),
-        .Url = "https://reddit.com" + post("permalink").ToString,
-        .Footer = New EmbedFooterBuilder With {
-                .Text = $"🗨{post("num_comments")} ⬆️{post("ups")}",
-                .IconUrl = Context.Guild.IconUrl
-            }
-        }
-        Context.Channel.SendMessageAsync(embed:=embed.Build)
+        Await ReplyAsync(embed:=Await FunService.RegularReddit(Context))
     End Function
 
     <Command("neko")>
     <Summary("Get a random neko image")>
     Public Async Function getNeko() As Task
-        Dim rand As New Random
-        Dim neko = rand.Next(1, 578)
-        Dim image As String
-
-        If neko >= 1 And neko < 10 Then
-            image = $"000{neko}"
-
-        ElseIf neko >= 10 And neko < 100 Then
-            image = $"00{neko}"
-        Else
-            image = $"0{neko}"
-        End If
-
-        Await ReplyAsync($"https://nekos.best/api/v1/nekos/{ image }.jpg")
-
+        Await ReplyAsync(embed:=Await FunService.GetNeko())
     End Function
 
     <Command("activity")>
     <[Alias]("act")>
     <Summary("Get a random activity")>
     Public Async Function getActivity() As Task
-        Dim httpClient = _httpClientFactory.CreateClient
-        Dim response = Await httpClient.GetStringAsync("https://www.boredapi.com/api/activity/")
-        Dim activity = ActivityEvent.FromJson(response)
-
-        If activity Is Nothing Then
-            Await ReplyAsync(embed:=embedHandler.errorEmbed("Activity", "An error occurred, please try again later").Result)
-            Return
-        End If
-
-        Dim embed = New EmbedBuilder With {
-            .Title = "New Activity",
-            .Color = New Color(_utils.randomEmbedColor),
-            .ThumbnailUrl = If(Context.User.GetAvatarUrl, Context.User.GetDefaultAvatarUrl)
-        }
-        embed.AddField("Activity", $"{activity.Activity}", True)
-        embed.AddField("Type", $"{activity.Type}", True)
-        embed.AddField("Participants", $"{activity.Participants}", True)
-        embed.AddField("Accessibility", $"{activity.Accessibility}", True)
-        embed.AddField("Price", $"{activity.Price}", True)
-
-        Await ReplyAsync(embed:=embed.Build)
-
+        Await ReplyAsync(embed:=Await FunService.GetActivity(Context))
     End Function
 
     <Command("joke")>
     <Summary("Get a random joke. WARNING: Some jokes may be offensive to some people. You have been warned.")>
     Public Async Function getRandomJoke() As Task
-
-        Try
-            Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync("https://v2.jokeapi.dev/joke/Any")
-            Dim joke = RandomJoke.FromJson(response)
-
-            If joke Is Nothing Then
-                Await ReplyAsync(embed:=embedHandler.errorEmbed("Joke", "An error occurred, please try again later").Result)
-                Return
-            End If
-
-            If joke.Type = "single" Then
-
-                Dim sEmbed = New EmbedBuilder With {
-                    .Description = joke.Joke,
-                    .Color = New Color(_utils.randomEmbedColor),
-                    .Footer = New EmbedFooterBuilder With {
-                        .Text = joke.Category
-                    }
-                }
-
-                Await ReplyAsync(embed:=sEmbed.Build)
-            Else
-
-                Dim tEmbed = New EmbedBuilder With {
-                    .Description = $"**{joke.Setup}**{Environment.NewLine}*{joke.Delivery}*",
-                    .Color = New Color(_utils.randomEmbedColor),
-                    .Footer = New EmbedFooterBuilder With {
-                        .Text = joke.Category
-                    }
-                }
-
-                Await ReplyAsync(embed:=tEmbed.Build)
-            End If
-
-
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Joke", ex.Message).Result)
-        End Try
-
+        Await ReplyAsync(embed:=Await FunService.GetJoke())
     End Function
 
     <Command("dictionary")>
@@ -327,43 +217,7 @@ Public Class Fun
     <Summary("Gives you the first definition of the provided word.")>
     <Remarks("\dic hello")>
     Public Async Function GetDefinition(word As String) As Task
-        Try
-            Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync($"https://api.dictionaryapi.dev/api/v2/entries/en/{ word}")
-            Dim dic = Dictionary.FromJson(response)
-
-            Dim synonymsBuilder = New StringBuilder
-            Dim synCount As Integer = dic.First.Meanings.First.Definitions.First.Synonyms.Count
-            Dim num As Integer = 0
-
-            For Each syn In dic.First.Meanings.First.Definitions.First.Synonyms
-                If synCount > 10 Then
-                    If num = 10 Then
-                        Exit For
-                    Else
-                        synonymsBuilder.Append($"*{syn}*,")
-                        num += 1
-                    End If
-                Else
-                    synonymsBuilder.Append($"*{syn}*,")
-                End If
-            Next
-            synonymsBuilder.Remove(synonymsBuilder.Length - 1, 1)
-
-            Dim embed = New EmbedBuilder With {
-                .Title = $"First Definition for {word}",
-                .Color = New Color(_utils.randomEmbedColor),
-                .ThumbnailUrl = If(Context.Client.CurrentUser.GetAvatarUrl, Context.Client.CurrentUser.GetDefaultAvatarUrl)
-            }
-            embed.AddField("Definition", dic.First.Meanings.First.Definitions.First.DefinitionDefinition)
-            embed.AddField("Part of Speech", dic.First.Meanings.First.PartOfSpeech, True)
-            embed.AddField("Synonyms", synonymsBuilder.ToString, True)
-
-            Await ReplyAsync(embed:=embed.Build)
-        Catch ex As Exception
-
-        End Try
-
+        Await ReplyAsync(embed:=Await FunService.GetDictionary(Context, word))
     End Function
 
 End Class

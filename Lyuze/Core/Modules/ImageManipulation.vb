@@ -26,14 +26,14 @@ Public Class imageManipulation
                 Await ReplyAndDeleteAsync("What is your desired width?", timeout:=New TimeSpan(0, 0, 15))
                 Dim widthReply = Await NextMessageAsync(True, timeout:=New TimeSpan(0, 0, 10))
                 If widthReply Is Nothing Then
-                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given timeframe.")
+                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given time frame.")
                     Return
                 End If
                 'Interactive response to get height with a 15sec timer
                 Await ReplyAndDeleteAsync("What is your desired height?", timeout:=New TimeSpan(0, 0, 15))
                 Dim heightReply = Await NextMessageAsync(timeout:=New TimeSpan(0, 0, 10))
                 If heightReply Is Nothing Then
-                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given timeframe.")
+                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given time frame.")
                     Return
                 End If
 
@@ -61,20 +61,20 @@ Public Class imageManipulation
             End If
 
             If url = Nothing Then
-                Await ReplyAsync("Please provide a direct url to am image.")
+                Await ReplyAsync("Please provide a direct URL to am image.")
                 Return
             Else
 
                 Await ReplyAndDeleteAsync("What is your desired width?", timeout:=New TimeSpan(0, 0, 15))
                 Dim widthReply = Await NextMessageAsync(True, timeout:=New TimeSpan(0, 0, 10))
                 If widthReply Is Nothing Then
-                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given timeframe.")
+                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given time frame.")
                 End If
                 Context.Message.DeleteAsync()
                 Await ReplyAndDeleteAsync("What is your desired height?", timeout:=New TimeSpan(0, 0, 15))
                 Dim heightReply = Await NextMessageAsync(timeout:=New TimeSpan(0, 0, 10))
                 If heightReply Is Nothing Then
-                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given timeframe.")
+                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given time frame.")
                 End If
                 Context.Message.DeleteAsync()
                 Dim width = Convert.ToInt32(widthReply.ToString)

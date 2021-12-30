@@ -23,7 +23,7 @@ NotInheritable Class InformationService
             Dim embed As New EmbedBuilder With {
                 .Title = $"{user.Username}'s Profile",
                 .ImageUrl = url,
-                .Color = New Color(_imgs.RandomColorFromURL(url).Result),
+                .Color = New Color(Await _imgs.RandomColorFromURL(url)),
                 .ThumbnailUrl = user.GetAvatarUrl(ImageFormat.Auto, 256),
                 .Timestamp = ctx.Message.Timestamp,
                 .Footer = New EmbedFooterBuilder With {
@@ -67,7 +67,7 @@ NotInheritable Class InformationService
             Dim embed As New EmbedBuilder With {
                 .Title = $"{g.Name}'s information",
                 .ImageUrl = url,
-                .Color = New Color(_imgs.RandomColorFromURL(url).Result),
+                .Color = New Color(Await _imgs.RandomColorFromURL(url)),
                 .ThumbnailUrl = g.IconUrl,
                 .Timestamp = ctx.Message.Timestamp,
                 .Footer = New EmbedFooterBuilder With {

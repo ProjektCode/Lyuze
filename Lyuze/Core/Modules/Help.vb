@@ -46,7 +46,7 @@ Public Class cmdHelp
 					If name = command.Name Then
 						Dim embed = New EmbedBuilder With {
 							.Title = command.Aliases.FirstOrDefault,
-							.Description = $"{command.Summary}{Environment.NewLine}{Environment.NewLine}{If(command.Remarks, "No paramters needed for this")}",
+							.Description = $"{command.Summary}{Environment.NewLine}{Environment.NewLine}{If(command.Remarks, "No parameters needed for this")}",
 							.Color = New Color(_utils.randomEmbedColor)
 						}
 

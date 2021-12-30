@@ -1,20 +1,11 @@
 ﻿Imports Discord
-Imports Discord.Commands
+Imports Discord.WebSocket
 Imports Victoria
+Imports Microsoft.Extensions.DependencyInjection
 
 NotInheritable Class embedHandler
 
-    Public Shared Async Function basicEmbed(title As String, description As String, color As Color) As Task(Of Embed)
-
-        Dim embed = Await Task.Run(Function() ((New EmbedBuilder()) _
-            .WithTitle(title) _
-            .WithDescription(description) _
-            .WithColor(color) _
-            .WithCurrentTimestamp() _
-            .Build()))
-
-        Return embed
-    End Function
+    Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     Public Shared Async Function errorEmbed(_source As String, _error As String) As Task(Of Embed)
 

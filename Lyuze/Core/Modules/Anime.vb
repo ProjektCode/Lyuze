@@ -27,7 +27,7 @@ Public Class Weeb
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your anime!", timeout:=New TimeSpan(0, 0, 5))
         Try
-            Await Context.Channel.SendMessageAsync(embed:=jikanService.GetAnimeAsync(id, Context).Result)
+            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetAnimeAsync(id, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed("Anime", ex.Message).Result)
         End Try
@@ -42,7 +42,7 @@ Public Class Weeb
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your manga!", timeout:=New TimeSpan(0, 0, 5))
         Try
-            Await Context.Channel.SendMessageAsync(embed:=jikanService.GetMangaAsync(id, Context).Result)
+            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetMangaAsync(id, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed($"Manga - {id}", ex.Message).Result)
         End Try
@@ -57,7 +57,7 @@ Public Class Weeb
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your character!", timeout:=New TimeSpan(0, 0, 5))
         Try
-            Await Context.Channel.SendMessageAsync(embed:=jikanService.GetCharacterAsync(id, Context).Result)
+            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetCharacterAsync(id, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed($"Staff - {id}", ex.Message).Result)
         End Try
@@ -80,7 +80,7 @@ Public Class Weeb
             End If
 
             Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=jikanService.GetTopAnimeAsync(type, Context).Result)
+            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetTopAnimeAsync(type, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed("Top Anime", ex.Message).Result)
         End Try
@@ -98,7 +98,7 @@ Public Class Weeb
             End If
 
             Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=jikanService.GetTopMangaAsync(type, Context).Result)
+            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetTopMangaAsync(type, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
         End Try
@@ -112,7 +112,7 @@ Public Class Weeb
         Try
 
             Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=jikanService.GetTopCharacterAsync(Context).Result)
+            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetTopCharacterAsync(Context))
 
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
@@ -125,7 +125,7 @@ Public Class Weeb
     Public Async Function GetTopPeople() As Task
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=jikanService.GetTopPeopleAsync(Context).Result)
+        Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetTopPeopleAsync(Context))
 
     End Function
 
@@ -135,7 +135,7 @@ Public Class Weeb
     Public Async Function GetSeasonalAnime() As Task
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your seasonal anime!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=jikanService.GetSeasonAnimeAsync(Context).Result)
+        Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetSeasonAnimeAsync(Context))
 
     End Function
 
@@ -157,7 +157,7 @@ Public Class Weeb
             Dim remove As Integer = 10
 
             If manga Is Nothing Then
-                Await ReplyAsync(embed:=embedHandler.errorEmbed("Random Manga", "Error occurred, try again later.").Result)
+                Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Random Manga", "Error occurred, try again later."))
                 Return
             End If
 
@@ -207,7 +207,7 @@ Public Class Weeb
             Dim quote = AnimeQuote.FromJson(response)
 
             If quote Is Nothing Then
-                Await ReplyAsync(embed:=embedHandler.errorEmbed("Anime - Quote", "An error occurred, please try again later").Result)
+                Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Anime - Quote", "An error occurred, please try again later"))
                 Return
             End If
 
@@ -226,19 +226,19 @@ Public Class Weeb
     End Function
 
     <Command("trace")>
-    <Summary("Find what anime is from a single screenshot")>
+    <Summary("Find what anime is from a single screen-shot")>
     <Remarks("/trace https://i.imgur.com/QNyCkZh.jpeg | Can also use an attachment.")>
     Public Async Function traceImage(Optional url As String = Nothing) As Task
 
         Try
-            'Check if url is empty
+            'Check if URL is empty
             If url Is Nothing Then
-                'Check if an attachment was sent if so get the url
+                'Check if an attachment was sent if so get the URL
                 If Context.Message.Attachments.Count > 0 Then
                     url = Context.Message.Attachments.First.Url
 
                 Else
-                    Await ReplyAsync(embed:=embedHandler.errorEmbed("Anime - Trace", "Please supply a url by either using it as an attachment or as a argument.").Result)
+                    Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Anime - Trace", "Please supply a URL by either using it as an attachment or as a argument."))
                     Return
                 End If
             End If
@@ -248,7 +248,7 @@ Public Class Weeb
             Dim trace = TraceMoe.FromJson(response)
             'If some error occurs return embed
             If trace Is Nothing Then
-                Await ReplyAsync(embed:=embedHandler.errorEmbed("Anime - Trace", "An error occurred, please try again later").Result)
+                Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Anime - Trace", "An error occurred, please try again later"))
                 Return
             End If
 
@@ -256,7 +256,7 @@ Public Class Weeb
                 .Title = "Most Relevant Result",
                 .ImageUrl = trace.Result.First.Image.AbsoluteUri,
                 .ThumbnailUrl = trace.Result.First.Image.AbsoluteUri,
-                .Color = New Color(_img.RandomColorFromURL(url).Result),
+                .Color = New Color(Await _img.RandomColorFromURL(url)),
                 .Footer = New EmbedFooterBuilder With {
                     .Text = $"Frame Count: {trace.FrameCount}"
                 }

@@ -19,7 +19,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.joinAsync(g, DirectCast(Context.User, IVoiceState), DirectCast(chnl, ITextChannel)).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.joinAsync(g, DirectCast(Context.User, IVoiceState), DirectCast(chnl, ITextChannel)))
     End Function
     'Change into embed
     <Command("play")>
@@ -87,7 +87,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.leaveAsync(g, TryCast(Context.User, IVoiceState), chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.leaveAsync(g, TryCast(Context.User, IVoiceState), chnl))
     End Function
 
     <Command("volume")>
@@ -98,7 +98,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.setVolumeAsync(g, vol, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.setVolumeAsync(g, vol, chnl))
     End Function
 
     <Command("pause")>
@@ -108,7 +108,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.togglePauseAsync(g, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.togglePauseAsync(g, chnl))
     End Function
 
     <Command("skip")>
@@ -117,7 +117,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.skipTrack(g, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.skipTrack(g, chnl))
     End Function
 
     <Command("queue")>
@@ -143,15 +143,15 @@ Public Class Music
                     Await embedHandler.victoriaNowPlayingEmbed(player.Track.Title, player.Track)
                 Else
 
-                    Await PagedReplyAsync(audioService.listTracks(g, chnl).Result)
+                    Await PagedReplyAsync(audioService.listTracks(g, chnl))
                 End If
 
             Else
-                Await ReplyAsync(embed:=embedHandler.errorEmbed("Audio - Queue", "Make sure the player is playing something first!").Result)
+                Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Queue", "Make sure the player is playing something first!"))
 
             End If
         Else
-            ReplyAsync(embed:=embedHandler.victoriaInvalidUsageEmbed(chnl).Result)
+            ReplyAsync(embed:=Await embedHandler.victoriaInvalidUsageEmbed(chnl))
 
         End If
 
@@ -163,7 +163,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.clearTracks(g, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.clearTracks(g, chnl))
     End Function
 
     <Command("stop")>
@@ -172,7 +172,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.stopAsync(g, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.stopAsync(g, chnl))
     End Function
 
     <Command("restart")>
@@ -181,7 +181,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.restartAsync(g, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.restartAsync(g, chnl))
     End Function
 
     <Command("seek")>
@@ -192,7 +192,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.seekAsync(g, time, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.seekAsync(g, time, chnl))
     End Function
 
     <Command("shuffle")>
@@ -202,7 +202,7 @@ Public Class Music
         Dim g = Context.Guild
         Dim u As IVoiceState = Context.User
 
-        Await chnl.SendMessageAsync(embed:=audioService.shuffleAsync(g, u, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.shuffleAsync(g, u, chnl))
     End Function
 
     <Command("np")>
@@ -211,7 +211,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.nowPlayingAsync(g, Context, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.nowPlayingAsync(g, Context, chnl))
     End Function
 
     <Command("repeat")>
@@ -220,7 +220,7 @@ Public Class Music
         Dim chnl = Context.Channel
         Dim g = Context.Guild
 
-        Await chnl.SendMessageAsync(embed:=audioService.repeatAsync(g, chnl).Result)
+        Await chnl.SendMessageAsync(embed:=Await audioService.repeatAsync(g, chnl))
     End Function
 
     <Command("radio")>

@@ -33,7 +33,8 @@ Public Class Admin
                 Dim count = filteredMessages.Count()
 
                 If count = 0 Then
-                    Await ReplyAsync("Nothing to delete.")
+                    Context.Message.DeleteAsync()
+                    Await ReplyAndDeleteAsync("Nothing to delete.", timeout:=New TimeSpan(0, 0, 3))
                 Else
                     Await TryCast(Context.Channel, ITextChannel).DeleteMessagesAsync(filteredMessages)
 
@@ -74,7 +75,7 @@ Public Class Admin
     <RequireBotPermission(GuildPermission.ManageChannels)>
     <Remarks("\slowmode 5 | slowmode with a 5 second interval - leave empty to remove slowmode.")>
     Public Async Function slowMode(Optional interval As Integer = 0) As Task
-        Await ReplyAsync(embed:=ModService.Slowmode(interval, Context).Result)
+        Await ReplyAsync(embed:=Await ModService.Slowmode(interval, Context))
     End Function
 
     <Command("ban")>
@@ -92,7 +93,7 @@ Public Class Admin
                 reason = "No reason given."
             End If
 
-            Await ReplyAsync(embed:=ModService.Ban(user, reason, Context).Result)
+            Await ReplyAsync(embed:=Await ModService.Ban(user, reason, Context))
         Catch ex As Exception
             ReplyAsync(ex.Message)
         End Try
@@ -110,7 +111,7 @@ Public Class Admin
             Dim channel = Context.Guild.GetTextChannel(settings.IDs.KickId)
 
             Await user.KickAsync(reason)
-            Await ReplyAsync(embed:=ModService.Kick(user, reason, Context).Result)
+            Await ReplyAsync(embed:=Await ModService.Kick(user, reason, Context))
         Catch ex As Exception
             ReplyAsync(ex.Message)
         End Try
@@ -122,7 +123,7 @@ Public Class Admin
     <RequireUserPermission(GuildPermission.KickMembers)>
     <Remarks("\id @user")>
     Public Async Function getId(user As IGuildUser) As Task
-        Await ReplyAsync(embed:=ModService.ID(user, Context).Result)
+        Await ReplyAsync(embed:=Await ModService.ID(user, Context))
     End Function
 
 End Class
@@ -137,65 +138,42 @@ Public Class Owner
     <Summary("Hides command window.")>
     <RequireOwner>
     Public Async Function cmdHide() As Task
-        Dim author = Context.Message.Author
-        Dim settings = Lyuze.Settings.Data
-
-        If DirectCast(author, SocketGuildUser).Id = settings.IDs.OwnerId Then
-            _utils.winHide()
-
-            Await Context.Channel.SendMessageAsync($"Don't worry I'll still be here.")
-        Else
-            Await Context.Channel.SendMessageAsync("This is only for the bot owner.")
-        End If
+        _utils.winHide()
+        Await ReplyAsync($"Don't worry I'll still be here.")
     End Function
 
     <Command("show")>
     <Summary("Shows command window.")>
     <RequireOwner>
     Public Async Function cmdShow() As Task
-        Dim author = Context.Message.Author
-        Dim settings = Lyuze.Settings.Data
-
-        If DirectCast(author, SocketGuildUser).Id = Settings.IDs.OwnerId Then
-            _utils.winShow()
-
-            Await Context.Channel.SendMessageAsync($"{author.Mention} hello again :smiley:.")
-        Else
-            Await Context.Channel.SendMessageAsync("This is only for the bot owner.")
-        End If
+        _utils.winShow()
+        Await Context.Channel.SendMessageAsync($"{Context.Message.Author.Mention} hello again :smiley:.")
     End Function
 
     <Command("kill", RunMode.Async)>
     <Summary("Kills the bot process.")>
     <RequireOwner>
     Public Async Function cmdKill() As Task
-        Dim author = Context.Message.Author
-        Dim settings = Lyuze.Settings.Data
+        For Each p As Process In Process.GetProcesses
+            If p.ProcessName = "javaw" Then
+                Try
+                    p.Kill()
+                Catch ex As Exception
+                    Continue For
+                End Try
+            End If
+        Next
+        For Each p As Process In Process.GetProcesses
+            If p.ProcessName = "LyuzeBOT" Then
+                Try
+                    Await ReplyAsync("Goodbye for now.")
+                    p.Kill()
 
-        If DirectCast(author, SocketGuildUser).Id = Settings.IDs.OwnerId Then
-            For Each p As Process In Process.GetProcesses
-                If p.ProcessName = "javaw" Then
-                    Try
-                        p.Kill()
-                    Catch ex As Exception
-                        Continue For
-                    End Try
-                End If
-            Next
-            For Each p As Process In Process.GetProcesses
-                If p.ProcessName = "LyuzeBOT" Then
-                    Try
-                        Await Context.Channel.SendMessageAsync("Goodbye for now.")
-                        p.Kill()
-
-                    Catch ex As Exception
-                        Continue For
-                    End Try
-                End If
-            Next
-        Else
-            Await Context.Channel.SendMessageAsync("This is only for the bot owner.")
-        End If
+                Catch ex As Exception
+                    Continue For
+                End Try
+            End If
+        Next
     End Function
 
 End Class

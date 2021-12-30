@@ -43,13 +43,19 @@ Public Class MasterUtils
 
 #Region "Color Options"
 
+    Public Function DiscordColor(hex As String)
+        Dim colorInt As Integer = Integer.Parse(hex, NumberStyles.HexNumber)
+        Dim color As UInteger = Convert.ToInt32(colorInt)
+        Return color
+    End Function
+
     Public Function randomEmbedColor()
         Dim rand As New Random
         Dim colors() As String = {
             "DC143C", ' Crimson
             "C3E4E8", 'Light Cyan
             "FF5733", 'Light Green
-            "E6E6FA", 'Lavendar
+            "E6E6FA", 'Lavender
             "7289DA", 'Discord Purple
             "5865F2", 'Discord Blurple
             "D2042D", 'Cherry Red
@@ -72,6 +78,14 @@ Public Class MasterUtils
         Dim minutes As Integer = afk / 60
         Dim time As Integer = minutes
         Return time
+    End Function
+
+    Public Function CheckAPI(key As String) As Boolean
+        If Not key.ToLower = Nothing Then
+            Return True
+        End If
+
+        Return False
     End Function
 
 #Region "status"

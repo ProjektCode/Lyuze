@@ -194,13 +194,13 @@ Public Class Images
         Return colors.Select(Function(x) x.Color.ToHexString()).ToList()
     End Function
 
-    'Returns image url as bitmap
+    'Returns image URL as bitmap
     Private Async Function URLToBitmap(url As String) As Task(Of Bitmap)
         Dim client = New WebClient
 
         Dim stream = client.OpenRead(url)
 
-        'If the stream can't be read set up a backup url
+        'If the stream can't be read set up a backup URL
         If Not stream.CanRead Then
             url = "https://images.unsplash.com/photo-1493514789931-586cb221d7a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=6512&q=80"
             stream = client.OpenRead(url)
@@ -211,7 +211,7 @@ Public Class Images
         Return bmap
     End Function
 
-    'Return a UInteger for discrd color when using a image url
+    'Return a UInteger for discord color when using a image URL
     Public Async Function RandomColorFromURL(url As String) As Task(Of UInteger)
         Dim newUrl As String
 
@@ -223,7 +223,7 @@ Public Class Images
 
         Dim rand As New Random
         Dim bmap = URLToBitmap(newUrl)
-        Dim hex = GenerateColors(bmap.Result).Result
+        Dim hex = Await GenerateColors(bmap.Result)
         Dim randomHex = hex(rand.Next(0, hex.Count))
         Dim newHex = randomHex.Replace("#", "")
 

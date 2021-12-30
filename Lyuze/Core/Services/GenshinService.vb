@@ -110,7 +110,7 @@ NotInheritable Class GenshinService
 
                         Dim embed = New EmbedBuilder With {
                             .Title = $"{character.Name} - {Await GenshinUtils.GetRarity(character.Rarity)}",
-                            .Color = New Color(_img.RandomColorFromURL(GenshinUtils.GetImage("char", character.Name, "gacha-splash").Result).Result),
+                            .Color = New Color(Await _img.RandomColorFromURL(Await GenshinUtils.GetImage("char", character.Name, "gacha-splash"))),
                             .ImageUrl = Await GenshinUtils.GetImage("char", character.Name, "gacha-splash"),
                             .ThumbnailUrl = Await GenshinUtils.GetImage("char", character.Name, "icon-big"),
                             .Footer = New EmbedFooterBuilder With {
@@ -208,10 +208,10 @@ NotInheritable Class GenshinService
 
                         Dim embed = New EmbedBuilder With {
                             .Title = $"{weapon.Name} - {Await GenshinUtils.GetRarity(weapon.Rarity)}",
-                            .ThumbnailUrl = GenshinUtils.GetImage("wea", newName, "icon").Result,
-                            .Color = New Color(_img.RandomColorFromURL(GenshinUtils.GetImage("wea", newName, "icon").Result).Result),
+                            .ThumbnailUrl = Await GenshinUtils.GetImage("wea", newName, "icon"),
+                            .Color = New Color(Await _img.RandomColorFromURL(Await GenshinUtils.GetImage("wea", newName, "icon"))),
                             .Footer = New EmbedFooterBuilder With {
-                                .IconUrl = GenshinUtils.GetImage("wea", newName, "icon").Result,
+                                .IconUrl = Await GenshinUtils.GetImage("wea", newName, "icon"),
                                 .Text = $"{weapon.Name}'s Info Card"
                             }
                         }
@@ -251,7 +251,7 @@ NotInheritable Class GenshinService
                 Return embedHandler.errorEmbed("Genshin - Artifact", "An error has occurred, please try again later.").Result
             End If
 
-            'Retuns a list of all available artifacts
+            'Returns a list of all available artifacts
             If name = "default" Then
                 Dim embed = New EmbedBuilder With {
                     .Title = "Available Weapons",
@@ -296,8 +296,8 @@ NotInheritable Class GenshinService
 
                         Dim embed = New EmbedBuilder With {
                             .Title = $"{artifact.Name} - {Await GenshinUtils.GetRarity(artifact.MaxRarity)}",
-                            .ThumbnailUrl = GenshinUtils.GetImage("art", newName, "icon").Result,
-                            .Color = New Color(_img.RandomColorFromURL(GenshinUtils.GetImage("art", newName, "icon").Result).Result),
+                            .ThumbnailUrl = Await GenshinUtils.GetImage("art", newName, "icon"),
+                            .Color = New Color(Await _img.RandomColorFromURL(Await GenshinUtils.GetImage("art", newName, "icon"))),
                             .Footer = New EmbedFooterBuilder With {
                                 .IconUrl = GenshinUtils.GetImage("art", newName, "icon").Result,
                                 .Text = $"{artifact.Name}'s Info Card"

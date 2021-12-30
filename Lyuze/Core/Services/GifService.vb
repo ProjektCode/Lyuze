@@ -1,15 +1,29 @@
 ﻿Imports System.Globalization
 Imports System.Net.Http
 Imports Discord
+Imports Discord.Commands
 Imports Microsoft.Extensions.DependencyInjection
 Imports Tenor
 Imports Tenor.Schema
 
 NotInheritable Class GifService
     Private Shared ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
+    Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
-    Public Shared Async Function TenorGif(tag As String) As Task(Of String)
+    Public Shared Async Function TenorGif(ctx As SocketCommandContext, tag As String) As Task(Of String)
         Dim settings = Lyuze.Settings.Data
+
+        'Check to see if there's an API Key
+        If _utils.CheckAPI(settings.ApIs.Tenor) = False Then
+            If Not settings.IDs.ErrorId Then
+                loggingHandler.LogCriticalAsync("gif", "No API Key was given. Please provide an API Key in the settings config.")
+            Else
+                Dim chnl = ctx.Guild.GetTextChannel(settings.IDs.ErrorId)
+                Await chnl.SendMessageAsync(embed:=Await embedHandler.errorEmbed("Gifs - Tenor", "No API Key was given. Please provide an API Key in the settings config."))
+            End If
+            Return "An error occurred and has been logged."
+        End If
+
         Dim horny As String() = {
             "oppai",
             "boobs",
@@ -43,7 +57,13 @@ NotInheritable Class GifService
             Return searchResults.Results.First.ShortUrl.AbsoluteUri
 
         Catch ex As Exception
-            Return $"An error ocurred - {ex.Message}"
+            If Not settings.IDs.ErrorId Then
+                loggingHandler.LogCriticalAsync("gif", ex.Message)
+            Else
+                Dim chnl = ctx.Guild.GetTextChannel(settings.IDs.ErrorId)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed("Gifs - Tenor", ex.Message).Result)
+            End If
+            Return "An error occurred and has been logged."
         End Try
     End Function
 
@@ -54,7 +74,7 @@ NotInheritable Class GifService
             Dim pic = WaifuPics.FromJson(response)
 
             If pic Is Nothing Then
-                Return "An error occured, please try again later."
+                Return "An error occurred, please try again later."
             End If
 
             Return pic.Url.AbsoluteUri
