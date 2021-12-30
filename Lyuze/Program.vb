@@ -9,6 +9,8 @@ Imports System.Threading.Thread
 '-[Roles] For role creation have a param for hex color code for role color.
 '-[FunCommands] Move commands into its own service
 '-[All] Move all commands into its own service
+
+'+[Music Queue] Returns null. Convert it into a embed. Add song URL back into it. Add max of 7 fields.(Should this be configurable?
 #End Region
 
 Module Program
