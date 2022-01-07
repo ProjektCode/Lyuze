@@ -92,7 +92,7 @@ NotInheritable Class RolesService
 
         Try
 
-            Dim _color = New Color(_utils.DiscordColor(color))
+            Dim _color = New Color(_utils.ConvertToDiscordColor(color))
             Dim newRole = Await ctx.Guild.CreateRoleAsync(name, Nothing, color:=_color, False, Nothing, Nothing)
             Dim role As SocketRole = Nothing
             Dim roleList = ctx.Guild.Roles

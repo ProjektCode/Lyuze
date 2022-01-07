@@ -214,7 +214,7 @@ Public Class Weeb
             Dim embed = New EmbedBuilder With {
                 .Title = quote.Anime,
                 .Description = $"*{quote.Quote}* - {quote.Character}",
-                .Color = New Color(_utils.randomEmbedColor)
+                .Color = New Color(_utils.RandomEmbedColor)
             }
 
             Await ReplyAsync(embed:=embed.Build)

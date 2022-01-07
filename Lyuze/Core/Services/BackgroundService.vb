@@ -57,7 +57,7 @@ NotInheritable Class BackgroundService
         Dim embed = New EmbedBuilder With {
             .Title = _text,
             .Description = Wallpapers.getSite.Result + _text,
-            .Color = _utils.randomEmbedColor,
+            .Color = _utils.RandomEmbedColor,
             .Footer = New EmbedFooterBuilder With {
                 .Text = ctx.Message.Timestamp.Date.ToShortDateString,
                 .IconUrl = ctx.Guild.CurrentUser.GetAvatarUrl
@@ -72,7 +72,7 @@ NotInheritable Class BackgroundService
         Dim embed = New EmbedBuilder With {
             .Title = text,
             .Description = Await Wallpapers.getSite + text,
-            .Color = _utils.randomEmbedColor,
+            .Color = _utils.RandomEmbedColor,
             .Footer = New EmbedFooterBuilder With {
                 .Text = ctx.Message.Timestamp.Date.ToShortDateString,
                 .IconUrl = ctx.Guild.CurrentUser.GetAvatarUrl
@@ -87,7 +87,7 @@ NotInheritable Class BackgroundService
             .Title = $"Wallpaper keyword list",
             .ImageUrl = "https://i.imgur.com/vc241Ku.jpeg",
             .Description = "The full list of keywords in our random wallpaper list",
-            .Color = New Color(_utils.randomEmbedColor),
+            .Color = New Color(_utils.RandomEmbedColor),
             .ThumbnailUrl = g.IconUrl,
             .Timestamp = ctx.Message.Timestamp,
             .Footer = New EmbedFooterBuilder With {

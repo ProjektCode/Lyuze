@@ -79,7 +79,7 @@ NotInheritable Class ModService
             },
                 .Title = $"{user.Username}'s Id",
                 .Description = user.Id,
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ThumbnailUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl),
                 .Timestamp = m.Timestamp,
                 .Footer = New EmbedFooterBuilder With {

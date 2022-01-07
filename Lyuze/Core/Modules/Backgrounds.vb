@@ -12,7 +12,6 @@ Public Class Backgrounds
     <Summary("Returns a link of wallpapers with your chosen keyword [Will be reworked since some websites don't have any results on a given keyword]")>
     <Remarks("\wall search league of legends")>
     Public Async Function wallpaperCmd(<Remainder> text As String) As Task
-
         Await ReplyAsync(embed:=Await BackgroundService.SearchWallpaper(text, Context))
     End Function
 

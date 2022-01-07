@@ -50,7 +50,7 @@ NotInheritable Class MiniGamesService
             Dim embed = New EmbedBuilder With {
                 .Title = "Random Number",
                 .Description = $"{ctx.User.Mention} the random number was {randNum}.",
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ThumbnailUrl = ctx.Guild.CurrentUser.GetAvatarUrl
             }
             Return embed.Build

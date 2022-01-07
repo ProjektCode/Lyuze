@@ -176,8 +176,6 @@ End Class
 Public Class Fun
 
     Inherits ModuleBase(Of SocketCommandContext)
-    Private ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
-    Private ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
 
     <Command("animememe")>
     <[Alias]("ameme")>

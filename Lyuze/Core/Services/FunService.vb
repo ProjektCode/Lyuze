@@ -23,7 +23,7 @@ NotInheritable Class FunService
             Dim memeFormat = meme.First.Data.Children.First
             Dim embed = New EmbedBuilder With {
                 .Title = memeFormat.Data.Title,
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ImageUrl = memeFormat.Data.Thumbnail.AbsoluteUri,
                 .Url = "https://reddit.com" + memeFormat.Data.Permalink,
                 .Footer = New EmbedFooterBuilder With {
@@ -50,7 +50,7 @@ NotInheritable Class FunService
             Dim memeFormat = meme.First.Data.Children.First
             Dim embed = New EmbedBuilder With {
                 .Title = memeFormat.Data.Title,
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ImageUrl = memeFormat.Data.Thumbnail.AbsoluteUri,
                 .Url = "https://reddit.com" + memeFormat.Data.Permalink,
                 .Footer = New EmbedFooterBuilder With {
@@ -81,7 +81,7 @@ NotInheritable Class FunService
 
         Dim embed = New EmbedBuilder With {
             .ImageUrl = $"https://nekos.best/api/v1/nekos/{ image }.jpg",
-            .Color = New Color(_utils.randomEmbedColor)
+            .Color = New Color(_utils.RandomEmbedColor)
         }
 
         Return embed.Build
@@ -98,7 +98,7 @@ NotInheritable Class FunService
 
         Dim embed = New EmbedBuilder With {
             .Title = "New Activity",
-            .Color = New Color(_utils.randomEmbedColor),
+            .Color = New Color(_utils.RandomEmbedColor),
             .ThumbnailUrl = If(ctx.User.GetAvatarUrl, ctx.User.GetDefaultAvatarUrl)
         }
         embed.AddField("Activity", $"{activity.Activity}", True)
@@ -124,7 +124,7 @@ NotInheritable Class FunService
 
                 Dim sEmbed = New EmbedBuilder With {
                     .Description = joke.Joke,
-                    .Color = New Color(_utils.randomEmbedColor),
+                    .Color = New Color(_utils.RandomEmbedColor),
                     .Footer = New EmbedFooterBuilder With {
                         .Text = joke.Category
                     }
@@ -135,7 +135,7 @@ NotInheritable Class FunService
 
                 Dim tEmbed = New EmbedBuilder With {
                     .Description = $"**{joke.Setup}**{Environment.NewLine}*{joke.Delivery}*",
-                    .Color = New Color(_utils.randomEmbedColor),
+                    .Color = New Color(_utils.RandomEmbedColor),
                     .Footer = New EmbedFooterBuilder With {
                         .Text = joke.Category
                     }
@@ -180,7 +180,7 @@ NotInheritable Class FunService
 
             Dim embed = New EmbedBuilder With {
                 .Title = $"First Definition for {word}",
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ThumbnailUrl = If(ctx.Client.CurrentUser.GetAvatarUrl, ctx.Client.CurrentUser.GetDefaultAvatarUrl)
             }
             embed.AddField("Definition", dic.First.Meanings.First.Definitions.First.DefinitionDefinition)

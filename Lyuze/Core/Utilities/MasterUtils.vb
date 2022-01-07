@@ -17,13 +17,11 @@ Public Class MasterUtils
     Private Shared Function ShowWindow(hwd As IntPtr, cmdShow As Integer) As Boolean
 
     End Function
-
     ReadOnly hwd As IntPtr = GetConsoleWindow()
 
     Public Function winHide()
         Return ShowWindow(hwd, 0)
     End Function
-
     Public Function winShow()
         Return ShowWindow(hwd, 1)
     End Function
@@ -33,23 +31,17 @@ Public Class MasterUtils
         Console.ForegroundColor = accentColor
         Console.WriteLine("===================================================================", accentColor)
     End Sub
-
-    Public Sub consoleTextColor(text As String, color As ConsoleColor)
-        Console.ForegroundColor = color
-        Console.WriteLine(vbTab + text, color)
-    End Sub
-
 #End Region
 
 #Region "Color Options"
 
-    Public Function DiscordColor(hex As String)
+    Public Function ConvertToDiscordColor(hex As String)
         Dim colorInt As Integer = Integer.Parse(hex, NumberStyles.HexNumber)
         Dim color As UInteger = Convert.ToInt32(colorInt)
         Return color
     End Function
 
-    Public Function randomEmbedColor()
+    Public Function RandomEmbedColor()
         Dim rand As New Random
         Dim colors() As String = {
             "DC143C", ' Crimson
@@ -97,10 +89,9 @@ Public Class MasterUtils
                 "William being a cunt | /help",
                 "Arknights is love, Arknights is life | /help",
                 "If anyone is gonna boost the server | /help",
-                "Everyone masturbate to 2D Girls | /help",
                 "My Owner trying to debug me | /help"
              }
-    Public sIndex As Integer = rand.Next(0, sList.Length)
+    Public sIndex As Integer = rand.Next(sList.Length)
 
 #End Region
 

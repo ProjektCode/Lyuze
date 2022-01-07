@@ -4,11 +4,6 @@ Imports System.Threading.Thread
 Imports Microsoft.Extensions.DependencyInjection
 
 #Region "-To-Do List / +Found Bugs"
-'-[Backgrounds]Transition code into its service
-'-[Settings]Disable API commands by determining if the value is "Disable"
-'-[Images]Come up with a better name for the bannerimageasync function.
-'-[Roles] For role creation have a param for hex color code for role color.
-'-[FunCommands] Move commands into its own service
 '-[All] Move all commands into its own service
 '-[All] change .result to await in most functions. DO SO MANUALLY and slowly any new commands should follow this getup.
 
@@ -24,7 +19,7 @@ Module Program
     ReadOnly Victoria = $"{Resources}Victoria\"
     ReadOnly Settings = $"{Resources}Settings\"
 
-    ReadOnly _Utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+    ReadOnly _Utils As New MasterUtils
     ReadOnly process As New Process
 
     Sub Main()

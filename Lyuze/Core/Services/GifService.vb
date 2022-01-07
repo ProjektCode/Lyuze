@@ -15,13 +15,7 @@ NotInheritable Class GifService
 
         'Check to see if there's an API Key
         If _utils.CheckAPI(settings.ApIs.Tenor) = False Then
-            If Not settings.IDs.ErrorId Then
-                loggingHandler.LogCriticalAsync("gif", "No API Key was given. Please provide an API Key in the settings config.")
-            Else
-                Dim chnl = ctx.Guild.GetTextChannel(settings.IDs.ErrorId)
-                Await chnl.SendMessageAsync(embed:=Await embedHandler.errorEmbed("Gifs - Tenor", "No API Key was given. Please provide an API Key in the settings config."))
-            End If
-            Return "An error occurred and has been logged."
+            Return "No API Key was given. Please provide an API Key in the settings config."
         End If
 
         Dim horny As String() = {

@@ -18,7 +18,7 @@ NotInheritable Class GeneralService
                 .Title = $"All guild emotes for usage do :EmoteName:",
                 .ImageUrl = "https://i.imgur.com/vc241Ku.jpeg",
                 .Description = "The full list of our custom guild emotes",
-                .Color = New Color(_Utils.randomEmbedColor),
+                .Color = New Color(_Utils.RandomEmbedColor),
                 .ThumbnailUrl = g.IconUrl,
                 .Timestamp = ctx.Message.Timestamp,
                 .Footer = New EmbedFooterBuilder With {

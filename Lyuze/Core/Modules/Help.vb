@@ -35,7 +35,7 @@ Public Class cmdHelp
 
 			Dim pageMessage As New PaginatedMessage With {
 				.Pages = pages,
-				.Color = New Color(_utils.randomEmbedColor),
+				.Color = New Color(_utils.RandomEmbedColor),
 				.AlternateDescription = "Help Command"
 			}
 
@@ -47,7 +47,7 @@ Public Class cmdHelp
 						Dim embed = New EmbedBuilder With {
 							.Title = command.Aliases.FirstOrDefault,
 							.Description = $"{command.Summary}{Environment.NewLine}{Environment.NewLine}{If(command.Remarks, "No parameters needed for this")}",
-							.Color = New Color(_utils.randomEmbedColor)
+							.Color = New Color(_utils.RandomEmbedColor)
 						}
 
 						ReplyAsync(embed:=embed.Build)

@@ -31,7 +31,7 @@ NotInheritable Class GenshinService
             Dim embed = New EmbedBuilder With {
                 .Title = "Available Types",
                 .Description = description,
-                .Color = New Color(_utils.randomEmbedColor)
+                .Color = New Color(_utils.RandomEmbedColor)
             }
 
             Return embed.Build
@@ -67,7 +67,7 @@ NotInheritable Class GenshinService
                 Dim embed = New EmbedBuilder With {
                     .Title = "Available Characters",
                     .Description = charList,
-                    .Color = New Color(_utils.randomEmbedColor)
+                    .Color = New Color(_utils.RandomEmbedColor)
                 }
 
                 Return embed.Build
@@ -170,7 +170,7 @@ NotInheritable Class GenshinService
             If name = "default" Then
                 Dim embed = New EmbedBuilder With {
                     .Title = "Available Weapons",
-                    .Color = New Color(_utils.randomEmbedColor)
+                    .Color = New Color(_utils.RandomEmbedColor)
                 }
 
                 For Each w In weapons
@@ -255,7 +255,7 @@ NotInheritable Class GenshinService
             If name = "default" Then
                 Dim embed = New EmbedBuilder With {
                     .Title = "Available Weapons",
-                    .Color = New Color(_utils.randomEmbedColor)
+                    .Color = New Color(_utils.RandomEmbedColor)
                 }
 
                 For Each a In artifacts
@@ -342,7 +342,7 @@ NotInheritable Class GenshinService
             If name = "default" Then
                 Dim embed = New EmbedBuilder With {
                     .Title = "Available Enemies",
-                    .Color = New Color(_utils.randomEmbedColor)
+                    .Color = New Color(_utils.RandomEmbedColor)
                 }
 
                 For Each e In enemies

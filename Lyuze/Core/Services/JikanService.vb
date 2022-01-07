@@ -74,7 +74,7 @@ Line1:
 
             Dim embed = New EmbedBuilder With {
             .Title = Defaults.defaultValue(a.Title),
-            .Color = New Color(_utils.randomEmbedColor),
+            .Color = New Color(_utils.RandomEmbedColor),
             .ImageUrl = If(a.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
             .ThumbnailUrl = If(a.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
             .Footer = New EmbedFooterBuilder With {
@@ -185,7 +185,7 @@ Line1:
 
             Dim embed = Await Task.Run(Function() New EmbedBuilder() _
             .WithTitle(Defaults.defaultValue(If(m.TitleEnglish, m.Title))) _
-            .WithColor(New Color(_utils.randomEmbedColor)) _
+            .WithColor(New Color(_utils.RandomEmbedColor)) _
             .WithImageUrl(If(m.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")) _
             .WithThumbnailUrl(If(m.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")) _
             .WithFooter(New EmbedFooterBuilder With {
@@ -305,7 +305,7 @@ Line1:
 
             Dim embed = New EmbedBuilder With {
                 .Title = _char.Name,
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ImageUrl = If(_char.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
                 .ThumbnailUrl = If(_char.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
                 .Footer = New EmbedFooterBuilder With {
@@ -406,7 +406,7 @@ Line1:
             Dim trackNum As Integer = 0
             Dim embed = New EmbedBuilder With {
                 .Title = $"Top 10 {type}",
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ImageUrl = If(a.Top.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
             }
 
@@ -472,7 +472,7 @@ Line1:
 
             Dim embed = New EmbedBuilder With {
                 .Title = $"Top 10 {type}",
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ImageUrl = If(m.Top.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
             }
 
@@ -505,7 +505,7 @@ Line1:
 
             Dim embed = New EmbedBuilder With {
                 .Title = $"Top 10 Characters",
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ImageUrl = If(c.Top.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
             }
 
@@ -538,7 +538,7 @@ Line1:
 
             Dim embed = New EmbedBuilder With {
                 .Title = $"Top 10 People",
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ImageUrl = If(p.Top.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
             }
 
@@ -571,7 +571,7 @@ Line1:
 
             Dim embed = New EmbedBuilder With {
                 .Title = $"10 Seasonal Animes: {s.SeasonName} ({s.SeasonYear})",
-                .Color = New Color(_utils.randomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ImageUrl = If(s.SeasonEntries.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
                 .Footer = New EmbedFooterBuilder With {
                     .Text = "Find more here https://myanimelist.net/anime/season",
