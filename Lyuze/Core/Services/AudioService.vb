@@ -489,7 +489,7 @@ NotInheritable Class audioService
                 Dim embed As New EmbedBuilder With {
                     .Description = $"**{player.Track.Title}** has been seeked to *{timeSpan}*.",
                     .Color = Color.Green,
-                    .ThumbnailUrl = If(YouTubeService.GetThumbnail(player.Track.Url), "https://i.imgur.com/Kl2Qrd2.png"),
+                    .ThumbnailUrl = If(YouTube.GetThumbnail(player.Track.Url), "https://i.imgur.com/Kl2Qrd2.png"),
                     .Footer = New EmbedFooterBuilder With {
                         .Text = $"{player.Track.Url}"
                     }

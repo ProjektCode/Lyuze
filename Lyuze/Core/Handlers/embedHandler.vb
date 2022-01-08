@@ -25,7 +25,7 @@ NotInheritable Class embedHandler
             .WithTitle($"NOW PLAYING") _
             .WithDescription($"{_song}") _
             .WithColor(Color.Blue) _
-            .WithThumbnailUrl(If(YouTubeService.GetThumbnail(track.Url), "https://i.imgur.com/Kl2Qrd2.png")) _
+            .WithThumbnailUrl(If(YouTube.GetThumbnail(track.Url), "https://i.imgur.com/Kl2Qrd2.png")) _
             .WithCurrentTimestamp() _
             .Build())
 

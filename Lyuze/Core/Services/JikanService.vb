@@ -2,16 +2,19 @@
 Imports Discord
 Imports Discord.Commands
 Imports JikanDotNet
+Imports Microsoft.Extensions.DependencyInjection
 
 NotInheritable Class jikanService
 
     Private Shared ReadOnly _jikan As New Jikan(True)
-    Private Shared ReadOnly _utils As New MasterUtils
-    Private Shared ReadOnly removeLength As Integer = 11
+    Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
+    Private Shared ReadOnly removeLength As Integer = 11
     Private Shared oldID As Long
     Private Shared trackedID As Boolean = False
     Private Shared retryLimit As Integer = 1
+    Private Shared searchLimit As Integer = 10
+    Private Shared searchLimitStart As Integer = 0
 
     Public Shared Async Function GetAnimeAsync(id As Integer, ctx As SocketCommandContext) As Task(Of Embed)
 Line1:
@@ -562,42 +565,32 @@ Line1:
         End Try
     End Function
 
-    Public Shared Async Function GetSeasonAnimeAsync(ctx As SocketCommandContext) As Task(Of Embed)
-
+    Public Shared Async Function AnimeSearchAsync(ctx As SocketCommandContext, query As String) As Task(Of Embed)
         Try
+            Dim searchList As String = String.Empty
+            Dim searchResult = Await _jikan.SearchAnime(query)
+            For Each anime In searchResult.Results
+                If searchLimitStart = searchLimit Then
+                    Exit For
+                End If
+                searchList += $"[{anime.MalId}] - {anime.Title} - {anime.URL}{Environment.NewLine}"
+                searchLimitStart += 1
+            Next
 
-            Dim s As Season = Await _jikan.GetSeason()
-            Dim trackNum As Integer = 0
-
-            Dim embed = New EmbedBuilder With {
-                .Title = $"10 Seasonal Animes: {s.SeasonName} ({s.SeasonYear})",
+            Dim embed As New EmbedBuilder With {
+                .Title = "Top 10 most relevant search results",
+                .Description = searchList,
                 .Color = New Color(_utils.RandomEmbedColor),
-                .ImageUrl = If(s.SeasonEntries.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
+                .ThumbnailUrl = If(ctx.Client.CurrentUser.GetAvatarUrl, ctx.Client.CurrentUser.GetDefaultAvatarUrl),
                 .Footer = New EmbedFooterBuilder With {
-                    .Text = "Find more here https://myanimelist.net/anime/season",
-                    .IconUrl = ctx.Client.CurrentUser.GetAvatarUrl
+                    .Text = "AnimeTV Search Results"
                 }
             }
 
-            For Each sEntry In s.SeasonEntries
-                If trackNum = 10 Then
-                    Return embed.Build()
-                End If
-                embed.AddField($"[{sEntry.MalId} - {sEntry.Title}]", $"`{sEntry.AiringStart.GetValueOrDefault.Now.ToShortDateString} - {sEntry.Type} - {sEntry.Genres.FirstOrDefault}`{Environment.NewLine}{sEntry.URL}")
-                trackNum += 1
-            Next
-
+            Return embed.Build
         Catch ex As Exception
-            Dim _settings = Lyuze.Settings.Data
-
-            If _settings.IDs.ErrorId = 0 Then
-                loggingHandler.LogCriticalAsync($"jikan", ex.Message)
-            Else
-                Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
-                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Jikan", ex.Message).Result)
-            End If
+            Return embedHandler.errorEmbed("Anime - Search", ex.Message).Result
         End Try
-
     End Function
 
 End Class

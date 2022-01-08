@@ -1,4 +1,4 @@
-﻿NotInheritable Class YouTubeService
+﻿NotInheritable Class YouTube
 	Public Shared Function GetThumbnail(url As String) As String
 
 		Dim thumbnail As String = String.Empty

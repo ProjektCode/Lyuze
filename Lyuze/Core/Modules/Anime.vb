@@ -135,10 +135,20 @@ Public Class Weeb
     Public Async Function GetSeasonalAnime() As Task
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your seasonal anime!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetSeasonAnimeAsync(Context))
+        'Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetSeasonAnimeAsync(Context))
 
     End Function
 
+#End Region
+
+#Region "Search"
+    <Command("asearch")>
+    <[Alias]("as")>
+    <Summary("Gets the first 10 results from the given name.")>
+    <Remarks("\as code geass | gets the first 10 search results.")>
+    Public Async Function SearchAnime(<Remainder> query As String) As Task
+        Await ReplyAsync(embed:=Await jikanService.AnimeSearchAsync(Context, query))
+    End Function
 #End Region
 #End Region
 

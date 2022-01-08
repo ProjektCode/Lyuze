@@ -1,12 +1,12 @@
 Imports System.IO
 Imports System.Net
 Imports System.Threading.Thread
-Imports Microsoft.Extensions.DependencyInjection
 
 #Region "-To-Do List / +Found Bugs"
-'-[All] Move all commands into its own service
 '-[All] change .result to await in most functions. DO SO MANUALLY and slowly any new commands should follow this getup.
+'-[Anime] Add search command for manga,character and person.
 
+'+[Anime] Re-add seasonal anime command. Somehow was removed.
 '+[Music Queue] Returns null. Convert it into a embed. Add song URL back into it. Add max of 7 fields.(Should this be configurable?
 #End Region
 
@@ -24,7 +24,6 @@ Module Program
 
     Sub Main()
         Console.Title = "Discord Bot - Multi-Purpose Discord Bot"
-        _Utils.setBanner("/ Discord Bot \", "#FFC0CB", ConsoleColor.Green)
         If Not Directory.Exists(Resources) Then
             BotSetup()
             loggingHandler.LogCriticalAsync("setup", "File structure has been created... Now go into Resources/Settings and open settings.json and fill in the required fields.")
@@ -62,8 +61,9 @@ Module Program
             Sleep(3000)
             Await loggingHandler.LogSetupAsync("setup", "Sever is setup now starting bot...")
             Sleep(500)
-            Call New bot().mainAsync().GetAwaiter().GetResult()
 
+
+            Call New bot().mainAsync().GetAwaiter().GetResult()
         End If
     End Function
 
@@ -76,15 +76,16 @@ Module Program
             Dim lavalinkURL As String = "https://www.dropbox.com/s/ofe51ep1ow94u9c/Lavalink.jar?dl=1"
             Dim applicationURL As String = "https://www.dropbox.com/s/ny0zvsxc3w7unv9/application.yaml?dl=1"
 
-            'Checks if the Resources directory exists if not it will create the file structure.
-            If Not Directory.Exists(Resources) Then
-                Directory.CreateDirectory(Resources)
-                Directory.CreateDirectory(Victoria)
-                Directory.CreateDirectory(Settings)
-            End If
             loggingHandler.LogInformationAsync("setup", "Downloading and setting up file structure for the first time please wait...")
+            'Create the file structure.
+            Directory.CreateDirectory(Resources)
+            Directory.CreateDirectory(Victoria)
+            Directory.CreateDirectory(Settings)
+
             Using client As New WebClient
+                loggingHandler.LogInformationAsync("setup", "Downloading settings.json")
                 client.DownloadFile(settingsURL, settingsPath)
+                loggingHandler.LogInformationAsync("setup", "Downloading Lavalink files")
                 client.DownloadFile(applicationURL, applicationPath)
                 client.DownloadFile(lavalinkURL, lavalinkPath)
             End Using
