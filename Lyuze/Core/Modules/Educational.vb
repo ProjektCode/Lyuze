@@ -1,5 +1,4 @@
-﻿Imports Discord
-Imports Discord.Commands
+﻿Imports Discord.Commands
 
 <Name("Educational")>
 <Summary("For quick math equations.")>

@@ -1,9 +1,4 @@
-﻿Imports System.Net.Http
-Imports Discord
-Imports Discord.Commands
-Imports Newtonsoft.Json.Linq
-Imports Microsoft.Extensions.DependencyInjection
-Imports System.Text
+﻿Imports Discord.Commands
 
 <Name("Gifs")>
 <Summary("Get a random anime gif.")>

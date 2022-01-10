@@ -51,12 +51,12 @@ Public Class Music
                     player.Queue.Enqueue(track)
                 Next track
                 Await ReplyAsync($"Queued {searchResponse.Tracks.Count} tracks.")
-                Await loggingHandler.LogInformationAsync("audio", $"Queued {searchResponse.Tracks.Count} tracks.")
+                'Await loggingHandler.LogInformationAsync("audio", $"Queued {searchResponse.Tracks.Count} tracks.")
             Else
                 Dim track = searchResponse.Tracks(0)
                 player.Queue.Enqueue(track)
                 Await ReplyAsync($"Added {track.Title} to the queue")
-                Await loggingHandler.LogInformationAsync("audio", $"Enqueued: {track.Title}")
+                'Await loggingHandler.LogInformationAsync("audio", $"Enqueued: {track.Title}")
             End If
         Else
             Dim track = searchResponse.Tracks(0)
@@ -65,16 +65,18 @@ Public Class Music
                 For i = 0 To searchResponse.Tracks.Count - 1
                     If i = 0 Then
                         Await player.PlayAsync(track)
-                        Await ReplyAsync($"Now Playing: **{track.Title}**")
+                        'Await ReplyAsync($"Now Playing: **{track.Title}**")
+                        Await ReplyAsync(embed:=Await embedHandler.victoriaNowPlayingEmbed(track.Title, track))
                     Else
                         player.Queue.Enqueue(searchResponse.Tracks(i))
                     End If
                 Next i
 
-                Await ReplyAsync($"Queued {searchResponse.Tracks.Count} tracks.")
+                'Await ReplyAsync($"Queued {searchResponse.Tracks.Count} tracks.")
             Else
                 Await player.PlayAsync(track)
-                Await ReplyAsync($"Now Playing: **{track.Title}**")
+                'Await ReplyAsync($"Now Playing: **{track.Title}**")
+                Await ReplyAsync(embed:=Await embedHandler.victoriaNowPlayingEmbed(track.Title, track))
             End If
         End If
         Await audioService.setVolumeAsync(Context.Guild, 25, Context.Channel)
@@ -128,32 +130,39 @@ Public Class Music
         Dim g = Context.Guild
         Dim player = _lavaNode.GetPlayer(g)
 
-        If chnl.Id = audioService._channel.Id Then
 
-            If player.PlayerState = PlayerState.Paused Or player.PlayerState = PlayerState.Playing Then
+        Try
 
-                If player.Queue.Count < 1 And player.Track IsNot Nothing Then
-                    noQueue = True
+            If chnl.Id = audioService._channel.Id Then
+
+                If player.PlayerState = PlayerState.Paused Or player.PlayerState = PlayerState.Playing Then
+
+                    If player.Queue.Count < 1 And player.Track IsNot Nothing Then
+                        noQueue = True
+                    Else
+                        noQueue = False
+                    End If
+
+                    If noQueue = True Then
+
+                        Await embedHandler.victoriaNowPlayingEmbed(player.Track.Title, player.Track)
+                    Else
+
+                        Await PagedReplyAsync(audioService.listTracks(g, chnl))
+                    End If
+
                 Else
-                    noQueue = False
+                    Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Queue", "Make sure the player is playing something first!"))
+
                 End If
-
-                If noQueue = True Then
-
-                    Await embedHandler.victoriaNowPlayingEmbed(player.Track.Title, player.Track)
-                Else
-
-                    Await PagedReplyAsync(audioService.listTracks(g, chnl))
-                End If
-
             Else
-                Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Queue", "Make sure the player is playing something first!"))
+                ReplyAsync(embed:=Await embedHandler.victoriaInvalidUsageEmbed(chnl))
 
             End If
-        Else
-            ReplyAsync(embed:=Await embedHandler.victoriaInvalidUsageEmbed(chnl))
 
-        End If
+        Catch ex As Exception
+            ReplyAsync(embed:=embedHandler.errorEmbed("Music - List", ex.Message).Result)
+        End Try
 
     End Function
 

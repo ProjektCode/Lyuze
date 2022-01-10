@@ -33,12 +33,7 @@ Public Class Backgrounds
         Dim settings = Lyuze.Settings.Data
 
         If _utils.CheckAPI(settings.ApIs.UnsplashAccess) = False Or _utils.CheckAPI(settings.ApIs.UnsplashSecret) = False Then
-            If settings.IDs.ErrorId = Nothing Then
-                loggingHandler.LogCriticalAsync("backgrounds", "No API Key was given.")
-            Else
-                Dim chnl = Context.Guild.GetTextChannel(settings.IDs.ErrorId)
-                Await chnl.SendMessageAsync(embed:=Await embedHandler.errorEmbed("Backgrounds - Unsplash", "No API key given. If you wish to use this command please provide an API key into the settings config."))
-            End If
+            Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Backgrounds - Unsplash", "No API key given. If you wish to use this command please provide an API key into the settings config."))
         Else
             Await ReplyAsync(embed:=Await BackgroundService.UnsplashRandomImage(Context, tag))
         End If

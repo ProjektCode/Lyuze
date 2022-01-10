@@ -1,22 +1,13 @@
-﻿Imports System.IO
-Imports Discord
-Imports Discord.Commands
+﻿Imports Discord.Commands
 Imports Discord.Addons.Interactive
-Imports System.Net.Http
-Imports System.Text
-Imports Microsoft.Extensions.DependencyInjection
 
 <Name("Anime")>
 <Summary("Anything anime related.")>
 Public Class Weeb
     Inherits InteractiveBase(Of SocketCommandContext)
 
-    'Grabbing required services
-    Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
-    Private Shared ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
-    Private Shared ReadOnly _img As Images = serviceHandler.provider.GetRequiredService(Of Images)
-
 #Region "Jikan"
+
 #Region "Get Info"
 
     <Command("getanime")>
@@ -27,7 +18,7 @@ Public Class Weeb
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your anime!", timeout:=New TimeSpan(0, 0, 5))
         Try
-            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetAnimeAsync(id, Context))
+            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetAnimeAsync(id, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed("Anime", ex.Message).Result)
         End Try
@@ -42,7 +33,7 @@ Public Class Weeb
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your manga!", timeout:=New TimeSpan(0, 0, 5))
         Try
-            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetMangaAsync(id, Context))
+            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetMangaAsync(id, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed($"Manga - {id}", ex.Message).Result)
         End Try
@@ -57,7 +48,7 @@ Public Class Weeb
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your character!", timeout:=New TimeSpan(0, 0, 5))
         Try
-            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetCharacterAsync(id, Context))
+            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetCharacterAsync(id, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed($"Staff - {id}", ex.Message).Result)
         End Try
@@ -72,15 +63,11 @@ Public Class Weeb
     <[Alias]("gtopa")>
     <Summary("gtopa | See the top 10 anime.")>
     <Remarks("\gtopa <option> | Options = tv, movies, special, upcoming, airing, ova, popularity, favorite")>
-    Public Async Function GetTopAnime(Optional type As String = Nothing) As Task
+    Public Async Function GetTopAnime(Optional type As String = "default") As Task
 
         Try
-            If type Is Nothing Then
-                type = "default"
-            End If
-
             Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetTopAnimeAsync(type, Context))
+            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopAnimeAsync(type, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed("Top Anime", ex.Message).Result)
         End Try
@@ -90,15 +77,12 @@ Public Class Weeb
     <[Alias]("gtopm")>
     <Summary("gtopm | See the top 10 Manga.")>
     <Remarks("\gtopm <option> | Options = doujin, favorite, manga, manhua, manhwa, novel, oneshot, popularity")>
-    Public Async Function GetTopManga(Optional type As String = Nothing) As Task
+    Public Async Function GetTopManga(Optional type As String = "default") As Task
 
         Try
-            If type Is Nothing Then
-                type = "default"
-            End If
 
             Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetTopMangaAsync(type, Context))
+            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopMangaAsync(type, Context))
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
         End Try
@@ -112,7 +96,7 @@ Public Class Weeb
         Try
 
             Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetTopCharacterAsync(Context))
+            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopCharacterAsync(Context))
 
         Catch ex As Exception
             ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
@@ -125,7 +109,7 @@ Public Class Weeb
     Public Async Function GetTopPeople() As Task
 
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetTopPeopleAsync(Context))
+        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopPeopleAsync(Context))
 
     End Function
 
@@ -147,143 +131,25 @@ Public Class Weeb
     <Summary("Gets the first 10 results from the given name.")>
     <Remarks("\as code geass | gets the first 10 search results.")>
     Public Async Function SearchAnime(<Remainder> query As String) As Task
-        Await ReplyAsync(embed:=Await jikanService.AnimeSearchAsync(Context, query))
+        Await ReplyAsync(embed:=Await AnimeService.AnimeSearchAsync(Context, query))
     End Function
 #End Region
+
 #End Region
 
 #Region "Anime APIs"
 
-    'Can't figure out how to get the cover art. I am not completely happy with the results.
-    <Command("manga")>
-    <Summary("Get a random manga from MangaDex")>
-    Public Async Function getMangaRandom() As Task
-
-        Try
-            Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync("http://api.mangadex.org/manga/random")
-            Dim manga = MangaDex.FromJson(response)
-            Dim description As New StringBuilder
-            Dim remove As Integer = 10
-
-            If manga Is Nothing Then
-                Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Random Manga", "Error occurred, try again later."))
-                Return
-            End If
-
-            Dim _manga = manga.Data.Attributes
-            Dim update As Date = Date.Parse(_manga.UpdatedAt)
-
-            description.Append(_manga.Description.En.ToString)
-            While description.Length > 1000
-                description.Remove(description.Length - remove, remove)
-            End While
-            description.Append("...")
-            Dim embed = New EmbedBuilder With {
-                .Title = $"{_manga.Title.En}",
-                .ThumbnailUrl = Context.Client.CurrentUser.GetAvatarUrl,
-                .Url = If($"https://mangadex.org/title/ {manga.Data.Id}", "https://mangadex.org"),
-                .Footer = New EmbedFooterBuilder With {
-                    .Text = manga.Data.Id.ToString
-                }
-            }
-
-            embed.AddField("Alternate Title", Defaults.defaultValue(_manga.AltTitles.FirstOrDefault.En), True)
-            embed.AddField("Type", Defaults.defaultValue(manga.Data.Type), True)
-            embed.AddField("Original Language", Defaults.defaultValue(_manga.OriginalLanguage), True)
-            embed.AddField("Status", Defaults.defaultValue(_manga.Status), True)
-            embed.AddField("Latest chapter", Defaults.defaultValue(_manga.LastChapter), True)
-            embed.AddField("Rating", Defaults.defaultValue(_manga.ContentRating), True)
-            embed.AddField("Updated at", Defaults.defaultValue(update.Date.ToShortDateString), True)
-            embed.AddField("Year", Defaults.defaultValue(_manga.State), True)
-            embed.AddField("Description", Defaults.defaultValue(description.ToString))
-
-            Await ReplyAsync(embed:=embed.Build)
-
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Manga", ex.Message).Result)
-        End Try
-
-    End Function
-
     <Command("aquote")>
     <Summary("Get a random anime quote.")>
     Public Async Function aQuote() As Task
-
-        Try
-
-            Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync("https://animechan.vercel.app/api/random/")
-            Dim quote = AnimeQuote.FromJson(response)
-
-            If quote Is Nothing Then
-                Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Anime - Quote", "An error occurred, please try again later"))
-                Return
-            End If
-
-            Dim embed = New EmbedBuilder With {
-                .Title = quote.Anime,
-                .Description = $"*{quote.Quote}* - {quote.Character}",
-                .Color = New Color(_utils.RandomEmbedColor)
-            }
-
-            Await ReplyAsync(embed:=embed.Build)
-
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Anime Quote", ex.Message).Result)
-        End Try
-
+        Await ReplyAsync(embed:=Await AnimeService.GetAnimeQuote())
     End Function
 
     <Command("trace")>
     <Summary("Find what anime is from a single screen-shot")>
     <Remarks("/trace https://i.imgur.com/QNyCkZh.jpeg | Can also use an attachment.")>
     Public Async Function traceImage(Optional url As String = Nothing) As Task
-
-        Try
-            'Check if URL is empty
-            If url Is Nothing Then
-                'Check if an attachment was sent if so get the URL
-                If Context.Message.Attachments.Count > 0 Then
-                    url = Context.Message.Attachments.First.Url
-
-                Else
-                    Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Anime - Trace", "Please supply a URL by either using it as an attachment or as a argument."))
-                    Return
-                End If
-            End If
-
-            Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync($"https://api.trace.moe/search?url={ url }")
-            Dim trace = TraceMoe.FromJson(response)
-            'If some error occurs return embed
-            If trace Is Nothing Then
-                Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Anime - Trace", "An error occurred, please try again later"))
-                Return
-            End If
-
-            Dim embed = New EmbedBuilder With {
-                .Title = "Most Relevant Result",
-                .ImageUrl = trace.Result.First.Image.AbsoluteUri,
-                .ThumbnailUrl = trace.Result.First.Image.AbsoluteUri,
-                .Color = New Color(Await _img.RandomColorFromURL(url)),
-                .Footer = New EmbedFooterBuilder With {
-                    .Text = $"Frame Count: {trace.FrameCount}"
-                }
-            }
-            embed.AddField("Name", trace.Result.First.Filename)
-            embed.AddField("Episode", trace.Result.First.Episode, True)
-            embed.AddField("Similarity", trace.Result.First.Similarity.ToString("#0.00%"), True)
-            embed.AddField("AniList", $"https://anilist.co/anime/{ trace.Result.First.Anilist}")
-            embed.AddField("Video", trace.Result.First.Video.AbsoluteUri)
-
-            Await ReplyAsync(embed:=embed.Build)
-
-
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Anime - Trace", ex.Message).Result)
-        End Try
-
+        Await ReplyAsync(embed:=Await AnimeService.GetTraceAnime(Context, url))
     End Function
 
 #End Region

@@ -3,8 +3,8 @@ Imports System.Net
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'-[All] change .result to await in most functions. DO SO MANUALLY and slowly any new commands should follow this getup.
 '-[Anime] Add search command for manga,character and person.
+'-[Music Play] Change it into an embed.
 
 '+[Anime] Re-add seasonal anime command. Somehow was removed.
 '+[Music Queue] Returns null. Convert it into a embed. Add song URL back into it. Add max of 7 fields.(Should this be configurable?

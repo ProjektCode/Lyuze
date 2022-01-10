@@ -5,7 +5,7 @@ Imports System.IO
 Imports Microsoft.Extensions.DependencyInjection
 
 <Name("Image")>
-<Summary("Sorta manipulate, to a certain extent, any image.")>
+<Summary("Manipulate, to a certain extent, any image.")>
 Public Class imageManipulation
 
     Inherits InteractiveBase(Of SocketCommandContext)

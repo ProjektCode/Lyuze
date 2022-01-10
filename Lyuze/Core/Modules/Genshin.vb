@@ -47,7 +47,7 @@ Public Class Genshin
     <Command("elements")>
     <[Alias]("ele")>
     <Summary("Gives information for enemies")>
-    <Remarks("/genshin ene <slime> | can leave empty to get a list of available enemies.")>
+    <Remarks("/genshin ene <pyro> | can leave empty to get a list of available enemies.")>
     Public Async Function GenshinElements(<Remainder> Optional name As String = "default") As Task
         Await ReplyAsync(embed:=Await GenshinService.GetElement(name))
     End Function

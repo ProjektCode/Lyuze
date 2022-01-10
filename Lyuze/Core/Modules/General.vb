@@ -15,7 +15,7 @@ Public Class General
 
     <Command("report")>
     <Summary("Report messages.")>
-    <Remarks("\report @messageid")>
+    <Remarks("\report @messageid | you get the id by right-clicking the message and then you'll see an option to copy the message id.")>
     Public Async Function Report(id As ULong) As Task
         Await ReplyAsync(embed:=Await ModService.Report(id, Context))
     End Function

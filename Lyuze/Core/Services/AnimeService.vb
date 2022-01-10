@@ -1,19 +1,23 @@
-﻿Imports System.Text
+﻿Imports System.Net.Http
+Imports System.Text
 Imports Discord
 Imports Discord.Commands
 Imports JikanDotNet
 Imports Microsoft.Extensions.DependencyInjection
 
-NotInheritable Class jikanService
+NotInheritable Class AnimeService
 
     Private Shared ReadOnly _jikan As New Jikan(True)
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+    Private Shared ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
+    Private Shared ReadOnly _img As Images = serviceHandler.provider.GetRequiredService(Of Images)
 
     Private Shared ReadOnly removeLength As Integer = 11
+    Private Shared ReadOnly searchLimit As Integer = 10
+
     Private Shared oldID As Long
     Private Shared trackedID As Boolean = False
     Private Shared retryLimit As Integer = 1
-    Private Shared searchLimit As Integer = 10
     Private Shared searchLimitStart As Integer = 0
 
     Public Shared Async Function GetAnimeAsync(id As Integer, ctx As SocketCommandContext) As Task(Of Embed)
@@ -592,5 +596,75 @@ Line1:
             Return embedHandler.errorEmbed("Anime - Search", ex.Message).Result
         End Try
     End Function
+
+#Region "Anime APIs"
+
+    Public Shared Async Function GetAnimeQuote() As Task(Of Embed)
+        Try
+
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim response = Await httpClient.GetStringAsync("https://animechan.vercel.app/api/random/")
+            Dim quote = AnimeQuote.FromJson(response)
+
+            If quote Is Nothing Then
+                Return Await embedHandler.errorEmbed("Anime - Quote", "An error occurred, please try again later")
+            End If
+
+            Dim embed = New EmbedBuilder With {
+                .Title = quote.Anime,
+                .Description = $"*{quote.Quote}* - {quote.Character}",
+                .Color = New Color(_utils.RandomEmbedColor)
+            }
+
+            Return embed.Build
+
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Anime Quote", ex.Message).Result
+        End Try
+    End Function
+
+    Public Shared Async Function GetTraceAnime(ctx As SocketCommandContext, Optional url As String = Nothing) As Task(Of Embed)
+        Try
+            'Check if URL is empty
+            If url Is Nothing Then
+                'Check if an attachment was sent if so get the URL
+                If ctx.Message.Attachments.Count > 0 Then
+                    url = ctx.Message.Attachments.First.Url
+
+                Else
+                    Return Await embedHandler.errorEmbed("Anime - Trace", "Please supply a URL by either using it as an attachment or as a argument.")
+                End If
+            End If
+
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim response = Await httpClient.GetStringAsync($"https://api.trace.moe/search?url={ url }")
+            Dim trace = TraceMoe.FromJson(response)
+            'If some error occurs return embed
+            If trace Is Nothing Then
+                Return Await embedHandler.errorEmbed("Anime - Trace", "An error occurred, please try again later")
+            End If
+
+            Dim embed = New EmbedBuilder With {
+                .Title = "Most Relevant Result",
+                .ImageUrl = trace.Result.First.Image.AbsoluteUri,
+                .ThumbnailUrl = trace.Result.First.Image.AbsoluteUri,
+                .Color = New Color(Await _img.RandomColorFromURL(url)),
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = $"Frame Count: {trace.FrameCount}"
+                }
+            }
+            embed.AddField("Name", trace.Result.First.Filename)
+            embed.AddField("Episode", trace.Result.First.Episode, True)
+            embed.AddField("Similarity", trace.Result.First.Similarity.ToString("#0.00%"), True)
+            embed.AddField("AniList", $"https://anilist.co/anime/{ trace.Result.First.Anilist}")
+            embed.AddField("Video", trace.Result.First.Video.AbsoluteUri)
+
+            Return embed.Build
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Anime - Trace", ex.Message).Result
+        End Try
+    End Function
+
+#End Region
 
 End Class

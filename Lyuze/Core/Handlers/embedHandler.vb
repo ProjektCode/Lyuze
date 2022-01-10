@@ -1,11 +1,7 @@
 ﻿Imports Discord
-Imports Discord.WebSocket
 Imports Victoria
-Imports Microsoft.Extensions.DependencyInjection
 
 NotInheritable Class embedHandler
-
-    Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     Public Shared Async Function errorEmbed(_source As String, _error As String) As Task(Of Embed)
 
