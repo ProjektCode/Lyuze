@@ -3,7 +3,6 @@ Imports System.Net
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'-[Anime] Add search command for manga,character and person.
 '-[Music Play] Change it into an embed.
 
 '+[Anime] Re-add seasonal anime command. Somehow was removed.

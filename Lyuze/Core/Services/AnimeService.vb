@@ -14,11 +14,14 @@ NotInheritable Class AnimeService
 
     Private Shared ReadOnly removeLength As Integer = 11
     Private Shared ReadOnly searchLimit As Integer = 10
+    Private Shared ReadOnly fieldLimit As Integer = 3
 
     Private Shared oldID As Long
     Private Shared trackedID As Boolean = False
     Private Shared retryLimit As Integer = 1
     Private Shared searchLimitStart As Integer = 0
+    Private Shared fieldLimitStart As Integer = 0
+    Private Shared searchList As String = String.Empty
 
     Public Shared Async Function GetAnimeAsync(id As Integer, ctx As SocketCommandContext) As Task(Of Embed)
 Line1:
@@ -280,31 +283,55 @@ Line1:
             Dim animeBuilder As New StringBuilder
             Dim aboutBuilder As New StringBuilder
             Dim mangaBuilder As New StringBuilder
-            Dim voice As String = $"{_char.VoiceActors.FirstOrDefault.Name} - {_char.VoiceActors.FirstOrDefault.Language}"
+            Dim voiceBuilder As New StringBuilder
+            'Dim voice As String = $"{_char.VoiceActors.FirstOrDefault.Name} - {_char.VoiceActors.FirstOrDefault.Language}"
             aboutBuilder.Append(_char.About)
 
             If _char.Animeography.Count = 1 Then
                 animeBuilder.Append($"{_char.Animeography.First}")
             Else
                 For Each ani In _char.Animeography
+                    If fieldLimitStart = fieldLimit Then
+                        Exit For
+                    End If
                     animeBuilder.Append($"{ani.Name},{Environment.NewLine}")
+                    fieldLimitStart += 1
                 Next
                 animeBuilder.Remove(animeBuilder.Length - 3, 3)
+            End If
+
+            If _char.Mangaography.Count = 1 Then
+                mangaBuilder.Append($"{_char.Mangaography.First}")
+            Else
+                fieldLimitStart = 0
+                For Each manga In _char.Mangaography
+                    If fieldLimitStart = fieldLimit Then
+                        Exit For
+                    End If
+                    mangaBuilder.Append($"{manga.Name},{Environment.NewLine}")
+                    fieldLimitStart += 1
+                Next
+                mangaBuilder.Remove(mangaBuilder.Length - 3, 3)
+            End If
+
+            If _char.VoiceActors.Count = 1 Then
+                voiceBuilder.Append($"{_char.VoiceActors.FirstOrDefault.Name} - {_char.VoiceActors.FirstOrDefault.Language}")
+            Else
+                fieldLimitStart = 0
+                For Each voice In _char.VoiceActors
+                    If fieldLimitStart = fieldLimit Then
+                        Exit For
+                    End If
+                    voiceBuilder.Append($"{voice.Name} - {voice.Language},{Environment.NewLine}")
+                    fieldLimitStart += 1
+                Next
+                voiceBuilder.Remove(voiceBuilder.Length - 3, 3)
             End If
 
             While aboutBuilder.Length > 1021
                 aboutBuilder.Remove(aboutBuilder.Length - removeLength, removeLength)
             End While
             aboutBuilder.Append("...")
-
-            If _char.Mangaography.Count = 1 Then
-                mangaBuilder.Append($"{_char.Mangaography.First}")
-            Else
-                For Each manga In _char.Mangaography
-                    mangaBuilder.Append($"{manga.Name},{Environment.NewLine}")
-                Next
-                mangaBuilder.Remove(mangaBuilder.Length - 3, 3)
-            End If
 
 #End Region
 
@@ -325,7 +352,7 @@ Line1:
             embed.AddField("Member Favorites", _char.MemberFavorites, True)
             embed.AddField("Animeography", animeBuilder.ToString, True)
             embed.AddField("Mangaography", mangaBuilder.ToString, True)
-            embed.AddField("Voice Actors", If(voice, "N/A"), True)
+            embed.AddField("Voice Actors", voiceBuilder.ToString, True)
             embed.AddField("About", aboutBuilder.ToString)
 
 #End Region
@@ -358,14 +385,7 @@ Line1:
                 retryLimit += 1
                 GoTo Line1
             Else
-                Dim _settings = Lyuze.Settings.Data
-
-                If _settings.IDs.ErrorId = 0 Then
-                    loggingHandler.LogCriticalAsync($"jikan", ex.Message)
-                Else
-                    Dim chnl = ctx.Guild.GetTextChannel(_settings.IDs.ErrorId)
-                    chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"jikan", ex.Message).Result)
-                End If
+                Return embedHandler.errorEmbed("Anime - Character Search", ex.Message).Result
             End If
 
         End Try
@@ -571,7 +591,7 @@ Line1:
 
     Public Shared Async Function AnimeSearchAsync(ctx As SocketCommandContext, query As String) As Task(Of Embed)
         Try
-            Dim searchList As String = String.Empty
+            searchList = String.Empty
             Dim searchResult = Await _jikan.SearchAnime(query)
             For Each anime In searchResult.Results
                 If searchLimitStart = searchLimit Then
@@ -587,13 +607,69 @@ Line1:
                 .Color = New Color(_utils.RandomEmbedColor),
                 .ThumbnailUrl = If(ctx.Client.CurrentUser.GetAvatarUrl, ctx.Client.CurrentUser.GetDefaultAvatarUrl),
                 .Footer = New EmbedFooterBuilder With {
-                    .Text = "AnimeTV Search Results"
+                    .Text = "Anime Search Results"
                 }
             }
 
             Return embed.Build
         Catch ex As Exception
             Return embedHandler.errorEmbed("Anime - Search", ex.Message).Result
+        End Try
+    End Function
+
+    Public Shared Async Function CharacterSearchAsync(ctx As SocketCommandContext, query As String) As Task(Of Embed)
+        Try
+            searchList = String.Empty
+            Dim searchResult = Await _jikan.SearchCharacter(query)
+            For Each [char] In searchResult.Results
+                If searchLimitStart = searchLimit Then
+                    Exit For
+                End If
+                searchList += $"[{[char].MalId}] - {[char].Name} - {[char].URL}{Environment.NewLine}"
+                searchLimitStart += 1
+            Next
+
+            Dim embed As New EmbedBuilder With {
+                .Title = "Top 10 most relevant search results",
+                .Description = searchList,
+                .Color = New Color(_utils.RandomEmbedColor),
+                .ThumbnailUrl = If(ctx.Client.CurrentUser.GetAvatarUrl, ctx.Client.CurrentUser.GetDefaultAvatarUrl),
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = "Character Search Results"
+                }
+            }
+
+            Return embed.Build
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Anime - Search - Character", ex.Message).Result
+        End Try
+    End Function
+
+    Public Shared Async Function PersonSearchAsync(ctx As SocketCommandContext, query As String) As Task(Of Embed)
+        Try
+            searchList = String.Empty
+            Dim searchResult = Await _jikan.SearchPerson(query)
+            For Each pers In searchResult.Results
+                If searchLimitStart = searchLimit Then
+                    Exit For
+                End If
+                searchList += $"[{pers.MalId}] - {pers.Name} - {pers.URL}{Environment.NewLine}"
+                searchLimitStart += 1
+            Next
+
+            Dim embed As New EmbedBuilder With {
+                .Title = "Top 10 most relevant search results",
+                .Description = searchList,
+                .Color = New Color(_utils.RandomEmbedColor),
+                .ThumbnailUrl = If(ctx.Client.CurrentUser.GetAvatarUrl, ctx.Client.CurrentUser.GetDefaultAvatarUrl),
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = "Person Search Results"
+                }
+            }
+
+            Return embed.Build
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Anime - Search - Character", ex.Message).Result
         End Try
     End Function
 
@@ -623,7 +699,7 @@ Line1:
         End Try
     End Function
 
-    Public Shared Async Function GetTraceAnime(ctx As SocketCommandContext, Optional url As String = Nothing) As Task(Of Embed)
+    Public Shared Async Function TraceAnimeAsync(ctx As SocketCommandContext, Optional url As String = Nothing) As Task(Of Embed)
         Try
             'Check if URL is empty
             If url Is Nothing Then

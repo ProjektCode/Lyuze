@@ -7,7 +7,6 @@ Public Class Weeb
     Inherits InteractiveBase(Of SocketCommandContext)
 
 #Region "Jikan"
-
 #Region "Get Info"
 
     <Command("getanime")>
@@ -15,14 +14,8 @@ Public Class Weeb
     <Summary("ganime | Get information on an Anime based on the provided ID.")>
     <Remarks("\ganime 1")>
     Public Async Function GetAnime(id As Integer) As Task
-
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your anime!", timeout:=New TimeSpan(0, 0, 5))
-        Try
-            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetAnimeAsync(id, Context))
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Anime", ex.Message).Result)
-        End Try
-        Await Context.Message.DeleteAsync()
+        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetAnimeAsync(id, Context))
     End Function
 
     <Command("getmanga")>
@@ -30,14 +23,8 @@ Public Class Weeb
     <Summary("gmanga | Get information on a Manga based on the provided ID.")>
     <Remarks("\gmanga 1")>
     Public Async Function GetManga(id As Integer) As Task
-
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your manga!", timeout:=New TimeSpan(0, 0, 5))
-        Try
-            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetMangaAsync(id, Context))
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed($"Manga - {id}", ex.Message).Result)
-        End Try
-        Await Context.Message.DeleteAsync()
+        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetMangaAsync(id, Context))
     End Function
 
     <Command("getcharacter")>
@@ -45,14 +32,8 @@ Public Class Weeb
     <Summary("gchar | Get information on a Character based on the provided ID.")>
     <Remarks("gchar 1")>
     Public Async Function GetAnimeCharacter(id As Integer) As Task
-
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your character!", timeout:=New TimeSpan(0, 0, 5))
-        Try
-            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetCharacterAsync(id, Context))
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed($"Staff - {id}", ex.Message).Result)
-        End Try
-        Await Context.Message.DeleteAsync()
+        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetCharacterAsync(id, Context))
     End Function
 
 #End Region
@@ -133,12 +114,26 @@ Public Class Weeb
     Public Async Function SearchAnime(<Remainder> query As String) As Task
         Await ReplyAsync(embed:=Await AnimeService.AnimeSearchAsync(Context, query))
     End Function
-#End Region
 
+    <Command("csearch")>
+    <[Alias]("cs")>
+    <Summary("Gets the first 10 results with the given character name.")>
+    <Remarks("\cs Edward Elric")>
+    Public Async Function SearchCharacter(<Remainder> query As String) As Task
+        Await ReplyAsync(embed:=Await AnimeService.CharacterSearchAsync(Context, query))
+    End Function
+
+    <Command("psearch")>
+    <[Alias]("ps")>
+    <Summary("Get the first 10 results from the given name")>
+    <Remarks("\ps john")>
+    Public Async Function SearchPerson(query As String) As Task
+        Await ReplyAsync(embed:=Await AnimeService.PersonSearchAsync(Context, query))
+    End Function
+#End Region
 #End Region
 
 #Region "Anime APIs"
-
     <Command("aquote")>
     <Summary("Get a random anime quote.")>
     Public Async Function aQuote() As Task
@@ -147,11 +142,10 @@ Public Class Weeb
 
     <Command("trace")>
     <Summary("Find what anime is from a single screen-shot")>
-    <Remarks("/trace https://i.imgur.com/QNyCkZh.jpeg | Can also use an attachment.")>
+    <Remarks("/trace https://i.imgur.com/QNyCkZh.jpeg | Can also use a message attachment.")>
     Public Async Function traceImage(Optional url As String = Nothing) As Task
-        Await ReplyAsync(embed:=Await AnimeService.GetTraceAnime(Context, url))
+        Await ReplyAsync(embed:=Await AnimeService.TraceAnimeAsync(Context, url))
     End Function
-
 #End Region
 
 End Class
