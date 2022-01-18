@@ -11,17 +11,13 @@ Public Class Music
     Inherits interactivebase(Of SocketCommandContext)
 
     ReadOnly _lavaNode As LavaNode = serviceHandler.provider.GetRequiredService(Of LavaNode)
-    Private noQueue As Boolean
 
     <Command("join")>
     <Summary("Joins your voice channel.")>
     Public Async Function cmdJoin() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.joinAsync(g, DirectCast(Context.User, IVoiceState), DirectCast(chnl, ITextChannel)))
+        Await ReplyAsync(embed:=Await audioService.joinAsync(Context.Guild, DirectCast(Context.User, IVoiceState), Context.Channel))
     End Function
-    'Change into embed
+
     <Command("play")>
     <Summary("Plays song - Can be done by text search or YouTube Playlist/Song URL.")>
     <Remarks("/play <YouTube URL> | Villians by k/da")>
@@ -86,10 +82,7 @@ Public Class Music
     <[Alias]("leave")>
     <Summary("Leaves voice channel.")>
     Public Async Function cmdLeave() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.leaveAsync(g, TryCast(Context.User, IVoiceState), chnl))
+        Await ReplyAsync(embed:=Await audioService.leaveAsync(Context.Guild, TryCast(Context.User, IVoiceState), Context.Channel))
     End Function
 
     <Command("volume")>
@@ -97,100 +90,45 @@ Public Class Music
     <Summary("Set the volume of the bot. Default is 25.")>
     <Remarks("\vol 25 | range is 0 - 150")>
     Public Async Function cmdVol(vol As Integer) As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.setVolumeAsync(g, vol, chnl))
+        Await ReplyAsync(embed:=Await audioService.setVolumeAsync(Context.Guild, vol, Context.Channel))
     End Function
 
     <Command("pause")>
     <[Alias]("resume")>
     <Summary("A toggle command to pause/resume. Could be used both ways.")>
     Public Async Function cmdPause() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.togglePauseAsync(g, chnl))
+        Await ReplyAsync(embed:=Await audioService.togglePauseAsync(Context.Guild, Context.Channel))
     End Function
 
     <Command("skip")>
     <Summary("Skips the current song.")>
     Public Async Function cmdSkip() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.skipTrack(g, chnl))
+        Await ReplyAsync(embed:=Await audioService.skipTrack(Context.Guild, Context.Channel))
     End Function
 
     <Command("queue")>
     <[Alias]("list")>
     <Summary("Shows a short list of the current queue. If there's no queue it will show current song.")>
     Public Async Function cmdList() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-        Dim player = _lavaNode.GetPlayer(g)
-
-
-        Try
-
-            If chnl.Id = audioService._channel.Id Then
-
-                If player.PlayerState = PlayerState.Paused Or player.PlayerState = PlayerState.Playing Then
-
-                    If player.Queue.Count < 1 And player.Track IsNot Nothing Then
-                        noQueue = True
-                    Else
-                        noQueue = False
-                    End If
-
-                    If noQueue = True Then
-
-                        Await embedHandler.victoriaNowPlayingEmbed(player.Track.Title, player.Track)
-                    Else
-
-                        Await PagedReplyAsync(audioService.listTracks(g, chnl))
-                    End If
-
-                Else
-                    Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Queue", "Make sure the player is playing something first!"))
-
-                End If
-            Else
-                ReplyAsync(embed:=Await embedHandler.victoriaInvalidUsageEmbed(chnl))
-
-            End If
-
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Music - List", ex.Message).Result)
-        End Try
-
+        Await ReplyAsync(embed:=Await audioService.listTracks(Context.Guild, Context.Channel))
     End Function
 
     <Command("clear")>
     <Summary("Clears current queue.")>
     Public Async Function cmdClear() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.clearTracks(g, chnl))
+        Await ReplyAsync(embed:=Await audioService.clearTracks(Context.Guild, Context.Channel))
     End Function
 
     <Command("stop")>
     <Summary("Stops playback completely.")>
     Public Async Function cmdStop() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.stopAsync(g, chnl))
+        Await ReplyAsync(embed:=Await audioService.stopAsync(Context.Guild, Context.Channel))
     End Function
 
     <Command("restart")>
     <Summary("Restarts the current song.")>
     Public Async Function cmdRestart() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.restartAsync(g, chnl))
+        Await ReplyAsync(embed:=Await audioService.restartAsync(Context.Guild, Context.Channel))
     End Function
 
     <Command("seek")>
@@ -198,42 +136,29 @@ Public Class Music
     <[Alias]("sk")>
     <Remarks("\sk <Option> - seeks to the given time on the given video | Options = 1s,1m,1h")>
     Public Async Function cmdSeek(<Remainder> time As TimeSpan) As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.seekAsync(g, time, chnl))
+        Await ReplyAsync(embed:=Await audioService.seekAsync(Context.Guild, time, Context.Channel))
     End Function
 
     <Command("shuffle")>
     <Summary("Shuffles current queue if there are enough songs.")>
     Public Async Function cmdShuffle() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-        Dim u As IVoiceState = Context.User
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.shuffleAsync(g, u, chnl))
+        Await ReplyAsync(embed:=Await audioService.shuffleAsync(Context.Guild, Context.User, Context.Channel))
     End Function
 
     <Command("np")>
     <Summary("Shows the current song.")>
     Public Async Function cmdNowPlaying() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.nowPlayingAsync(g, Context, chnl))
+        Await ReplyAsync(embed:=Await audioService.nowPlayingAsync(Context.Guild, Context, Context.Channel))
     End Function
 
     <Command("repeat")>
     <Summary("repeats current song.")>
     Public Async Function cmdRepeat() As Task
-        Dim chnl = Context.Channel
-        Dim g = Context.Guild
-
-        Await chnl.SendMessageAsync(embed:=Await audioService.repeatAsync(g, chnl))
+        Await ReplyAsync(embed:=Await audioService.repeatAsync(Context.Guild, Context.Channel))
     End Function
 
     <Command("radio")>
-    <Summary("Plays a 24/7 Anime music stream from LISTEN.Moe")>
+    <Summary("Plays a raw 24/7 Anime music stream from LISTEN.Moe")>
     Public Async Function Radio() As Task
         PlayAsync("https://listen.moe/stream")
     End Function

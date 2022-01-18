@@ -4,9 +4,9 @@ Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
 '-[Music Play] Change it into an embed.
+'-[AudioService] add condition to check if _channel is nothing
 
 '+[Anime] Re-add seasonal anime command. Somehow was removed.
-'+[Music Queue] Returns null. Convert it into a embed. Add song URL back into it. Add max of 7 fields.(Should this be configurable?
 #End Region
 
 Module Program

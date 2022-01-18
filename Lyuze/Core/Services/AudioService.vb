@@ -14,8 +14,11 @@ NotInheritable Class audioService
     Inherits InteractiveBase
 
     Private Shared ReadOnly _lavaNode As LavaNode = serviceHandler.provider.GetRequiredService(Of LavaNode)
+    Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+
     Private Shared ReadOnly _disconnectTokens = New ConcurrentDictionary(Of ULong, CancellationTokenSource)
     Private Shared ReadOnly _repeatTokens = New ConcurrentDictionary(Of ULong, Boolean)
+    Private Shared ReadOnly _listLimit = 10
 
     Public Shared _channel As ITextChannel
 
@@ -49,6 +52,8 @@ NotInheritable Class audioService
 
     Public Shared Async Function leaveAsync(guild As IGuild, voiceState As IVoiceState, channel As ITextChannel) As Task(Of Embed)
 
+
+
         Try
             'Checks if the text channel id the command was executed from matches the channel ID where the join command was
             '   executed. if it matches it leaves the voice channel if not it will since a embed saying the command cannot be
@@ -58,7 +63,7 @@ NotInheritable Class audioService
                 Dim player = _lavaNode.GetPlayer(guild)
 
                 If player Is Nothing Then 'Check if player is null
-                    Return embedHandler.errorEmbed("Audio - Leave", "Player not found").Result
+                    Return Await embedHandler.errorEmbed("Audio - Leave", "Player not found")
                 End If
 
                 If voiceState.VoiceChannel Is Nothing Then
@@ -82,7 +87,7 @@ NotInheritable Class audioService
                 End If
 
             Else
-                Return embedHandler.victoriaInvalidUsageEmbed(channel).Result
+                Return Await embedHandler.victoriaInvalidUsageEmbed(channel)
 
             End If
 
@@ -280,77 +285,70 @@ NotInheritable Class audioService
         End Try
     End Function
 
-    Public Shared Async Function listTracks(guild As IGuild, channel As ITextChannel) As Task(Of PaginatedMessage)
+    Public Shared Async Function listTracks(guild As IGuild, channel As ITextChannel) As Task(Of Embed)
+        If _channel IsNot Nothing Then
 
-        If channel.Id = _channel.Id Then
+            If channel.Id = _channel.Id Then
 
-            Try
-                Dim page = String.Empty
-                Dim pages As New List(Of String)
+                Try
+                    Dim page = String.Empty
 
-                Dim player = _lavaNode.GetPlayer(guild)
+                    Dim player = _lavaNode.GetPlayer(guild)
 
-                Dim title = $"*{player.Track.Url}*" & vbLf & "------------------------------------------------------------" & vbLf
-                page = title
+                    Dim title = $"**{player.Track.Title}**{Environment.NewLine}*{player.Track.Url}*{Environment.NewLine}------------------------------------------------------------{Environment.NewLine}"
+                    page = title
 
-                If player Is Nothing Then 'Check if player is null
-                    page = "No player found"
-                    pages.Add(page)
-                    Dim pageMsg As New PaginatedMessage With {
-                            .Pages = pages
-                        }
-                    Return pageMsg
-                End If
-
-                If player.PlayerState = PlayerState.Playing Then
-
-                    If player.Queue.Count < 1 And player.Track IsNot Nothing Then
-                        page = $"**Now Playing:** *{player.Track.Title}* {Environment.NewLine} **URL:** {player.Track.Url}"
-                        pages.Add(page)
-                        Dim pageMsg As New PaginatedMessage With {
-                            .Pages = pages
-                        }
-                        Return pageMsg
-                    Else
-
-                        Dim trackNum = 1
-                        Dim listNum = 0
-                        Dim avgNum = player.Queue.Count / 10
-                        Dim queueAvg = MathF.Round(avgNum)
-
-                        For Each track As LavaTrack In player.Queue
-                            page += $"**[{trackNum}]** `{track.Title}`{Environment.NewLine}"
-                            trackNum += 1
-                            listNum += 1
-
-                            If listNum = queueAvg Then
-                                pages.Add(page)
-                                page = title
-                                listNum = 0
-                            End If
-                        Next
-
-                        Dim pageMessage As New PaginatedMessage With {
-                            .Pages = pages,
-                            .Title = player.Track.Title
-                        }
-
-                        Return pageMessage
+                    If player Is Nothing Then 'Check if player is null
+                        Return Await embedHandler.errorEmbed("Music - List", "No player found.")
                     End If
-                End If
 
-            Catch ex As Exception
-                Dim pages As New List(Of String)
-                Dim page = ex.Message
-                pages.Add(page)
-                Dim pageMessage As New PaginatedMessage With {
-                            .Pages = pages
-                        }
-                Return pageMessage
-            End Try
+                    If player.PlayerState = PlayerState.Playing Or player.PlayerState = PlayerState.Paused Then
 
+                        If player.Queue.Count < 1 And player.Track IsNot Nothing Then
+                            Return Await embedHandler.victoriaNowPlayingEmbed(player.Track.Title, player.Track)
+                        Else
+
+                            Dim trackNum = 1
+                            Dim listNum = 0
+                            Dim avgNum = player.Queue.Count / _listLimit
+                            Dim queueAvg = MathF.Round(avgNum)
+
+                            For Each track As LavaTrack In player.Queue
+                                If page.Length > 1024 Then
+                                    Exit For
+                                End If
+                                If listNum = queueAvg Then
+                                    Exit For
+                                End If
+
+                                page += $"**[{trackNum}]** `{track.Title}`{Environment.NewLine}"
+                                trackNum += 1
+                                listNum += 1
+                            Next
+                            Dim embed = New EmbedBuilder With {
+                                .Title = $"The next {queueAvg}/{player.Queue.Count} songs",
+                                .Description = page,
+                                .ThumbnailUrl = YouTube.GetThumbnail(player.Track.Url),
+                                .Color = New Color(_utils.RandomEmbedColor),
+                                .Footer = New EmbedFooterBuilder With {
+                                    .IconUrl = YouTube.GetThumbnail(player.Track.Url),
+                                    .Text = $"{player.Queue.Count} queued songs"
+                                }
+                            }
+
+
+                            Return embed.Build
+                        End If
+                    End If
+
+                Catch ex As Exception
+                    Return embedHandler.errorEmbed("Music - List", ex.Message).Result
+                End Try
+
+            End If
+        Else
+            Return Await embedHandler.errorEmbed("Music - List", "Please make sure I am joined a voice channel.")
         End If
-
     End Function
 
     Public Shared Async Function clearTracks(guild As IGuild, channel As ITextChannel) As Task(Of Embed)
