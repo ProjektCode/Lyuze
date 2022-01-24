@@ -3,7 +3,7 @@ Imports System.Net
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'+[Anime] Re-add seasonal anime command. Somehow was removed.
+
 #End Region
 
 Module Program

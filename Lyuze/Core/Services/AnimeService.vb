@@ -15,12 +15,14 @@ NotInheritable Class AnimeService
     Private Shared ReadOnly removeLength As Integer = 11
     Private Shared ReadOnly searchLimit As Integer = 10
     Private Shared ReadOnly fieldLimit As Integer = 3
+    Private Shared ReadOnly defaultImage As String = "https://i.imgur.com/Kl2Qrd2.png"
 
     Private Shared oldID As Long
     Private Shared trackedID As Boolean = False
     Private Shared retryLimit As Integer = 1
     Private Shared searchLimitStart As Integer = 0
     Private Shared fieldLimitStart As Integer = 0
+    Private Shared numLimiter As Integer = 0
     Private Shared searchList As String = String.Empty
 
     Public Shared Async Function GetAnimeAsync(id As Integer, ctx As SocketCommandContext) As Task(Of Embed)
@@ -85,11 +87,11 @@ Line1:
             Dim embed = New EmbedBuilder With {
             .Title = Defaults.defaultValue(a.Title),
             .Color = New Color(_utils.RandomEmbedColor),
-            .ImageUrl = If(a.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
-            .ThumbnailUrl = If(a.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
+            .ImageUrl = If(a.ImageURL, defaultImage),
+            .ThumbnailUrl = If(a.ImageURL, defaultImage),
             .Footer = New EmbedFooterBuilder With {
                  .Text = $"ID:{Defaults.defaultValue(a.MalId)} - {Defaults.defaultValue(a.LinkCanonical)}",
-                 .IconUrl = If(a.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
+                 .IconUrl = If(a.ImageURL, defaultImage)
             }
             }
             embed.AddField("Japanese Title", Defaults.defaultValue(a.TitleJapanese), True)
@@ -196,11 +198,11 @@ Line1:
             Dim embed = Await Task.Run(Function() New EmbedBuilder() _
             .WithTitle(Defaults.defaultValue(If(m.TitleEnglish, m.Title))) _
             .WithColor(New Color(_utils.RandomEmbedColor)) _
-            .WithImageUrl(If(m.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")) _
-            .WithThumbnailUrl(If(m.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")) _
+            .WithImageUrl(If(m.ImageURL, defaultImage)) _
+            .WithThumbnailUrl(If(m.ImageURL, defaultImage)) _
             .WithFooter(New EmbedFooterBuilder With {
                  .Text = $"ID: {Defaults.defaultValue(m.MalId)} - {Defaults.defaultValue(m.LinkCanonical)}",
-                 .IconUrl = If(m.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
+                 .IconUrl = If(m.ImageURL, defaultImage)
             }) _
             .AddField("Japanese Title", Defaults.defaultValue(m.TitleJapanese), True) _
             .AddField("Title Synonyms", If(m.TitleSynonyms.FirstOrDefault, "N/A"), True) _
@@ -340,11 +342,11 @@ Line1:
             Dim embed = New EmbedBuilder With {
                 .Title = _char.Name,
                 .Color = New Color(_utils.RandomEmbedColor),
-                .ImageUrl = If(_char.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
-                .ThumbnailUrl = If(_char.ImageURL, "https://i.imgur.com/Kl2Qrd2.png"),
+                .ImageUrl = If(_char.ImageURL, defaultImage),
+                .ThumbnailUrl = If(_char.ImageURL, defaultImage),
                 .Footer = New EmbedFooterBuilder With {
                     .Text = $"ID: {_char.MalId} - {_char.LinkCanonical}",
-                    .IconUrl = If(_char.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
+                    .IconUrl = If(_char.ImageURL, defaultImage)
                 }
             }
             embed.AddField("Japanese Name", _char.NameKanji, True)
@@ -392,6 +394,39 @@ Line1:
 
     End Function
 
+    Public Shared Async Function GetSeasonalAsync() As Task(Of Embed)
+        Try
+
+            Dim seasonal = Await _jikan.GetSeason()
+            Dim desc As String = String.Empty
+
+            For Each sea In seasonal.SeasonEntries
+                If Not numLimiter = 10 Then
+                    desc += $"*[{sea.MalId}]* - **{sea.Title}**{Environment.NewLine}{sea.URL}{Environment.NewLine}"
+                Else
+                    Exit For
+                End If
+                numLimiter += 1
+            Next
+            numLimiter = 0
+            Dim embed = New EmbedBuilder With {
+                .Title = $"This Season's Anime",
+                .Description = desc,
+                .ImageUrl = If(seasonal.SeasonEntries.First.ImageURL, defaultImage),
+                .Color = New Color(Await _img.RandomColorFromURL(seasonal.SeasonEntries.First.ImageURL)),
+                .ThumbnailUrl = If(seasonal.SeasonEntries.First.ImageURL, defaultImage),
+                .Footer = New EmbedFooterBuilder With {
+                    .IconUrl = If(seasonal.SeasonEntries.First.ImageURL, defaultImage),
+                    .Text = "10 Seasonal anime"
+                }
+            }
+
+            Return embed.Build
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Anime - Season", ex.Message).Result
+        End Try
+    End Function
+
     Public Shared Async Function GetTopAnimeAsync(tag As String, ctx As SocketCommandContext) As Task(Of Embed)
 
         Try
@@ -434,7 +469,7 @@ Line1:
             Dim embed = New EmbedBuilder With {
                 .Title = $"Top 10 {type}",
                 .Color = New Color(_utils.RandomEmbedColor),
-                .ImageUrl = If(a.Top.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
+                .ImageUrl = If(a.Top.FirstOrDefault.ImageURL, defaultImage)
             }
 
             For Each aEntry In a.Top
@@ -500,7 +535,7 @@ Line1:
             Dim embed = New EmbedBuilder With {
                 .Title = $"Top 10 {type}",
                 .Color = New Color(_utils.RandomEmbedColor),
-                .ImageUrl = If(m.Top.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
+                .ImageUrl = If(m.Top.FirstOrDefault.ImageURL, defaultImage)
             }
 
             For Each mEntry In m.Top
@@ -533,7 +568,7 @@ Line1:
             Dim embed = New EmbedBuilder With {
                 .Title = $"Top 10 Characters",
                 .Color = New Color(_utils.RandomEmbedColor),
-                .ImageUrl = If(c.Top.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
+                .ImageUrl = If(c.Top.FirstOrDefault.ImageURL, defaultImage)
             }
 
             For Each cEntry In c.Top
@@ -566,7 +601,7 @@ Line1:
             Dim embed = New EmbedBuilder With {
                 .Title = $"Top 10 People",
                 .Color = New Color(_utils.RandomEmbedColor),
-                .ImageUrl = If(p.Top.FirstOrDefault.ImageURL, "https://i.imgur.com/Kl2Qrd2.png")
+                .ImageUrl = If(p.Top.FirstOrDefault.ImageURL, defaultImage)
             }
 
             For Each pEntry In p.Top

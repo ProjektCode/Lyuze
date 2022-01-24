@@ -98,10 +98,7 @@ Public Class Weeb
     <[Alias]("gseason")>
     <Summary("gseason | See 10 seasonal anime listings.")>
     Public Async Function GetSeasonalAnime() As Task
-
-        Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your seasonal anime!", timeout:=New TimeSpan(0, 0, 5))
-        'Await Context.Channel.SendMessageAsync(embed:=Await jikanService.GetSeasonAnimeAsync(Context))
-
+        Await ReplyAsync(embed:=Await AnimeService.GetSeasonalAsync())
     End Function
 
 #End Region
