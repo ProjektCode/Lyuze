@@ -3,9 +3,6 @@ Imports System.Net
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'-[Music Play] Change it into an embed.
-'-[AudioService] add condition to check if _channel is nothing
-
 '+[Anime] Re-add seasonal anime command. Somehow was removed.
 #End Region
 

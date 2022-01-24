@@ -11,6 +11,7 @@ Public Class Music
     Inherits interactivebase(Of SocketCommandContext)
 
     ReadOnly _lavaNode As LavaNode = serviceHandler.provider.GetRequiredService(Of LavaNode)
+    ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     <Command("join")>
     <Summary("Joins your voice channel.")>
@@ -23,19 +24,19 @@ Public Class Music
     <Remarks("/play <YouTube URL> | Villians by k/da")>
     Public Async Function PlayAsync(<Remainder> searchQuery As String) As Task
         If String.IsNullOrWhiteSpace(searchQuery) Then
-            Await ReplyAsync("Please provide search terms.")
+            Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Play", "Please provide search terms."))
             Return
         End If
 
         If Not _lavaNode.HasPlayer(Context.Guild) Then
-            Await ReplyAsync("I'm not connected to a voice channel.")
+            Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Play", "I'm not connected to a voice channel."))
             Return
         End If
 
         Dim searchResponse = If(Uri.IsWellFormedUriString(searchQuery, UriKind.Absolute), Await _lavaNode.SearchAsync(searchQuery), Await _lavaNode.SearchYouTubeAsync(searchQuery))
 
         If searchResponse.LoadStatus = searchResponse.LoadStatus.LoadFailed OrElse searchResponse.LoadStatus = searchResponse.LoadStatus.NoMatches Then
-            Await ReplyAsync($"I wasn't able to find anything for `{searchQuery}`.")
+            Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Play", $"I wasn't able to find anything for `{searchQuery}`."))
             Return
         End If
 
@@ -46,12 +47,12 @@ Public Class Music
                 For Each track In searchResponse.Tracks
                     player.Queue.Enqueue(track)
                 Next track
-                Await ReplyAsync($"Queued {searchResponse.Tracks.Count} tracks.")
+                Await ReplyAsync(embed:=Await embedHandler.victoriaAddedQueue($"{searchResponse.Tracks.Count} tracks"))
                 'Await loggingHandler.LogInformationAsync("audio", $"Queued {searchResponse.Tracks.Count} tracks.")
             Else
                 Dim track = searchResponse.Tracks(0)
                 player.Queue.Enqueue(track)
-                Await ReplyAsync($"Added {track.Title} to the queue")
+                Await ReplyAsync(embed:=Await embedHandler.victoriaAddedQueue(track.Title))
                 'Await loggingHandler.LogInformationAsync("audio", $"Enqueued: {track.Title}")
             End If
         Else
@@ -62,7 +63,7 @@ Public Class Music
                     If i = 0 Then
                         Await player.PlayAsync(track)
                         'Await ReplyAsync($"Now Playing: **{track.Title}**")
-                        Await ReplyAsync(embed:=Await embedHandler.victoriaNowPlayingEmbed(track.Title, track))
+                        Await ReplyAsync(embed:=Await embedHandler.victoriaNowPlayingEmbed(track))
                     Else
                         player.Queue.Enqueue(searchResponse.Tracks(i))
                     End If
@@ -72,7 +73,7 @@ Public Class Music
             Else
                 Await player.PlayAsync(track)
                 'Await ReplyAsync($"Now Playing: **{track.Title}**")
-                Await ReplyAsync(embed:=Await embedHandler.victoriaNowPlayingEmbed(track.Title, track))
+                Await ReplyAsync(embed:=Await embedHandler.victoriaNowPlayingEmbed(track))
             End If
         End If
         Await audioService.setVolumeAsync(Context.Guild, 25, Context.Channel)
