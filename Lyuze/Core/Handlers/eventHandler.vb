@@ -1,14 +1,12 @@
 ﻿Imports Discord.WebSocket
 Imports Discord.Commands
 Imports Discord
-Imports Victoria
 Imports Microsoft.Extensions.DependencyInjection
 Imports System.Media
 Imports System.IO
 Imports System.Threading
 
 NotInheritable Class eventHandler
-    Private Shared ReadOnly _lavaNode As LavaNode = serviceHandler.provider.GetRequiredService(Of LavaNode)
     Private Shared ReadOnly _client As DiscordSocketClient = serviceHandler.provider.GetRequiredService(Of DiscordSocketClient)
     Private Shared ReadOnly _cmdService As CommandService = serviceHandler.provider.GetRequiredService(Of CommandService)
     Private Shared ReadOnly _images As Images = serviceHandler.provider.GetRequiredService(Of Images)
@@ -19,8 +17,6 @@ NotInheritable Class eventHandler
         AddHandler _cmdService.Log, AddressOf logAsync
         AddHandler _client.Ready, AddressOf onReady
         AddHandler _client.MessageReceived, AddressOf messageRecieved
-        AddHandler _lavaNode.OnTrackEnded, AddressOf audioService.trackEnded
-        AddHandler _lavaNode.OnTrackStarted, AddressOf audioService.trackStart
         AddHandler _client.UserJoined, AddressOf onUserJoined
         AddHandler _client.UserLeft, AddressOf onUserLeave
 
@@ -34,15 +30,6 @@ NotInheritable Class eventHandler
     End Function
 
     Private Async Function onReady() As Task
-
-        If Not _lavaNode.IsConnected Then
-            Try
-                Await _lavaNode.ConnectAsync
-            Catch ex As Exception
-                Throw ex
-            End Try
-        End If
-
         Await _client.SetStatusAsync(UserStatus.Online)
 
         Dim t = New Timer(Async Sub(__)

@@ -33,72 +33,74 @@ Public Class Weeb
     <Remarks("gchar 1")>
     Public Async Function GetAnimeCharacter(id As Integer) As Task
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your character!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetCharacterAsync(id, Context))
+        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetCharacterAsync(id))
     End Function
 
 #End Region
 
 #Region "Top Info"
 
-    <Command("gettopanime")>
-    <[Alias]("gtopa")>
-    <Summary("gtopa | See the top 10 anime.")>
-    <Remarks("\gtopa <option> | Options = tv, movies, special, upcoming, airing, ova, popularity, favorite")>
-    Public Async Function GetTopAnime(Optional type As String = "default") As Task
+#Region "waiting for updated docs"
+    '<Command("gettopanime")>
+    '<[Alias]("gtopa")>
+    '<Summary("gtopa | See the top 10 anime.")>
+    '<Remarks("\gtopa <option> | Options = tv, movies, special, upcoming, airing, ova, popularity, favorite")>
+    'Public Async Function GetTopAnime(Optional type As String = "default") As Task
 
-        Try
-            Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopAnimeAsync(type, Context))
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Top Anime", ex.Message).Result)
-        End Try
-    End Function
+    '    Try
+    '        Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
+    '        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopAnimeAsync(type, Context))
+    '    Catch ex As Exception
+    '        ReplyAsync(embed:=embedHandler.errorEmbed("Top Anime", ex.Message).Result)
+    '    End Try
+    'End Function
 
-    <Command("gettopmanga")>
-    <[Alias]("gtopm")>
-    <Summary("gtopm | See the top 10 Manga.")>
-    <Remarks("\gtopm <option> | Options = doujin, favorite, manga, manhua, manhwa, novel, oneshot, popularity")>
-    Public Async Function GetTopManga(Optional type As String = "default") As Task
+    '<Command("gettopmanga")>
+    '<[Alias]("gtopm")>
+    '<Summary("gtopm | See the top 10 Manga.")>
+    '<Remarks("\gtopm <option> | Options = doujin, favorite, manga, manhua, manhwa, novel, oneshot, popularity")>
+    'Public Async Function GetTopManga(Optional type As String = "default") As Task
 
-        Try
+    '    Try
 
-            Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopMangaAsync(type, Context))
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
-        End Try
-    End Function
+    '        Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
+    '        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopMangaAsync(type, Context))
+    '    Catch ex As Exception
+    '        ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
+    '    End Try
+    'End Function
 
-    <Command("gettopcharacter")>
-    <[Alias]("gtopc")>
-    <Summary("gtopc | See the top 10 Anime Characters.")>
-    Public Async Function GetTopAnimeChatacter() As Task
+    '<Command("gettopcharacter")>
+    '<[Alias]("gtopc")>
+    '<Summary("gtopc | See the top 10 Anime Characters.")>
+    'Public Async Function GetTopAnimeChatacter() As Task
 
-        Try
+    '    Try
 
-            Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-            Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopCharacterAsync(Context))
+    '        Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
+    '        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopCharacterAsync(Context))
 
-        Catch ex As Exception
-            ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
-        End Try
-    End Function
+    '    Catch ex As Exception
+    '        ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
+    '    End Try
+    'End Function
 
-    <Command("gettoppeople")>
-    <[Alias]("gtopp")>
-    <Summary("gtopp | See the top 10 People.")>
-    Public Async Function GetTopPeople() As Task
+    '<Command("gettoppeople")>
+    '<[Alias]("gtopp")>
+    '<Summary("gtopp | See the top 10 People.")>
+    'Public Async Function GetTopPeople() As Task
 
-        Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopPeopleAsync(Context))
+    '    Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
+    '    Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopPeopleAsync(Context))
 
-    End Function
+    'End Function
+#End Region
 
     <Command("getseason")>
     <[Alias]("gseason")>
     <Summary("gseason | See 10 seasonal anime listings.")>
-    Public Async Function GetSeasonalAnime() As Task
-        Await ReplyAsync(embed:=Await AnimeService.GetSeasonalAsync())
+    Public Async Function GetSeasonalAnime(season As String, Optional _date As Integer = 0) As Task
+        Await ReplyAsync(embed:=Await AnimeService.GetSeasonalAsync(season, _date))
     End Function
 
 #End Region

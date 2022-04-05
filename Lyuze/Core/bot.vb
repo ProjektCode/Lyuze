@@ -4,7 +4,6 @@ Imports Discord.WebSocket
 Imports Discord.Addons.Interactive
 Imports Discord.Net.Providers.WS4Net
 Imports Microsoft.Extensions.DependencyInjection
-Imports Victoria
 Imports System.Threading
 Imports JikanDotNet
 
@@ -33,10 +32,6 @@ Public Class bot
         Dim collection = New ServiceCollection
         collection.AddSingleton(_client)
         collection.AddSingleton(_cmdService)
-        collection.AddLavaNode(Sub(LavaConfig)
-                                   LavaConfig.SelfDeaf = False
-                                   LavaConfig.ReconnectAttempts = 5
-                               End Sub)
         collection.AddSingleton(Of InteractiveService)
         collection.AddSingleton(Of IJikan, Jikan)
         collection.AddSingleton(Of Images)

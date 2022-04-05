@@ -17,8 +17,8 @@ Partial Public Class Settings
 	<JsonProperty("Welcome Message")>
 	Public Property WelcomeMessage() As List(Of String)
 
-	<JsonProperty("Goodby Message")>
-	Public Property GoodbyMessage() As List(Of String)
+	<JsonProperty("Goodbye Message")>
+	Public Property GoodbyeMessage() As List(Of String)
 
 End Class
 
@@ -63,9 +63,6 @@ Partial Public Class IDs
 	<JsonProperty("Leave ID")>
 	Public Property LeaveId() As ULong
 End Class
-
-
-
 
 Partial Public Class Settings
 	Public Shared Function Data() As Settings
