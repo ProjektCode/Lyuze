@@ -8,22 +8,23 @@ NotInheritable Class InformationService
     Private Shared ReadOnly _imgs As Images = serviceHandler.provider.GetRequiredService(Of Images)
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
     Private Shared ReadOnly rand As New Random
+    Private Shared ReadOnly defaultImage As String = "https://i.imgur.com/Kl2Qrd2.png"
 
     Public Shared Async Function GetProfile(user As IGuildUser, ctx As SocketCommandContext) As Task(Of Embed)
         Dim profileList As String() = {
-            "1.png?token=AFU5U6UQZD74W4NDJIKFEM3BVWVQE",
-            "2.png?token=AFU5U6TBB4DN3ZCRFH6AIPDBVWVQ4",
-            "3.png?token=AFU5U6TDBAAFLSSUTJI4VATBVWVRM"
+            "1.png?token=GHSAT0AAAAAABSXUW76TOCLZ6LPL7T435LOYSRAX4A",
+            "2.png?token=GHSAT0AAAAAABSXUW76G6OF4AIGRIZZKIBOYSRBELA",
+            "3.png?token=GHSAT0AAAAAABSXUW76CAOYL2527LBIJP6CYSRBEOA"
         }
         Dim profileBanner As String = rand.Next(profileList.Length)
 
-        Dim url As String = $"https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Assets/Images/Banner-User-{ profileList(profileBanner)}"
+        Dim url As New Uri($"https://raw.githubusercontent.com/ProjektCode/Lyuze/master/Lyuze/Assets/Images/Banner-User-{ profileList(profileBanner)}", UriKind.Absolute)
         Try
 
             Dim embed As New EmbedBuilder With {
                 .Title = $"{user.Username}'s Profile",
-                .ImageUrl = url,
-                .Color = New Color(Await _imgs.RandomColorFromURL(url)),
+                .ImageUrl = url.AbsoluteUri,
+                .Color = New Color(Await _imgs.RandomColorFromURL(url.AbsoluteUri)),
                 .ThumbnailUrl = user.GetAvatarUrl(ImageFormat.Auto, 256),
                 .Timestamp = ctx.Message.Timestamp,
                 .Footer = New EmbedFooterBuilder With {
@@ -54,25 +55,25 @@ NotInheritable Class InformationService
 
     Public Shared Async Function GetServer(g As IGuild, ctx As SocketCommandContext) As Task(Of Embed)
         Dim serverList As String() = {
-            "1.png?token=AFU5U6QEHUY4FLRXL6YKGXLBV3V3W",
-            "2.png?token=AFU5U6S2VSHNIRRAUVCDII3BV3V4E",
-            "3.png?token=AFU5U6SB4ULQZF4K6GSSN5LBV3V4M"
+            "1.png?token=GHSAT0AAAAAABSXUW77MLVJIDBRLYTOVT56YSRBJCQ",
+            "2.png?token=GHSAT0AAAAAABSXUW76AEDNO6YROWG4QTAOYSRBJEA",
+            "3.png?token=GHSAT0AAAAAABSXUW77ZKYMGVQJR4DE6ZBEYSRBJBQ"
         }
         Dim serverBanner As String = rand.Next(serverList.Length)
 
-        Dim url As String = $"https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Assets/Images/Banner-Server-{ serverList(serverBanner)}"
+        Dim url As New Uri($"https://raw.githubusercontent.com/ProjektCode/Lyuze/master/Lyuze/Assets/Images/Banner-Server-{ serverList(serverBanner)}", UriKind.Absolute)
 
         Try
 
             Dim embed As New EmbedBuilder With {
                 .Title = $"{g.Name}'s information",
-                .ImageUrl = url,
-                .Color = New Color(Await _imgs.RandomColorFromURL(url)),
-                .ThumbnailUrl = g.IconUrl,
+                .ImageUrl = url.AbsoluteUri,
+                .Color = New Color(Await _imgs.RandomColorFromURL(url.AbsoluteUri)),
+                .ThumbnailUrl = If(g.IconUrl, defaultImage),
                 .Timestamp = ctx.Message.Timestamp,
                 .Footer = New EmbedFooterBuilder With {
                     .Text = "Server Data",
-                    .IconUrl = g.IconUrl
+                    .IconUrl = If(g.IconUrl, defaultImage)
                 }
             }
 
