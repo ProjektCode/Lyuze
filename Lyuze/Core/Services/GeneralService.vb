@@ -1,4 +1,5 @@
-﻿Imports Discord
+﻿Imports System.Net
+Imports Discord
 Imports Discord.Commands
 Imports Microsoft.Extensions.DependencyInjection
 
@@ -18,7 +19,7 @@ NotInheritable Class GeneralService
                 .Title = $"All guild emotes for usage do :EmoteName:",
                 .ImageUrl = "https://i.imgur.com/vc241Ku.jpeg",
                 .Description = "The full list of our custom guild emotes",
-                .Color = New Color(_Utils.RandomEmbedColor),
+                .Color = New Color(_utils.RandomEmbedColor),
                 .ThumbnailUrl = g.IconUrl,
                 .Timestamp = ctx.Message.Timestamp,
                 .Footer = New EmbedFooterBuilder With {
@@ -47,6 +48,14 @@ NotInheritable Class GeneralService
         Catch ex As Exception
             Return embedHandler.errorEmbed("General - Emotes", ex.Message).Result
         End Try
+    End Function
+
+    Public Shared Function ReverseShortUrl(url As String)
+        Dim Webrequest As HttpWebRequest = System.Net.WebRequest.Create(url)
+        Dim Webresponse As HttpWebResponse = CType(Webrequest.GetResponse(), HttpWebResponse)
+        Dim uri As Uri = Webresponse.ResponseUri
+        Return uri.AbsoluteUri
+
     End Function
 
 End Class

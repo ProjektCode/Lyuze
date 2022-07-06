@@ -3,6 +3,8 @@ Imports Discord
 Imports Discord.Commands
 Imports Discord.Addons.Interactive
 Imports Microsoft.Extensions.DependencyInjection
+Imports System.Text
+Imports SauceNET
 
 <Name("General")>
 <Summary("Commands that don't deserve their own place.")>
@@ -27,51 +29,15 @@ Public Class General
         Await ReplyAsync(embed:=Await ModService.Report(id, Context))
     End Function
 
-    <Command("test")>
-    Public Async Function test() As Task
-        Try
-
-            Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync("http://localhost:5000/characters/w")
-            Dim c = [Operator].FromJson(response)
-            Dim potential As String
-            Dim skill As String
-
-            If c Is Nothing Then
-                ReplyAsync("Something went wrong.")
-                Return
-            End If
-
-            Dim embed = New EmbedBuilder With {
-                .Title = c.Profile.Name,
-                .Description = c.Profile.Description,
-                .ImageUrl = "https://api.arknights.dev/characters/w/splash_e2",
-                .Color = New Color(_utils.RandomEmbedColor)
-            }
-            embed.AddField("Position", c.Profile.Position, True)
-            embed.AddField("Role", c.Profile.AttackType, True)
-            embed.AddField("Role", c.Profile.Role, True)
-            embed.AddField("Role", c.Profile.SubRole, True)
-            embed.AddField("Role", c.Profile.Rarity, True)
-            embed.AddField("Role", c.Profile.AlternativeForms, True)
-            embed.AddField("Role", c.Profile.Quote, True)
-            embed.AddField("Role", c.Profile.Artist, True)
-            embed.AddField("Role", c.Profile.Cv, True)
-            embed.AddField("Role", c.Profile.Gender, True)
-            embed.AddField("Role", c.Profile.PlaceOfBirth, True)
-            embed.AddField("Role", c.Profile.Birthday, True)
-            embed.AddField("Role", c.Profile.Race, True)
-            embed.AddField("Role", c.Profile.InfectionStatus, True)
-            embed.AddField("Role", c.Profile.Group, True)
-            embed.AddField("Role", $"CN: {c.Profile.ReleaseDate.Cn}{Environment.NewLine}NA: {c.Profile.ReleaseDate.Na}", True)
-            embed.AddField("Potentials", potential)
-            embed.AddField("Skills", skill)
-
-            ReplyAsync(embed:=embed.Build)
-
-        Catch ex As Exception
-
-        End Try
+    <Command("url")>
+    <Summary("Gets the long url from url shorteners.")>
+    <Remarks("\url https://bit.ly/3uqikrh | returns a mediafire link,")>
+    Public Async Function GetUrl(url As String) As Task
+        Await ReplyAsync(GeneralService.ReverseShortUrl(url))
     End Function
 
+    <Command("test")>
+    Public Async Function test(url As String) As Task
+        Await ReplyAsync(embed:=Await AnimeService.GetSauce(Context, url))
+    End Function
 End Class

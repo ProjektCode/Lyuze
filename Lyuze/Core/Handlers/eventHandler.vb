@@ -36,7 +36,7 @@ NotInheritable Class eventHandler
                               Await _client.SetGameAsync(_utils.sList.ElementAtOrDefault(_utils.sIndex), type:=ActivityType.Watching)
                               _utils.sIndex = If(_utils.sIndex + 1 = _utils.sList.Count, 0, _utils.sIndex + 1)
                           End Sub, Nothing, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(120))
-        _utils.winHide()
+        '_utils.winHide()
         SystemSounds.Asterisk.Play()
     End Function
 

@@ -1,4 +1,5 @@
-﻿Imports System.Drawing
+﻿Imports System.IO
+Imports System.Drawing
 Imports System.Globalization
 Imports System.Runtime.InteropServices
 Imports Discord.WebSocket
@@ -73,7 +74,7 @@ Public Class MasterUtils
     End Function
 
     Public Function CheckAPI(key As String) As Boolean
-        If Not key.ToLower = Nothing Then
+        If Not key.ToLower = "disable" Then
             Return True
         End If
 

@@ -98,7 +98,7 @@ Line1:
             embed.AddField("Title Synonyms", If(a.Data.TitleSynonyms.FirstOrDefault, "N/A"), True)
             embed.AddField("Type", Defaults.defaultValue(a.Data.Type), True)
             embed.AddField("Source", Defaults.defaultValue(a.Data.Source), True)
-            embed.AddField("Aired", Defaults.defaultValue(a.Data.Aired.ToString), True)
+            embed.AddField("Aired", Defaults.defaultValue($"{a.Data.Aired.From.Value.ToShortDateString} - {a.Data.Aired.To.Value.ToShortDateString}"), True)
             embed.AddField("Status", Defaults.defaultValue(a.Data.Status), True)
             embed.AddField("Episodes", Defaults.defaultValue(a.Data.Episodes), True)
             embed.AddField("Popularity Rank", Defaults.defaultValue(a.Data.Popularity), True)
@@ -678,7 +678,7 @@ Line1:
         End Try
     End Function
 
-#Region "Anime APIs"
+#Region "APIs"
 
     Public Shared Async Function GetAnimeQuote() As Task(Of Embed)
         Try
@@ -743,6 +743,35 @@ Line1:
             Return embed.Build
         Catch ex As Exception
             Return embedHandler.errorEmbed("Anime - Trace", ex.Message).Result
+        End Try
+    End Function
+
+    Public Shared Async Function GetSauce(ctx As SocketCommandContext, url As String) As Task(Of Embed)
+        Try
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim db As String = "dbs[]=5&dbs[]=37&dbs[]=9&dbs[]=12&dbs[]=14&dbs[]=16&dbs[]=25&db=26&dbs[]=27&dbs[]=39&dbs[]=41"
+            Dim response = Await httpClient.GetStringAsync($"https://saucenao.com/search.php?api_key=9da56c3c737d7725384df5bb282ab04a70afb1c8&{db}&output_type=2&testmode=1&numres=16&url={url}")
+            Dim sauce = SauceNaoModel.FromJson(response)
+
+            If sauce Is Nothing Then
+                Return embedHandler.errorEmbed("Test - Sauce", "an error as occurred, please try again later.").Result
+            End If
+
+            Dim embed = New EmbedBuilder With {
+                .Title = "Most Relevant Result",
+                .Description = $"***Top 3 results:***{Environment.NewLine}{sauce.Results.Item(1).Data.ExtUrls.First.AbsoluteUri}{Environment.NewLine}{sauce.Results.Item(2).Data.ExtUrls.First.AbsoluteUri}{Environment.NewLine}{sauce.Results.Item(3).Data.ExtUrls.First.AbsoluteUri}",
+                .ImageUrl = sauce.Results.Item(0).Header.Thumbnail.AbsoluteUri,
+                .ThumbnailUrl = sauce.Results.Item(0).Header.Thumbnail.AbsoluteUri,
+                .Url = sauce.Results.Item(0).Data.ExtUrls.First.AbsoluteUri,
+                .Color = New Color(Await _img.RandomColorFromURL(sauce.Results.Item(0).Header.Thumbnail.AbsoluteUri)),
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = "Time for the sauce.",
+                    .IconUrl = sauce.Results.Item(0).Header.Thumbnail.AbsoluteUri
+                }
+            }
+            Return embed.Build
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Test - Sauce", ex.Message).Result
         End Try
     End Function
 

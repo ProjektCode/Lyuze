@@ -11,7 +11,7 @@ NotInheritable Class FunService
     Private Shared ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
 
 
-    Public Shared Async Function AnimeReddit(ctx As SocketCommandContext) As Task(Of Embed)
+    Public Shared Async Function AnimeRedit(ctx As SocketCommandContext) As Task(Of Embed)
         Try
             Dim httpClient = _httpClientFactory.CreateClient
             Dim response = Await httpClient.GetStringAsync("https://reddit.com/r/" + _utils.getAnimeMeme + "/random.json?limit=1")
@@ -38,7 +38,7 @@ NotInheritable Class FunService
         End Try
     End Function
 
-    Public Shared Async Function RegularReddit(ctx As SocketCommandContext) As Task(Of Embed)
+    Public Shared Async Function RegularRedit(ctx As SocketCommandContext) As Task(Of Embed)
         Try
             Dim httpClient = _httpClientFactory.CreateClient
             Dim response = Await httpClient.GetStringAsync("https://reddit.com/r/" + _utils.getMeme + "/random.json?limit=1")
@@ -190,6 +190,33 @@ NotInheritable Class FunService
             Return embed.Build
         Catch ex As Exception
 
+        End Try
+    End Function
+
+    Public Shared Async Function UselessFact(ctx As SocketCommandContext) As Task(Of Embed)
+        Try
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim response = Await httpClient.GetStringAsync("https://uselessfacts.jsph.pl/random.json?language=en")
+            Dim fact = UselessFactsModel.FromJson(response)
+
+            If fact Is Nothing Then
+                Return embedHandler.errorEmbed("Fun - Useless Fact", "An error occurred please try again later.").Result
+            End If
+
+            Dim embed = New EmbedBuilder With {
+                .Title = fact.Source,
+                .Description = fact.Text,
+                .Color = New Color(_utils.RandomEmbedColor),
+                .Url = fact.SourceUrl.AbsoluteUri,
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = fact.Id.ToString,
+                    .IconUrl = If(ctx.Guild.IconUrl, ctx.User.GetAvatarUrl)
+                }
+            }
+
+            Return embed.Build
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Fun - Usless Fact", ex.Message).Result
         End Try
     End Function
 

@@ -12,7 +12,6 @@ Module Program
     ReadOnly Settings = $"{Resources}Settings\"
 
     ReadOnly _Utils As New MasterUtils
-    ReadOnly process As New Process
 
     Sub Main()
         Console.Title = "Discord Bot - Multi-Purpose Discord Bot"
@@ -45,7 +44,7 @@ Module Program
     Private Sub BotSetup()
         Try
             Dim settingsPath = $"{Settings}settings.json"
-            Dim settingsURL As String = "https://raw.githubusercontent.com/Projekt-Dev/Lyuze/master/Lyuze/Assets/settings.json?token=AFU5U6WEZ2ADGJRTKWBVRWLB2FJ6W"
+            Dim settingsURL As String = $"http://lyuze-api.projektcode.com/data/settings"
 
             loggingHandler.LogInformationAsync("setup", "Downloading and setting up file structure for the first time please wait...")
             'Create the file structure.

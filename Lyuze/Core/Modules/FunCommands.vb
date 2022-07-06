@@ -176,14 +176,14 @@ Public Class Fun
     <[Alias]("ameme")>
     <Summary("Get a meme from a random Anime subreddit")>
     Public Async Function animeRedditMeme() As Task
-        Await ReplyAsync(embed:=Await FunService.AnimeReddit(Context))
+        Await ReplyAsync(embed:=Await FunService.AnimeRedit(Context))
     End Function
 
     <Command("regularmememe")>
     <[Alias]("rmeme")>
     <Summary("Get a meme from a random Meme subreddit")>
     Public Async Function regularRedditMeme() As Task
-        Await ReplyAsync(embed:=Await FunService.RegularReddit(Context))
+        Await ReplyAsync(embed:=Await FunService.RegularRedit(Context))
     End Function
 
     <Command("neko")>
@@ -211,6 +211,14 @@ Public Class Fun
     <Remarks("\dic hello")>
     Public Async Function GetDefinition(word As String) As Task
         Await ReplyAsync(embed:=Await FunService.GetDictionary(Context, word))
+    End Function
+
+    <Command("uselessfact")>
+    <[Alias]("ufact")>
+    <Summary("Get a random useless fact.")>
+    <Remarks("\ufact")>
+    Public Async Function GetFact() As Task
+        Await ReplyAsync(embed:=Await FunService.UselessFact(Context))
     End Function
 
 End Class

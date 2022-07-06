@@ -9,16 +9,12 @@ NotInheritable Class InformationService
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
     Private Shared ReadOnly rand As New Random
     Private Shared ReadOnly defaultImage As String = "https://i.imgur.com/Kl2Qrd2.png"
+    Private Shared ReadOnly apiurl As String = "http://lyuze-api.projektcode.com"
 
     Public Shared Async Function GetProfile(user As IGuildUser, ctx As SocketCommandContext) As Task(Of Embed)
-        Dim profileList As String() = {
-            "1.png?token=GHSAT0AAAAAABSXUW76TOCLZ6LPL7T435LOYSRAX4A",
-            "2.png?token=GHSAT0AAAAAABSXUW76G6OF4AIGRIZZKIBOYSRBELA",
-            "3.png?token=GHSAT0AAAAAABSXUW76CAOYL2527LBIJP6CYSRBEOA"
-        }
-        Dim profileBanner As String = rand.Next(profileList.Length)
-
-        Dim url As New Uri($"https://raw.githubusercontent.com/ProjektCode/Lyuze/master/Lyuze/Assets/Images/Banner-User-{ profileList(profileBanner)}", UriKind.Absolute)
+        Dim number = rand.Next(1, 3)
+        Dim aurl = apiurl
+        Dim url As New Uri($"{aurl}/images/banners/info/profile/user-{number}", UriKind.Absolute)
         Try
 
             Dim embed As New EmbedBuilder With {
@@ -54,14 +50,9 @@ NotInheritable Class InformationService
     End Function
 
     Public Shared Async Function GetServer(g As IGuild, ctx As SocketCommandContext) As Task(Of Embed)
-        Dim serverList As String() = {
-            "1.png?token=GHSAT0AAAAAABSXUW77MLVJIDBRLYTOVT56YSRBJCQ",
-            "2.png?token=GHSAT0AAAAAABSXUW76AEDNO6YROWG4QTAOYSRBJEA",
-            "3.png?token=GHSAT0AAAAAABSXUW77ZKYMGVQJR4DE6ZBEYSRBJBQ"
-        }
-        Dim serverBanner As String = rand.Next(serverList.Length)
-
-        Dim url As New Uri($"https://raw.githubusercontent.com/ProjektCode/Lyuze/master/Lyuze/Assets/Images/Banner-Server-{ serverList(serverBanner)}", UriKind.Absolute)
+        Dim number = rand.Next(1, 3)
+        Dim aurl = apiurl
+        Dim url As New Uri($"{aurl}/images/banners/info/server/server-{number}", UriKind.Absolute)
 
         Try
 

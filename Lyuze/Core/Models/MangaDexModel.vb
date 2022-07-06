@@ -13,10 +13,10 @@ Partial Public Class MangaDex
 End Class
 
 Partial Public Class Data
-	<JsonProperty("id")>
-	Public Property Id() As Guid
+    <JsonProperty("id")>
+    Public Property GuId() As Guid
 
-	<JsonProperty("type")>
+    <JsonProperty("type")>
 	Public Property Type() As String
 
 	<JsonProperty("attributes")>

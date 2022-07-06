@@ -15,7 +15,7 @@ Public Class Weeb
     <Remarks("\ganime 1")>
     Public Async Function GetAnime(id As Integer) As Task
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your anime!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetAnimeAsync(id, Context))
+        Await ReplyAsync(embed:=Await AnimeService.GetAnimeAsync(id, Context))
     End Function
 
     <Command("getmanga")>
@@ -24,7 +24,7 @@ Public Class Weeb
     <Remarks("\gmanga 1")>
     Public Async Function GetManga(id As Integer) As Task
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your manga!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetMangaAsync(id, Context))
+        Await ReplyAsync(embed:=Await AnimeService.GetMangaAsync(id, Context))
     End Function
 
     <Command("getcharacter")>
@@ -33,7 +33,7 @@ Public Class Weeb
     <Remarks("gchar 1")>
     Public Async Function GetAnimeCharacter(id As Integer) As Task
         Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your character!", timeout:=New TimeSpan(0, 0, 5))
-        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetCharacterAsync(id))
+        Await ReplyAsync(embed:=Await AnimeService.GetCharacterAsync(id))
     End Function
 
 #End Region
@@ -49,7 +49,7 @@ Public Class Weeb
 
     '    Try
     '        Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-    '        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopAnimeAsync(type, Context))
+    '        Await ReplyAsync(embed:=Await AnimeService.GetTopAnimeAsync(type, Context))
     '    Catch ex As Exception
     '        ReplyAsync(embed:=embedHandler.errorEmbed("Top Anime", ex.Message).Result)
     '    End Try
@@ -64,7 +64,7 @@ Public Class Weeb
     '    Try
 
     '        Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-    '        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopMangaAsync(type, Context))
+    '        Await ReplyAsync(embed:=Await AnimeService.GetTopMangaAsync(type, Context))
     '    Catch ex As Exception
     '        ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
     '    End Try
@@ -78,7 +78,7 @@ Public Class Weeb
     '    Try
 
     '        Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-    '        Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopCharacterAsync(Context))
+    '        Await ReplyAsync(embed:=Await AnimeService.GetTopCharacterAsync(Context))
 
     '    Catch ex As Exception
     '        ReplyAsync(embed:=embedHandler.errorEmbed("Top Manga", ex.Message).Result)
@@ -91,7 +91,7 @@ Public Class Weeb
     'Public Async Function GetTopPeople() As Task
 
     '    Await ReplyAndDeleteAsync($"{Context.Message.Author.Mention} Please wait while I attempt to look your top 10!", timeout:=New TimeSpan(0, 0, 5))
-    '    Await Context.Channel.SendMessageAsync(embed:=Await AnimeService.GetTopPeopleAsync(Context))
+    '    Await ReplyAsync(embed:=Await AnimeService.GetTopPeopleAsync(Context))
 
     'End Function
 #End Region
@@ -141,9 +141,19 @@ Public Class Weeb
 
     <Command("trace")>
     <Summary("Find what anime is from a single screen-shot")>
-    <Remarks("/trace https://i.imgur.com/QNyCkZh.jpeg | Can also use a message attachment.")>
+    <Remarks("\trace https://i.imgur.com/QNyCkZh.jpeg | Can also use a message attachment.")>
     Public Async Function traceImage(Optional url As String = Nothing) As Task
         Await ReplyAsync(embed:=Await AnimeService.TraceAnimeAsync(Context, url))
+    End Function
+
+    <Command("sauce")>
+    <Summary("Get the sauce of an image with decent results")>
+    <Remarks("\sauce https://i.imgur.com/WRCuQAG.jpg or \sauce [discord image attachment]")>
+    Public Async Function Sauce(Optional url As String = Nothing) As Task
+        If Context.Message.Attachments.Count = 1 Then
+            url = Context.Message.Attachments.First.Url
+        End If
+        Await ReplyAsync(embed:=Await AnimeService.GetSauce(Context, url))
     End Function
 #End Region
 
