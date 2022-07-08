@@ -31,7 +31,7 @@ Public Class Images
     End Function
 
     'Returns a cropped image
-    Public Async Function createImageAsync(width As Integer, height As Integer, Optional url As String = Nothing) As Task(Of String)
+    Public Async Function createImageAsync(width As Integer, height As Integer, url As String) As Task(Of String)
         Dim background = Await fetchImageAsync(If(url, Wallpapers.returnImage.Result))
 
         If background.Width < width Or background.Height < height Then

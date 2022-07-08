@@ -3,7 +3,10 @@ Imports System.Net
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-
+'-Change profile command to images instead of embeds.
+'-Add database for leveling system with store for profile backgrounds.
+'-Find more commands/apis to use.(try for 100 commands.)
+'+Crop command does not work when it's not on the host machine.(works on the pc that it's being developed on but when being hosted on a different pc it does not work.)
 #End Region
 
 Module Program

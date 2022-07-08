@@ -1,5 +1,4 @@
-﻿Imports Discord
-Imports Discord.Commands
+﻿Imports Discord.Commands
 Imports Discord.Addons.Interactive
 Imports System.IO
 Imports Microsoft.Extensions.DependencyInjection
@@ -14,7 +13,7 @@ Public Class imageManipulation
     <Command("crop", RunMode.Async)>
     <Summary("Crops an image into a given dimension.")>
     <Remarks("\crop https://i.imgur.com/LdiD7hb.png | \crop <image attachment>")>
-    Public Async Function imgCrop(Optional url As String = Nothing) As Task
+    Public Async Function imgCrop(width As Integer, height As Integer, Optional url As String = Nothing) As Task
 
 #Region "Execution"
 
@@ -22,23 +21,9 @@ Public Class imageManipulation
 
             'Checks if the URL in an attachment is a actual image. - Not added
             If Context.Message.Attachments.Count = 1 Then
-                'Interactive response to get width with a 15sec timer
-                Await ReplyAndDeleteAsync("What is your desired width?", timeout:=New TimeSpan(0, 0, 15))
-                Dim widthReply = Await NextMessageAsync(True, timeout:=New TimeSpan(0, 0, 10))
-                If widthReply Is Nothing Then
-                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given time frame.")
-                    Return
-                End If
-                'Interactive response to get height with a 15sec timer
-                Await ReplyAndDeleteAsync("What is your desired height?", timeout:=New TimeSpan(0, 0, 15))
-                Dim heightReply = Await NextMessageAsync(timeout:=New TimeSpan(0, 0, 10))
-                If heightReply Is Nothing Then
-                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given time frame.")
-                    Return
-                End If
 
-                Dim width = Convert.ToInt32(widthReply.ToString)
-                Dim height = Convert.ToInt32(heightReply.ToString)
+                'Dim width = Convert.ToInt32(widthReply.ToString)
+                'Dim height = Convert.ToInt32(heightReply.ToString)
 
 
                 If width <= 0 Or height <= 0 Then
@@ -55,7 +40,7 @@ Public Class imageManipulation
                     File.Delete(path)
                     Return
                 Else
-                    Await ReplyAsync($"The given attachment was not a supported image format. if it is an image message admin to allow format.")
+                    Await ReplyAsync($"The given attachment was not a supported image format. use png or jpg.")
                     Return
                 End If
             End If
@@ -64,22 +49,6 @@ Public Class imageManipulation
                 Await ReplyAsync("Please provide a direct URL to am image.")
                 Return
             Else
-
-                Await ReplyAndDeleteAsync("What is your desired width?", timeout:=New TimeSpan(0, 0, 15))
-                Dim widthReply = Await NextMessageAsync(True, timeout:=New TimeSpan(0, 0, 10))
-                If widthReply Is Nothing Then
-                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given time frame.")
-                End If
-                Context.Message.DeleteAsync()
-                Await ReplyAndDeleteAsync("What is your desired height?", timeout:=New TimeSpan(0, 0, 15))
-                Dim heightReply = Await NextMessageAsync(timeout:=New TimeSpan(0, 0, 10))
-                If heightReply Is Nothing Then
-                    Await ReplyAndDeleteAsync($"{Context.Message.Author} you did not reply within the given time frame.")
-                End If
-                Context.Message.DeleteAsync()
-                Dim width = Convert.ToInt32(widthReply.ToString)
-                Dim height = Convert.ToInt32(heightReply.ToString)
-
                 Dim path = Await _img.createImageAsync(width, height, url)
                 Await Context.Channel.SendFileAsync(path)
                 File.Delete(path)
@@ -101,33 +70,33 @@ Public Class imageManipulation
 
     End Function
 
-    <Command("masscrop", RunMode.Async)>
-    <[Alias]("mc")>
-    <Summary("mc | Owner only command - mass crops images from a list.")>
-    Public Async Function imgMassCrop() As Task
-        Dim settings = Lyuze.Settings.Data
+    '<Command("masscrop", RunMode.Async)>
+    '<[Alias]("mc")>
+    '<Summary("mc | Owner only command - mass crops images from a list.")>
+    'Public Async Function imgMassCrop(width As Integer, height As Integer) As Task
+    '    Dim settings = Lyuze.Settings.Data
 
-        Try
-            If Context.User.Id = settings.IDs.OwnerId Then
-                For Each wall As String In Wallpapers.images
-                    Dim path = Await _img.createImageAsync(1100, 450, wall)
-                    Await Context.Channel.SendFileAsync(path)
-                    File.Delete(path)
-                Next
-            Else
-                Await Context.Channel.SendMessageAsync("This is only for the bot owner.")
-            End If
-        Catch ex As Exception
-            Dim _settings = Lyuze.Settings.Data
+    '    Try
+    '        If Context.User.Id = settings.IDs.OwnerId Then
+    '            For Each wall As String In Wallpapers.images
+    '                Dim path = Await _img.createImageAsync(width, height, wall)
+    '                Await Context.Channel.SendFileAsync(path)
+    '                File.Delete(path)
+    '            Next
+    '        Else
+    '            Await Context.Channel.SendMessageAsync("This is only for the bot owner.")
+    '        End If
+    '    Catch ex As Exception
+    '        Dim _settings = Lyuze.Settings.Data
 
-            If _settings.IDs.ErrorId = 0 Then
-                loggingHandler.LogCriticalAsync($"image", ex.Message)
-            Else
-                Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
-                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Image - Masscrop", ex.Message).Result)
-            End If
-        End Try
+    '        If _settings.IDs.ErrorId = 0 Then
+    '            loggingHandler.LogCriticalAsync($"image", ex.Message)
+    '        Else
+    '            Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ErrorId)
+    '            chnl.SendMessageAsync(embed:=embedHandler.errorEmbed($"Image - Masscrop", ex.Message).Result)
+    '        End If
+    '    End Try
 
-    End Function
+    'End Function
 
 End Class
