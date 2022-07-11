@@ -220,4 +220,19 @@ NotInheritable Class FunService
         End Try
     End Function
 
+    Public Shared Async Function Quote(ctx As SocketCommandContext, id As ULong) As Task(Of Embed)
+        Try
+            Dim msg = ctx.Channel.GetMessageAsync(id)
+            Dim embed = New EmbedBuilder With {
+                .Title = msg.Result.Author.ToString,
+                .Description = $"*""{msg.Result.Content} - {Date.Now.Year}*""",
+                .ThumbnailUrl = If(msg.Result.Author.GetAvatarUrl, msg.Result.Author.GetDefaultAvatarUrl),
+                .Color = New Color(_utils.RandomEmbedColor)
+            }
+            Return embed.Build
+        Catch ex As Exception
+
+        End Try
+    End Function
+
 End Class

@@ -4,9 +4,14 @@ Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
 '-Change profile command to images instead of embeds.
-'-Add database for leveling system with store for profile backgrounds.
-'-Find more commands/apis to use.(try for 100 commands.)
-'+Crop command does not work when it's not on the host machine.(works on the pc that it's being developed on but when being hosted on a different pc it does not work.)
+'-Add database for leveling system with store for profile backgrounds.=leveling finished=
+'-Find more commands/apis to use.(try for 50 commands.)=suggestion=
+'-Turn bannerasync into a command to make custom banners.
+'-Removed cod commands and turn it into it's own bot
+'-Decided if you want to slowly merge from settings.json to MongoDB
+'-RPG?
+'-For cooldown add to either database or json
+'+Emote command is returning null on for each statement
 #End Region
 
 Module Program
@@ -14,7 +19,7 @@ Module Program
     ReadOnly Resources = $"{basePath}Resources\"
     ReadOnly Settings = $"{Resources}Settings\"
 
-    ReadOnly _Utils As New MasterUtils
+    ReadOnly _utils As New MasterUtils
 
     Sub Main()
         Console.Title = "Discord Bot - Multi-Purpose Discord Bot"
@@ -37,7 +42,7 @@ Module Program
         End If
         Console.Clear()
         Console.Title = $"{settings.Discord.Name} - Multi-Purpose Discord Bot"
-        _Utils.setBanner($"/ {settings.Discord.Name} Bot \", "#FFC0CB", ConsoleColor.Green)
+        _utils.setBanner($"/ {settings.Discord.Name} Bot \", "#FFC0CB", ConsoleColor.Green)
         Sleep(500)
 
 

@@ -17,8 +17,12 @@ Partial Public Class Settings
 	<JsonProperty("Welcome Message")>
 	Public Property WelcomeMessage() As List(Of String)
 
-	<JsonProperty("Goodbye Message")>
-	Public Property GoodbyeMessage() As List(Of String)
+    <JsonProperty("Goodbye Message")>
+    Public Property GoodbyeMessage() As List(Of String)
+
+    <JsonProperty("Database", NullValueHandling:=NullValueHandling.Ignore)>
+    Public Property Database() As Database
+
 
 End Class
 
@@ -63,6 +67,12 @@ Partial Public Class IDs
 	<JsonProperty("Leave ID")>
 	Public Property LeaveId() As ULong
 End Class
+
+Partial Public Class Database
+    <JsonProperty("MongoDB")>
+    Public Property MongoDb() As String
+End Class
+
 
 Partial Public Class Settings
 	Public Shared Function Data() As Settings

@@ -11,6 +11,8 @@ NotInheritable Class eventHandler
     Private Shared ReadOnly _cmdService As CommandService = serviceHandler.provider.GetRequiredService(Of CommandService)
     Private Shared ReadOnly _images As Images = serviceHandler.provider.GetRequiredService(Of Images)
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+    Private Shared ReadOnly _lvl As LevelingSystem = serviceHandler.provider.GetRequiredService(Of LevelingSystem)
+
 
     Public Function loadEvents() As Task
         AddHandler _client.Log, AddressOf logAsync
@@ -41,6 +43,7 @@ NotInheritable Class eventHandler
     End Function
 
     Private Async Function messageRecieved(arg As SocketMessage) As Task
+
         Dim message = TryCast(arg, SocketUserMessage)
         Dim context = New SocketCommandContext(_client, message)
         Dim settings = Lyuze.Settings.Data
@@ -48,6 +51,12 @@ NotInheritable Class eventHandler
         If message.Author.IsBot OrElse TypeOf message.Channel Is IDMChannel Then
             Return
         End If
+
+        'Database
+        Player.CheckProfile(context)
+        _lvl.MsgAntiSpam(context)
+
+
 
         'Anti-Discord invite
         If message.Content.Contains("https://discord.gg/") Then

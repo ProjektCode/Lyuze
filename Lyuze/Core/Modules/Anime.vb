@@ -133,7 +133,8 @@ Public Class Weeb
 #End Region
 
 #Region "Anime APIs"
-    <Command("aquote")>
+    <Command("animequote")>
+    <[Alias]("aquote")>
     <Summary("Get a random anime quote.")>
     Public Async Function aQuote() As Task
         Await ReplyAsync(embed:=Await AnimeService.GetAnimeQuote())

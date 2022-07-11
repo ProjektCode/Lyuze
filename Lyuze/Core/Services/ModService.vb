@@ -8,7 +8,7 @@ NotInheritable Class ModService
     Public Shared Async Function Report(id As ULong, ctx As SocketCommandContext) As Task(Of Embed)
         Try
             Dim message = ctx.Channel.GetMessageAsync(id)
-            Dim embed = New EmbedBuilder With {
+            Dim [embed] = New EmbedBuilder With {
                 .Title = ":pencil: Report",
                 .Description = $"Author: ***{message.Result.Author}***{Environment.NewLine}Message:**{message.Result.Content}**{Environment.NewLine}------------------------------
                     {Environment.NewLine}By:{ctx.Message.Author.Mention}",
@@ -19,9 +19,13 @@ NotInheritable Class ModService
                     .Text = "Submitted Report"
                 }
             }
+            Try
+                ctx.User.SendMessageAsync(embed:=[embed].Build)
+            Catch ex As Exception
 
+            End Try
             ctx.Message.DeleteAsync()
-            Return embed.Build
+            Return [embed].Build
         Catch ex As Exception
             Return embedHandler.errorEmbed("Gen - Report", ex.Message).Result
         End Try
@@ -87,7 +91,7 @@ NotInheritable Class ModService
                         .IconUrl = g.IconUrl
                     }
             }
-
+        ctx.Message.DeleteAsync()
         Return embed.Build
     End Function
 End Class

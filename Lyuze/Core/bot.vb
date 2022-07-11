@@ -36,6 +36,7 @@ Public Class bot
         collection.AddSingleton(Of IJikan, Jikan)
         collection.AddSingleton(Of Images)
         collection.AddSingleton(Of MasterUtils)
+        collection.AddSingleton(Of LevelingSystem)
         collection.AddHttpClient
         serviceHandler.setProvider(collection)
 

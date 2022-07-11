@@ -1,5 +1,4 @@
 ﻿Imports Discord.Commands
-Imports Discord.Addons.Interactive
 
 <Name("Call of Duty")>
 <Summary("Anything COD Related")>

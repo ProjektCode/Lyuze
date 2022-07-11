@@ -221,4 +221,11 @@ Public Class Fun
         Await ReplyAsync(embed:=Await FunService.UselessFact(Context))
     End Function
 
+    <Command("quotethem")>
+    <[Alias]("qt")>
+    <Summary("Somesone said something stupid? Get it quoted. Right click the msg and copy id.")>
+    <Remarks("\qt [message id] | \qt 995153475442843819")>
+    Public Async Function Quote(id As ULong) As Task
+        Await ReplyAsync(embed:=Await FunService.Quote(Context, id))
+    End Function
 End Class
