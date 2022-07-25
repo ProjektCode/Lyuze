@@ -37,6 +37,7 @@ Public Class bot
         collection.AddSingleton(Of Images)
         collection.AddSingleton(Of MasterUtils)
         collection.AddSingleton(Of LevelingSystem)
+        'collection.AddSingleton(Of GoldSystem)
         collection.AddHttpClient
         serviceHandler.setProvider(collection)
 

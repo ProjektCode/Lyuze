@@ -94,4 +94,9 @@ NotInheritable Class ModService
         ctx.Message.DeleteAsync()
         Return embed.Build
     End Function
+
+    Public Shared Async Function ChangeBackground(user As SocketGuildUser) As Task(Of Embed)
+        Dim p As PlayerModel = Await Player.GetUser(user)
+
+    End Function
 End Class

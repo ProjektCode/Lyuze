@@ -1,14 +1,18 @@
 ﻿Imports Discord
 Imports Discord.Commands
 Imports Discord.WebSocket
+Imports Microsoft.Extensions.DependencyInjection
 
 NotInheritable Class embedHandler
 
-    Public Shared Async Function basicEmbed(src As String, msg As String, clr As String) As Task(Of Embed)
+    Private Shared ReadOnly _imgs As Images = serviceHandler.provider.GetRequiredService(Of Images)
+    Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+
+    Public Shared Async Function basicEmbed(src As String, msg As String) As Task(Of Embed)
         Dim embed = Await Task.Run(Function() New EmbedBuilder() _
             .WithTitle($"{src}") _
             .WithDescription($"{msg}") _
-            .WithColor(New Color(clr)) _
+            .WithColor(New Color(_utils.RandomEmbedColor())) _
             .WithCurrentTimestamp() _
             .Build())
 
@@ -48,6 +52,38 @@ NotInheritable Class embedHandler
         embed.AddField("Handle", handle, True)
         embed.AddField("Stock", stock, True)
 
+
+        Return embed.Build
+    End Function
+
+    Public Shared Async Function ProfileEmbed(user As SocketGuildUser, ctx As SocketCommandContext, p As PlayerModel, lvl As LevelingSystem) As Task(Of Embed)
+        Dim embed As New EmbedBuilder With {
+            .Title = $"{user.Username}'s Profile | Level - {p.Level}",
+            .ImageUrl = p.Background,
+            .Color = New Color(Await _imgs.RandomColorFromURL(p.Background)),
+            .ThumbnailUrl = user.GetAvatarUrl(ImageFormat.Auto, 256),
+            .Timestamp = ctx.Message.Timestamp,
+            .Footer = New EmbedFooterBuilder With {
+                .Text = "Profile Data",
+                .IconUrl = ctx.Guild.IconUrl
+            }
+        }
+        If user.Nickname IsNot Nothing Then
+            embed.AddField("Nickname",
+                            user.Nickname, True)
+        End If
+        embed.AddField("XP",
+                       $"{p.XP}/{lvl.LevelEquation(p.Level)}", True)
+        embed.AddField("Account Creation",
+                       user.CreatedAt.DateTime.Date.ToShortDateString, True)
+        embed.AddField("Joined Server",
+                       If(user.JoinedAt.Value.DateTime.ToShortDateString, "N/A"), True)
+        embed.AddField("Current Activity",
+                       If(user.Activity, "N/A"), True)
+        embed.AddField("Favorite Character",
+                       p.FavChar, True)
+        embed.AddField("About Me",
+                       p.AboutMe)
 
         Return embed.Build
     End Function

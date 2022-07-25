@@ -25,3 +25,37 @@ Public Class Information
     End Function
 
 End Class
+<Group("set")>
+<Name("Information")>
+Public Class SetInformation
+    Inherits ModuleBase(Of SocketCommandContext)
+
+    <Command("about")>
+    <Summary("Configure your profile's about me.")>
+    <Remarks("\set about This is a test. | your about me will be 'This is a test.'")>
+    Public Async Function ConfigAboutMe(<Remainder> about As String) As Task
+        Await ReplyAsync(embed:=Await PlayerService.UpdateAboutMe(Context.User, about))
+    End Function
+
+    <Command("background")>
+    <Summary("Configure your profile's background Preferred dimensions are 1299x512.")>
+    <Remarks("\set about This is a test. | your about me will be 'This is a test.'")>
+    Public Async Function ConfigBackground(url As String) As Task
+        Await ReplyAsync(embed:=Await PlayerService.UpdateBackground(Context.User, url))
+    End Function
+
+    <Command("favchar")>
+    <Summary("Configure your profile's favorite character.")>
+    <Remarks("\set favchar Yoimiya. | your favorite character is Yoimiya")>
+    Public Async Function ConfigFavChar(<Remainder> [char] As String) As Task
+        Await ReplyAsync(embed:=Await PlayerService.UpdateFavCharacter(Context.User, [char]))
+    End Function
+
+    <Command("profile")>
+    <Summary("Configure your profile's publicity state.")>
+    <Remarks("\set profile public. | your profile would be set to public having other users view your profile.")>
+    Public Async Function ConfigProfile(state As String) As Task
+        Await ReplyAsync(embed:=Await PlayerService.UpdateProfile(Context.User, state))
+    End Function
+
+End Class

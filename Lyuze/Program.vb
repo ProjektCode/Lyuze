@@ -3,15 +3,13 @@ Imports System.Net
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'-Change profile command to images instead of embeds.
-'-Add database for leveling system with store for profile backgrounds.=leveling finished=
 '-Find more commands/apis to use.(try for 50 commands.)=suggestion=
 '-Turn bannerasync into a command to make custom banners.
 '-Removed cod commands and turn it into it's own bot
 '-Decided if you want to slowly merge from settings.json to MongoDB
-'-RPG?
 '-For cooldown add to either database or json
 '+Emote command is returning null on for each statement
+'-Decided whether to add node server or not.
 #End Region
 
 Module Program

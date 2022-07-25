@@ -21,7 +21,6 @@ NotInheritable Class eventHandler
         AddHandler _client.MessageReceived, AddressOf messageRecieved
         AddHandler _client.UserJoined, AddressOf onUserJoined
         AddHandler _client.UserLeft, AddressOf onUserLeave
-
         Return Task.CompletedTask
     End Function
 
@@ -47,14 +46,15 @@ NotInheritable Class eventHandler
         Dim message = TryCast(arg, SocketUserMessage)
         Dim context = New SocketCommandContext(_client, message)
         Dim settings = Lyuze.Settings.Data
+        Dim user = context.User
 
         If message.Author.IsBot OrElse TypeOf message.Channel Is IDMChannel Then
             Return
         End If
 
         'Database
-        Player.CheckProfile(context)
-        _lvl.MsgAntiSpam(context)
+        Player.CheckProfile(user)
+        _lvl.MsgAntiSpam(user, context)
 
 
 

@@ -2,6 +2,8 @@
 Imports Discord
 Imports Discord.Commands
 Imports Microsoft.Extensions.DependencyInjection
+Imports MongoDB.Bson
+
 <Name("General")>
 <Summary("Commands that don't deserve their own place.")>
 Public Class General
@@ -11,12 +13,12 @@ Public Class General
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
     Private Shared ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
     Private Shared ReadOnly _img As Images = serviceHandler.provider.GetRequiredService(Of Images)
-    Private Shared ReadOnly _lvl As LevelingSystem = serviceHandler.provider.GetRequiredService(Of LevelingSystem)
+    ' Private Shared ReadOnly _lvl As LevelingSystem = serviceHandler.provider.GetRequiredService(Of LevelingSystem)
+    'Private Shared ReadOnly _gold As GoldSystem = serviceHandler.provider.GetRequiredService(Of GoldSystem)
 
     <Command("emotes")>
     <Summary("Returns all available guild emotes.")>
     Public Async Function guildEmotesCmd() As Task
-        _lvl.CmdAntiSpam(Context, 2)
         Await ReplyAsync(embed:=Await GeneralService.GuildEmotes(Context))
     End Function
 
@@ -26,7 +28,6 @@ Public Class General
     Public Async Function Report(id As ULong) As Task
         Dim _settings = Lyuze.Settings.Data
         Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ReportId)
-        _lvl.CmdAntiSpam(Context, 2)
         Await chnl.SendMessageAsync(embed:=Await ModService.Report(id, Context))
     End Function
 
@@ -34,15 +35,28 @@ Public Class General
     <Summary("Gets the long url from url shorteners.")>
     <Remarks("\url https://bit.ly/3uqikrh | returns a mediafire link,")>
     Public Async Function GetUrl(url As String) As Task
-        _lvl.CmdAntiSpam(Context, 2)
         Await ReplyAsync(GeneralService.ReverseShortUrl(url))
     End Function
 
     <Command("test")>
     Public Async Function test() As Task
-        _lvl.CmdAntiSpam(Context, 2)
-        Dim _player As PlayerModel = Await Player.GetUser(Context)
-        Await ReplyAsync($"{Context.User} XP is: {_player.XP}")
-        Await ReplyAsync($"{_lvl.LevelEquation(_player.Level)} XP needed.")
+
+        Try
+            Dim client = New HttpClient()
+            Dim request = New HttpRequestMessage With {
+                .Method = HttpMethod.Get,
+                .RequestUri = New Uri("https://anime-recommender.p.rapidapi.com/?anime_title=Plastic%20Memories&number_of_anime=5")
+            }
+            request.Headers.Add("X-RapidAPI-Key", "6c28fe7c95msh10d4e16c2bb2955p1a8678jsnc9f172ba1fb0")
+            request.Headers.Add("X-RapidAPI-Host", "anime-recommender.p.rapidapi.com")
+            Using response = Await client.SendAsync(request)
+                'response.EnsureSuccessStatusCode()
+                Dim body = Await response.Content.ReadAsStringAsync()
+                Await ReplyAsync(body)
+            End Using
+        Catch ex As Exception
+            ReplyAsync(ex.Message)
+        End Try
+
     End Function
 End Class
