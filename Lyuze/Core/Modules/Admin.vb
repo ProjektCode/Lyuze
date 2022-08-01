@@ -75,7 +75,7 @@ Public Class Admin
     <RequireBotPermission(GuildPermission.ManageChannels)>
     <Remarks("\slowmode 5 | slowmode with a 5 second interval - leave empty to remove slowmode.")>
     Public Async Function slowMode(Optional interval As Integer = 0) As Task
-        Await ReplyAsync(embed:=Await ModService.Slowmode(interval, Context))
+        Await ReplyAsync(embed:=Await AdminService.Slowmode(interval, Context))
     End Function
 
     <Command("ban")>
@@ -93,7 +93,7 @@ Public Class Admin
                 reason = "No reason given."
             End If
 
-            Await ReplyAsync(embed:=Await ModService.Ban(user, reason, Context))
+            Await ReplyAsync(embed:=Await AdminService.Ban(user, reason, Context))
         Catch ex As Exception
             ReplyAsync(ex.Message)
         End Try
@@ -111,7 +111,7 @@ Public Class Admin
             Dim channel = Context.Guild.GetTextChannel(settings.IDs.KickId)
 
             Await user.KickAsync(reason)
-            Await ReplyAsync(embed:=Await ModService.Kick(user, reason, Context))
+            Await ReplyAsync(embed:=Await AdminService.Kick(user, reason, Context))
         Catch ex As Exception
             ReplyAsync(ex.Message)
         End Try
@@ -123,9 +123,17 @@ Public Class Admin
     <RequireUserPermission(GuildPermission.KickMembers)>
     <Remarks("\id @user")>
     Public Async Function getId(user As IGuildUser) As Task
-        Await ReplyAsync(embed:=Await ModService.ID(user, Context))
+        Await ReplyAsync(embed:=Await AdminService.ID(user, Context))
     End Function
 
+    <Command("changebackground")>
+    <[Alias]("cbg")>
+    <Summary("Change the background of someone's profile")>
+    <RequireUserPermission(GuildPermission.KickMembers)>
+    <Remarks("\cbg @user https://i.imgur.com/5c0jfZS.png")>
+    Public Async Function ChangeBackground(user As SocketGuildUser, url As String) As Task
+        Await ReplyAsync(embed:=Await AdminService.ChangeBackground(user, url))
+    End Function
 
 End Class
 
@@ -155,15 +163,15 @@ Public Class Owner
     <Summary("Kills the bot process.")>
     <RequireOwner>
     Public Async Function cmdKill() As Task
-        For Each p As Process In Process.GetProcesses
-            If p.ProcessName = "javaw" Then
-                Try
-                    p.Kill()
-                Catch ex As Exception
-                    Continue For
-                End Try
-            End If
-        Next
+        'For Each p As Process In Process.GetProcesses
+        '    If p.ProcessName = "javaw" Then
+        '        Try
+        '            p.Kill()
+        '        Catch ex As Exception
+        '            Continue For
+        '        End Try
+        '    End If
+        'Next
         For Each p As Process In Process.GetProcesses
             If p.ProcessName = "LyuzeBOT" Then
                 Try

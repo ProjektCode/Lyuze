@@ -28,7 +28,7 @@ Public Class General
     Public Async Function Report(id As ULong) As Task
         Dim _settings = Lyuze.Settings.Data
         Dim chnl = Context.Guild.GetTextChannel(_settings.IDs.ReportId)
-        Await chnl.SendMessageAsync(embed:=Await ModService.Report(id, Context))
+        Await chnl.SendMessageAsync(embed:=Await AdminService.Report(id, Context))
     End Function
 
     <Command("url")>

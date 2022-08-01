@@ -3,8 +3,9 @@ Imports Discord.Commands
 Imports Discord.WebSocket
 Imports Microsoft.Extensions.DependencyInjection
 
-NotInheritable Class ModService
+NotInheritable Class AdminService
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+    Private Shared ReadOnly _imgs As Images = serviceHandler.provider.GetRequiredService(Of Images)
     Public Shared Async Function Report(id As ULong, ctx As SocketCommandContext) As Task(Of Embed)
         Try
             Dim message = ctx.Channel.GetMessageAsync(id)
@@ -95,8 +96,22 @@ NotInheritable Class ModService
         Return embed.Build
     End Function
 
-    Public Shared Async Function ChangeBackground(user As SocketGuildUser) As Task(Of Embed)
-        Dim p As PlayerModel = Await Player.GetUser(user)
+    Public Shared Async Function ChangeBackground(user As SocketGuildUser, url As String) As Task(Of Embed)
+        Try
+            Dim p As PlayerModel = Await Player.GetUser(user)
+            p.Background = url
+            Await Player.UpdateUser(user, p)
 
+            Dim embed As New EmbedBuilder With {
+                .Title = $"Background of {user.Username} has been changed.",
+                .Description = "Background has been changed to the image below.",
+                .ImageUrl = url,
+                .Color = New Color(Await _imgs.RandomColorFromURL(url))
+            }
+
+            Return embed.Build
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Admin - Change Background", ex.Message).Result
+        End Try
     End Function
 End Class

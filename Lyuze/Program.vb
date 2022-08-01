@@ -8,7 +8,7 @@ Imports System.Threading.Thread
 '-Removed cod commands and turn it into it's own bot
 '-Decided if you want to slowly merge from settings.json to MongoDB
 '-For cooldown add to either database or json
-'+Emote command is returning null on for each statement
+'+Emote command is returning null on for each statement=found error more than likely was because I was adding an image file that's not a url
 '-Decided whether to add node server or not.
 #End Region
 
