@@ -228,4 +228,12 @@ Public Class Fun
     Public Async Function Quote(id As ULong) As Task
         Await ReplyAsync(embed:=Await FunService.Quote(Context, id))
     End Function
+
+    <Command("wouldyourather")>
+    <[Alias]("wyr")>
+    <Summary("Gives you a random 'would you rather' question.")>
+    Public Async Function WouldYouRather() As Task
+        Await ReplyAsync(embed:=Await FunService.WouldYouRatherAsync(Context))
+    End Function
+
 End Class

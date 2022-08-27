@@ -26,7 +26,6 @@
     <PackageReference Include="MongoDB.Driver" Version="2.16.1" />
     <PackageReference Include="Pastel" Version="3.0.1" />
     <PackageReference Include="SauceNET" Version="1.1.1" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Windows.Extensions" Version="6.0.0" />

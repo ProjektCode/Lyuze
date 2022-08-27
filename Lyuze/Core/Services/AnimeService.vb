@@ -345,19 +345,21 @@ Line1:
 
     Public Shared Async Function GetSeasonalAsync(season As String, year As Integer) As Task(Of Embed)
         Try
-            Dim _season As Season
+            Dim _season As String
+            Dim sType As JikanDotNet.Season
             Select Case season.ToLower
                 Case "spring"
-                    _season = JikanDotNet.Season.Spring
+                    _season = sType.Spring
                 Case "summer"
-                    _season = JikanDotNet.Season.Summer
+                    _season = sType.Summer
                 Case "fall"
-                    _season = JikanDotNet.Season.Fall
+                    _season = sType.Fall
                 Case "winter"
-                    _season = JikanDotNet.Season.Winter
+                    _season = sType.Winter
                 Case Else
-                    _season = JikanDotNet.Season.Spring
+                    _season = sType.Spring
             End Select
+
             If year = 0 Then
                 year = Date.Now.Year
             End If
@@ -366,6 +368,7 @@ Line1:
             End If
 
             Dim seasonal = Await _jikan.GetSeasonAsync(year, _season)
+            Dim sData = seasonal.Data
             Dim desc As String = String.Empty
 
             For Each sea In seasonal.Data
@@ -380,11 +383,11 @@ Line1:
             Dim embed = New EmbedBuilder With {
                 .Title = $"This Season's Anime",
                 .Description = desc,
-                .ImageUrl = If(seasonal.Data.FirstOrDefault.Images.JPG.ImageUrl, defaultImage),
-                .Color = New Color(Await _img.RandomColorFromURL(seasonal.Data.FirstOrDefault.Images.JPG.ImageUrl)),
-                .ThumbnailUrl = If(seasonal.Data.FirstOrDefault.Images.JPG.ImageUrl, defaultImage),
+                .ImageUrl = If(sData.FirstOrDefault.Images.JPG.ImageUrl, defaultImage),
+                .Color = New Color(Await _img.RandomColorFromURL(sData.FirstOrDefault.Images.JPG.ImageUrl)),
+                .ThumbnailUrl = If(sData.FirstOrDefault.Images.JPG.ImageUrl, defaultImage),
                 .Footer = New EmbedFooterBuilder With {
-                    .IconUrl = If(seasonal.Data.FirstOrDefault.Images.JPG.ImageUrl, defaultImage),
+                    .IconUrl = If(sData.FirstOrDefault.Images.JPG.ImageUrl, defaultImage),
                     .Text = "10 Seasonal anime"
                 }
             }
@@ -718,7 +721,7 @@ Line1:
             End If
 
             Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync($"https://api.trace.moe/search?url={ url }")
+            Dim response = Await httpClient.GetStringAsync($"https://api.trace.moe/search?url={url}")
             Dim trace = TraceMoe.FromJson(response)
             'If some error occurs return embed
             If trace Is Nothing Then
@@ -746,7 +749,8 @@ Line1:
         End Try
     End Function
 
-    Public Shared Async Function GetSauce(ctx As SocketCommandContext, url As String) As Task(Of Embed)
+    'Turn API Key into option in settings - same with database - then do a for loop to add it into a string
+    Public Shared Async Function GetSauce(url As String) As Task(Of Embed)
         Try
             Dim httpClient = _httpClientFactory.CreateClient
             Dim db As String = "dbs[]=5&dbs[]=37&dbs[]=9&dbs[]=12&dbs[]=14&dbs[]=16&dbs[]=25&db=26&dbs[]=27&dbs[]=39&dbs[]=41"
@@ -765,7 +769,7 @@ Line1:
                 .Url = sauce.Results.Item(0).Data.ExtUrls.First.AbsoluteUri,
                 .Color = New Color(Await _img.RandomColorFromURL(sauce.Results.Item(0).Header.Thumbnail.AbsoluteUri)),
                 .Footer = New EmbedFooterBuilder With {
-                    .Text = "Time for the sauce.",
+                    .Text = "Time for the sauce - Click title for most relevant result.",
                     .IconUrl = sauce.Results.Item(0).Header.Thumbnail.AbsoluteUri
                 }
             }

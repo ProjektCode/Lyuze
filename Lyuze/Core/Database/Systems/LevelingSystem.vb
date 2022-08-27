@@ -37,7 +37,7 @@ Public Class LevelingSystem
 
         Dim embed As New EmbedBuilder With {
             .Title = $"{user.Username} Has Reached Level {_player.Level}!",
-            .Description = $"{LevelEquation(_player.Level)} XP needed for next level!",
+            .Description = $"{LevelEquation(_player.Level)} XP needed for the next level!",
             .Color = New Color((Await _imgs.RandomColorFromURL(If(user.GetAvatarUrl, user.GetDefaultAvatarUrl)))),
             .ThumbnailUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl)
           }
@@ -55,9 +55,9 @@ Public Class LevelingSystem
         'Anti-LevelSplan
         If MsgCooldownTarget.Contains(TryCast(ctx.User, SocketGuildUser)) Then
             'If they have used this command before, take the time the user last did something, add 3 seconds, and see if it's greater than this very moment.
-            If MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(5) >= DateTimeOffset.Now Then
+            If MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(3) >= DateTimeOffset.Now Then
                 'If enough time hasn't passed
-                Dim secondsLeft As Integer = Math.Truncate((MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(5) - DateTimeOffset.Now).TotalSeconds)
+                Dim secondsLeft As Integer = Math.Truncate((MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(3) - DateTimeOffset.Now).TotalSeconds)
             Else
                 'If enough time has passed, set the time for the user to right now.
                 MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))) = DateTimeOffset.Now

@@ -154,7 +154,7 @@ Public Class Weeb
         If Context.Message.Attachments.Count = 1 Then
             url = Context.Message.Attachments.First.Url
         End If
-        Await ReplyAsync(embed:=Await AnimeService.GetSauce(Context, url))
+        Await ReplyAsync(embed:=Await AnimeService.GetSauce(url))
     End Function
 #End Region
 

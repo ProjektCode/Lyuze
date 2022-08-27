@@ -3,6 +3,7 @@ Imports MongoDB.Driver
 Imports MongoDB.Bson
 Imports MongoDB.Bson.Serialization.Attributes
 Imports Discord.WebSocket
+Imports Microsoft.Extensions.DependencyInjection
 
 Public Class PlayerModel
     <BsonId>
@@ -18,7 +19,8 @@ Public Class PlayerModel
 End Class
 
 Public Class Player
-    Shared ReadOnly db As New DatabaseContext
+    Private Shared ReadOnly db As DatabaseContext = serviceHandler.provider.GetRequiredService(Of DatabaseContext)
+    'Shared ReadOnly db As New DatabaseContext
     Shared ReadOnly rand As New Random
 
     Public Shared Function CreateProfile(user As SocketGuildUser)
@@ -32,11 +34,11 @@ Public Class Player
             .FavChar = "Favorite Character has not been set.",
             .PublicProfile = "Private"
         }
-        db._playerCollection.InsertOneAsync(player)
+        db.playerCollection.InsertOneAsync(player)
     End Function
 
     Public Shared Function HasProfile(user As SocketGuildUser) As Boolean
-        Dim result = db._playerCollection.Find(Function(x) x.DiscordID = user.Id)
+        Dim result = db.playerCollection.Find(Function(x) x.DiscordID = user.Id)
         If result.CountDocuments = 1 Then
             Return True
         End If
@@ -45,7 +47,7 @@ Public Class Player
 
     Public Shared Async Function GetUser(user As SocketGuildUser) As Task(Of PlayerModel)
         Dim filter = Builders(Of PlayerModel).Filter.Eq(Function(x) x.DiscordID, user.Id)
-        Dim u = db._playerCollection.Find(filter).FirstOrDefault
+        Dim u = db.playerCollection.Find(filter).FirstOrDefault
         Return u
     End Function
 
@@ -58,7 +60,7 @@ Public Class Player
     Public Shared Async Function UpdateUser(user As SocketGuildUser, p As PlayerModel) As Task
         Dim filter = Builders(Of PlayerModel).Filter.Eq(Function(x) x.DiscordID, user.Id)
         'Dim user = db._collection.Find(filter).FirstOrDefault
-        Await db._playerCollection.ReplaceOneAsync(filter, p)
+        Await db.playerCollection.ReplaceOneAsync(filter, p)
         Return
     End Function
 

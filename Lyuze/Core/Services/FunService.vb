@@ -235,4 +235,31 @@ NotInheritable Class FunService
         End Try
     End Function
 
+    Public Shared Async Function WouldYouRatherAsync(ctx As SocketCommandContext) As Task(Of Embed)
+        Try
+            Dim httpClient = _httpClientFactory.CreateClient
+            Dim response = Await httpClient.GetStringAsync("https://would-you-rather-api.abaanshanid.repl.co")
+            Dim wyr = WouldYouRather.FromJson(response)
+
+            If wyr Is Nothing Then
+                Return embedHandler.errorEmbed("Fun - Useless Fact", "An error occurred please try again later.").Result
+            End If
+
+            Dim embed = New EmbedBuilder With {
+                .Title = "Would You Rather...",
+                .Description = wyr.Data,
+                .Color = New Color(_utils.RandomEmbedColor),
+                .ThumbnailUrl = If(ctx.User.GetAvatarUrl, ctx.User.GetDefaultAvatarUrl),
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = wyr.Id.ToString,
+                    .IconUrl = If(ctx.Guild.IconUrl, ctx.User.GetAvatarUrl)
+                }
+            }
+
+            Return embed.Build
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Fun - Usless Fact", ex.Message).Result
+        End Try
+    End Function
+
 End Class

@@ -3,13 +3,13 @@ Imports System.Net
 Imports System.Threading.Thread
 
 #Region "-To-Do List / +Found Bugs"
-'-Find more commands/apis to use.(try for 50 commands.)=suggestion=
-'-Turn bannerasync into a command to make custom banners.
-'-Removed cod commands and turn it into it's own bot
-'-Decided if you want to slowly merge from settings.json to MongoDB
-'-For cooldown add to either database or json
-'+Emote command is returning null on for each statement=found error more than likely was because I was adding an image file that's not a url
+'-Find more commands/apis to use.(try for 50 commands.)
+'-Turn bannerasync into a command to make custom banners(this will require a nodejs server).
+'-Removed cod commands and turn it into it's own bot(make bot first then do it).
+'+Emote command is returning null on for each statement=found error more than likely was because I was adding an image file instead of a url
 '-Decided whether to add node server or not.
+'-Possibly add back victoria/Lavalink.
+'-Possibly make your own "what am I?" API.
 #End Region
 
 Module Program
