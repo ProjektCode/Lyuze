@@ -8,7 +8,7 @@ Imports System.Globalization
 
 Public Class Images
 
-    'Returns a image with the user's avatar and a welcome message
+    'Returns a image with the user's avatar and a welcome message with a set background
     Public Async Function CreateBannerImageAsync(user As SocketGuildUser, msg As String, submsg As String) As Task(Of String)
         Dim avatar = Await fetchImageAsync(If(user.GetAvatarUrl(Discord.ImageFormat.Png, 2048), user.GetDefaultAvatarUrl))
         Dim background = Await fetchImageAsync(Wallpapers.returnImage.Result)
@@ -24,7 +24,7 @@ Public Class Images
         Dim banner = copyRegionIntoBanner(bmap, amap, background)
         banner = drawTextToImage(banner, msg, submsg)
 
-        Dim path As String = $"{Guid.NewGuid}.png"
+        Dim path As String = $"{AppDomain.CurrentDomain.BaseDirectory}{Guid.NewGuid}.png"
         banner.Save(path)
 
         Return Await Task.FromResult(path)
@@ -49,6 +49,7 @@ Public Class Images
         Return Await Task.FromResult(path)
     End Function
 
+    'Crops image to the specified dimensions
     Private Shared Function cropToBanner(img As Image, Optional width As Integer = 1100, Optional height As Integer = 450) As Bitmap
         Dim orgWidth = img.Width
         Dim orgHieght = img.Height
@@ -77,6 +78,7 @@ Public Class Images
 
     End Function
 
+    'Creates a border for the avatar circle
     Private Function circleBorder(img As Image) As Image
         Dim destination As Image = New Bitmap(img.Width, img.Height, img.PixelFormat)
         Dim radius = img.Width / 2
@@ -100,6 +102,7 @@ Public Class Images
 
     End Function
 
+    'Clips the user's avatar(if they don't have one it uses discord's default avatar) to a circle
     Private Function clipImageToCircle(img As Image) As Image
         Dim destination As Image = New Bitmap(img.Width, img.Height, img.PixelFormat)
         Dim radius = img.Width / 2
@@ -128,6 +131,7 @@ Public Class Images
 
     End Function
 
+    'Sets the banner to it's final state with the avatar layed on top of it.
     Private Function copyRegionIntoBanner(circleBorder As Image, imgSource As Image, destination As Image) As Image
         Using g = Graphics.FromImage(destination)
             Dim x = (destination.Width / 2) - 110
@@ -143,6 +147,7 @@ Public Class Images
 
     End Function
 
+    'Draws text onto the banner
     Private Function drawTextToImage(img As Image, header As String, subHeader As String) As Image
         Dim head = New Font("Roboto", 30, FontStyle.Regular)
         Dim subH = New Font("Roboto", 23, FontStyle.Regular)
@@ -171,6 +176,7 @@ Public Class Images
 
     End Function
 
+    'Attempts to grab the image from the specified url
     Private Async Function fetchImageAsync(url As String) As Task(Of Image)
         Dim client = New HttpClient
         Dim response = Await client.GetAsync(url)
@@ -211,7 +217,7 @@ Public Class Images
         Return bmap
     End Function
 
-    'Return a UInteger for discord color when using a image URL
+    'Return a UInteger for discord embed color when using a image from a URL
     Public Async Function RandomColorFromURL(url As String) As Task(Of UInteger)
         Dim newUrl As String
 
@@ -224,7 +230,7 @@ Public Class Images
         Dim rand As New Random
         Dim bmap = URLToBitmap(newUrl)
         Dim hex = Await GenerateColors(bmap.Result)
-        Dim randomHex = hex(rand.Next(0, hex.Count))
+        Dim randomHex = hex(rand.Next(hex.Count))
         Dim newHex = randomHex.Replace("#", "")
 
         Dim colorInt As Integer = Integer.Parse(newHex, NumberStyles.HexNumber)

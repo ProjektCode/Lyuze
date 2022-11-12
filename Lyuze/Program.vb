@@ -9,6 +9,8 @@ Imports System.Threading.Thread
 '-Decided whether to add node server or not.
 '-Possibly add back victoria/Lavalink.
 '-Possibly make your own "what am I?" API.
+'+Found cropped images in main folder. don't know where they're from
+'-Possibly revert JikanAPI to before the Async Changes(this is to have all the anime commands working again)
 #End Region
 
 Module Program
@@ -26,10 +28,10 @@ Module Program
             Sleep(5000)
             Environment.Exit(0)
         End If
-        Call setUp().GetAwaiter.GetResult()
+        Call SetUp().GetAwaiter.GetResult()
     End Sub
 
-    Private Async Function setUp() As Task
+    Private Async Function SetUp() As Task
         Dim settings = Lyuze.Settings.Data
         'All sleep timers are there only for aesthetic no real reason for them to be there.
         If settings.Discord.Token = "Token Here" Then
@@ -38,12 +40,12 @@ Module Program
             Environment.Exit(0)
         End If
         Console.Clear()
-        Console.Title = $"{settings.Discord.Name} - Multi-Purpose Discord Bot"
-        _utils.setBanner($"/ {settings.Discord.Name} Bot \", "#FFC0CB", ConsoleColor.Green)
+        Console.Title = $"{settings.Discord.Name} - Discord Bot"
+        _utils.setBanner($"/ {settings.Discord.Name} Bot \", "#DC143C", "#00A36C")
         Sleep(500)
 
 
-        Call New bot().mainAsync().GetAwaiter().GetResult()
+        Call New Bot().MainAsync().GetAwaiter().GetResult()
     End Function
 
     Private Sub BotSetup()

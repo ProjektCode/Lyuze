@@ -17,22 +17,22 @@ NotInheritable Class GifService
         If _utils.CheckAPI(settings.ApIs.Tenor) = False Then
             Return "No API Key was given. Please provide an API Key in the settings config."
         End If
-
-        Dim horny As String() = {
-            "oppai",
-            "boobs",
-            "booty",
-            "horny",
-            "ecchi",
-            "lewd",
-            "ass",
-            "tits",
-            "boobies"
-        }
         Dim rand As New Random
 
         If tag = "horny" Then
-            tag = horny(rand.Next(0, horny.Length))
+            Dim hrny As String() = {
+                "oppai",
+                "boobs",
+                "booty",
+                "horny",
+                "ecchi",
+                "lewd",
+                "ass",
+                "tits",
+                "boobies"
+            }
+
+            tag = hrny(rand.Next(hrny.Length))
         End If
 
         Try
@@ -46,9 +46,10 @@ NotInheritable Class GifService
             Dim client = New TenorClient(config)
 
             Dim _tag = $"anime {tag}"
-            Dim searchResults = Await client.GetRandomPostsAsync(_tag, limit:=1)
+            Dim searchResults = Await client.GetRandomPostsAsync(_tag, limit:=100)
+            Dim result As Uri = searchResults.Results(rand.Next(searchResults.Results.Count)).ShortUrl
 
-            Return searchResults.Results.First.ShortUrl.AbsoluteUri
+            Return result.AbsoluteUri
 
         Catch ex As Exception
             If Not settings.IDs.ErrorId Then

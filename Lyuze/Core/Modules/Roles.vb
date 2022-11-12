@@ -69,7 +69,7 @@ Public Class Roles 'Change messages from string to embeds.
     <Remarks("\grole @role")>
     <RequireBotPermission(GuildPermission.ManageRoles)>
     <RequireUserPermission(GuildPermission.ManageRoles)>
-    Public Async Function createRole(color As String, <Remainder> name As String) As Task
+    Public Async Function createRole(color As String, name As String) As Task
         Await ReplyAsync(embed:=Await RolesService.CreateRole(name, color, Context))
     End Function
 

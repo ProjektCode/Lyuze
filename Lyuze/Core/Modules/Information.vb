@@ -25,8 +25,10 @@ Public Class Information
     End Function
 
 End Class
+
 <Group("set")>
-<Name("Information")>
+<Name("Database Information")>
+<Summary("/set <command> <argument> | set stuff for your profile.")>
 Public Class SetInformation
     Inherits ModuleBase(Of SocketCommandContext)
 

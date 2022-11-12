@@ -118,7 +118,7 @@ NotInheritable Class RolesService
                 Return embedHandler.errorEmbed("Roles - Create", $"Role with the name {name} already exists. Please chose a different name.").Result
             Else
                 Dim chnl = ctx.Guild.GetTextChannel(settings.IDs.ErrorId)
-                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed("Roles - Create", $"Role with the name {name} already exists. Please chose a different name.").Result)
+                chnl.SendMessageAsync(embed:=embedHandler.errorEmbed("Roles - Create", ex.Message).Result)
             End If
         End Try
 

@@ -27,16 +27,19 @@ Public Class MasterUtils
         Return ShowWindow(hwd, 1)
     End Function
 
-    Public Sub setBanner(text As String, primarycolor As String, accentColor As ConsoleColor)
+    Public Sub setBanner(text As String, primarycolor As String, accentColor As String)
         Console.Write(FiggleFonts.Standard.Render(text).Pastel(ColorTranslator.FromHtml(primarycolor)))
-        Console.ForegroundColor = accentColor
-        Console.WriteLine("===================================================================", accentColor)
+        'Console.ForegroundColor = accentColor
+        Console.WriteLine("===================================================================".Pastel(accentColor))
     End Sub
 #End Region
 
 #Region "Color Options"
 
     Public Function ConvertToDiscordColor(hex As String)
+        If hex.Contains("#") Then
+            hex = hex.Remove(0, 1)
+        End If
         Dim colorInt As Integer = Integer.Parse(hex, NumberStyles.HexNumber)
         Dim color As UInteger = Convert.ToInt32(colorInt)
         Return color

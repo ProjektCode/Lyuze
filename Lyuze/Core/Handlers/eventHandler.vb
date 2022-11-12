@@ -7,6 +7,8 @@ Imports System.IO
 Imports System.Threading
 
 NotInheritable Class eventHandler
+    Inherits ModuleBase(Of SocketCommandContext)
+
     Private Shared ReadOnly _client As DiscordSocketClient = serviceHandler.provider.GetRequiredService(Of DiscordSocketClient)
     Private Shared ReadOnly _cmdService As CommandService = serviceHandler.provider.GetRequiredService(Of CommandService)
     Private Shared ReadOnly _images As Images = serviceHandler.provider.GetRequiredService(Of Images)
@@ -21,6 +23,7 @@ NotInheritable Class eventHandler
         AddHandler _client.MessageReceived, AddressOf messageRecieved
         AddHandler _client.UserJoined, AddressOf onUserJoined
         AddHandler _client.UserLeft, AddressOf onUserLeave
+        'AddHandler _client.MessageDeleted, AddressOf onMessageDelete
         Return Task.CompletedTask
     End Function
 
@@ -112,6 +115,29 @@ NotInheritable Class eventHandler
         Catch ex As Exception
             loggingHandler.LogCriticalAsync("bot", ex.Message)
         End Try
+    End Function
+
+
+    Private Function onMessageDelete(msg As Cacheable(Of IMessage, ULong), chnl As ISocketMessageChannel) As Task
+
+        Dim content = msg.Value.Content
+
+        While content.Length > 500
+            content.Remove(content.Length - 10, 10)
+        End While
+
+
+        Dim embed As New EmbedBuilder With {
+            .Title = "Message Deleted on " + chnl.Name,
+            .Description = $"**Message Author:** {msg.Value.Author}#{msg.Value.Author.Discriminator}{Environment.NewLine}**Message ID:** {msg.Value.Id}{Environment.NewLine}**Message content:** {content}...{Environment.NewLine}**Attachments:** {If(msg.Value.Attachments, "N/A")}",
+            .Color = New Color(_utils.RandomEmbedColor),
+            .ThumbnailUrl = If(msg.Value.Author.GetAvatarUrl, msg.Value.Author.GetDefaultAvatarUrl)
+        }
+
+
+        Dim auditChnl = Context.Guild.GetTextChannel(962178654077591562)
+        auditChnl.SendMessageAsync(embed:=embed.Build)
+
     End Function
 
 #End Region

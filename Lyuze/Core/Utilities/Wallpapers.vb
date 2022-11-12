@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.ComponentModel
+Imports System.IO
 
 NotInheritable Class Wallpapers
     Private Shared ReadOnly rand As New Random
@@ -115,14 +116,25 @@ NotInheritable Class Wallpapers
 #Region "Images"
 
     Private Shared ReadOnly basePath = AppDomain.CurrentDomain.BaseDirectory
-    Private Shared ReadOnly filePath = $"{basePath}Resources\Settings\images.txt"
 
-    Public Shared images As String() = File.ReadAllLines(filePath)
+    Public Shared images As New List(Of Uri)
 
     Public Shared Async Function returnImage() As Task(Of String)
-        Dim i As String = images(rand.Next(0, images.Length - 1))
+        GrabImages()
+        Dim i As String = images(rand.Next(images.Count)).ToString
         Return i
     End Function
+
+    Private Shared Sub GrabImages()
+        Dim settings = Lyuze.Settings.Data
+
+        If Not images.Count = 0 Then
+            Return
+        End If
+        For Each img In settings.ImageLinks
+            images.Add(img)
+        Next
+    End Sub
 
 #End Region
 

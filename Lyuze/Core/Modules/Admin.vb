@@ -3,6 +3,7 @@ Imports Discord.Commands
 Imports Discord.WebSocket
 Imports Discord.Addons.Interactive
 Imports Microsoft.Extensions.DependencyInjection
+Imports System.Drawing
 
 <Name("Admin")>
 <Summary("Commands only for admins.")>
@@ -15,6 +16,8 @@ Public Class Admin
     <RequireBotPermission(GuildPermission.ManageMessages)>
     <Remarks("\purge <number> | 1-1000 could leave blank to delete 1000 messages.")>
     Public Async Function purgeCmd(Optional amount As Integer = 1000) As Task(Of RuntimeResult)
+        'Changes bot's avatar > Context.Client.CurrentUser.ModifyAsync(Function(x) x.Avatar = TryCast("a", Drawing.Image))
+        'Dim auditLogs = Context.Guild.GetAuditLogsAsync(100, actionType:=ActionType.MessageDeleted)
 
         Try
             If DirectCast(Context.Message.Author, SocketGuildUser).GuildPermissions.ManageMessages Then
@@ -41,7 +44,7 @@ Public Class Admin
                     Dim embed = New EmbedBuilder With {
                         .Title = "I've done my job",
                         .Description = $":recycle: {count} {If(count > 1, "messages have", "message has")} been dealt with.",
-                        .Color = Color.Green,
+                        .Color = Discord.Color.Green,
                         .ThumbnailUrl = Context.Client.CurrentUser.GetAvatarUrl
                     }
 

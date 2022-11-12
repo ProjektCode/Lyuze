@@ -1,4 +1,5 @@
-﻿Imports System.Net.Http
+﻿Imports System.IO
+Imports System.Net.Http
 Imports Discord
 Imports Discord.Commands
 Imports Microsoft.Extensions.DependencyInjection
@@ -41,22 +42,39 @@ Public Class General
     <Command("test")>
     Public Async Function test() As Task
 
-        Try
-            Dim client = New HttpClient()
-            Dim request = New HttpRequestMessage With {
-                .Method = HttpMethod.Get,
-                .RequestUri = New Uri("https://anime-recommender.p.rapidapi.com/?anime_title=Plastic%20Memories&number_of_anime=5")
-            }
-            request.Headers.Add("X-RapidAPI-Key", "6c28fe7c95msh10d4e16c2bb2955p1a8678jsnc9f172ba1fb0")
-            request.Headers.Add("X-RapidAPI-Host", "anime-recommender.p.rapidapi.com")
-            Using response = Await client.SendAsync(request)
-                'response.EnsureSuccessStatusCode()
-                Dim body = Await response.Content.ReadAsStringAsync()
-                Await ReplyAsync(body)
-            End Using
-        Catch ex As Exception
-            ReplyAsync(ex.Message)
-        End Try
+        'Try
+        '    Dim client = New HttpClient()
+        '    Dim request = New HttpRequestMessage With {
+        '        .Method = HttpMethod.Get,
+        '        .RequestUri = New Uri("https://anime-recommender.p.rapidapi.com/?anime_title=Plastic%20Memories&number_of_anime=5")
+        '    }
+        '    request.Headers.Add("X-RapidAPI-Key", "6c28fe7c95msh10d4e16c2bb2955p1a8678jsnc9f172ba1fb0")
+        '    request.Headers.Add("X-RapidAPI-Host", "anime-recommender.p.rapidapi.com")
+        '    Using response = Await client.SendAsync(request)
+        '        'response.EnsureSuccessStatusCode()
+        '        Dim body = Await response.Content.ReadAsStringAsync()
+        '        Await ReplyAsync(body)
+        '    End Using
+        'Catch ex As Exception
+        '    ReplyAsync(ex.Message)
+        'End Try
+
+
+
+
+        'Try
+        '    Dim settings = Lyuze.Settings.Data
+        '    'Dim channel = Context.Guild.GetTextChannel(settings.IDs.WelcomeId)
+        '    Dim msg = $"{Context.User.Username}#{Context.User.Discriminator} has joined the server"
+        '    Dim submsg = Context.Guild.MemberCount
+        '    Dim path = Await _img.CreateBannerImageAsync(Context.User, msg, submsg)
+        '    Await Context.Channel.SendFileAsync(path)
+        '    'Await ReplyAsync(path, String.Empty)
+
+        '    File.Delete(path)
+        'Catch ex As Exception
+        '    ReplyAsync(ex.Message)
+        'End Try
 
     End Function
 End Class

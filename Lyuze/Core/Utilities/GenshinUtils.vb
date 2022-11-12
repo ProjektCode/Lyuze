@@ -3,7 +3,7 @@
     Public Shared Async Function GetImage(cat As String, name As String, img As String) As Task(Of String)
         Dim newName As String
 
-        If name = "Traveler" Then
+        If name.ToLower = "traveler" Then
             name = "traveler-anemo"
         End If
         If name.Contains(" ") Then
@@ -18,16 +18,16 @@
 
         Select Case cat.ToLower
             Case "char"
-                Return $"https://api.genshin.dev/characters/{ newName}/{ img}.png"
+                Return $"https://api.genshin.dev/characters/{newName}/{img}.png"
             Case "wea"
-                Return $"https://api.genshin.dev/weapons/{ newName}/{ img}.png"
+                Return $"https://api.genshin.dev/weapons/{newName}/{img}.png"
             Case "ene"
-                Return $"https://api.genshin.dev/enemies/{ newName}/{ img}.png"
+                Return $"https://api.genshin.dev/enemies/{newName}/{img}.png"
             Case "art"
-                Return $"https://api.genshin.dev/artifacts/{ newName}/flower-of-life.png"
+                Return $"https://api.genshin.dev/artifacts/{newName}/flower-of-life.png"
             Case "dom"
             Case "ele"
-                Return $"https://api.genshin.dev/elements/{ newName}/{ img}.png"
+                Return $"https://api.genshin.dev/elements/{newName}/{img}.png"
             Case "materials"
             Case Else
                 Return "https://i.imgur.com/Kl2Qrd2.png"

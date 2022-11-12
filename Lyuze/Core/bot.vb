@@ -7,18 +7,18 @@ Imports Microsoft.Extensions.DependencyInjection
 Imports System.Threading
 Imports JikanDotNet
 
-Public Class bot
+Public Class Bot
     Private _client As DiscordSocketClient
     Private _cmdService As CommandService
     Private ReadOnly eManager As New eventHandler
 
-    Public Sub bot()
+    Public Sub Bot()
         _client = New DiscordSocketClient(New DiscordSocketConfig() With {
             .LogLevel = LogSeverity.Info,
             .DefaultRetryMode = RetryMode.AlwaysRetry,
             .WebSocketProvider = WS4NetProvider.Instance,
             .AlwaysDownloadUsers = True,
-            .MessageCacheSize = 200,
+            .MessageCacheSize = 1000,
             .ExclusiveBulkDelete = True
          })
 
@@ -44,9 +44,9 @@ Public Class bot
 
     End Sub
 
-    Public Async Function mainAsync() As Task
+    Public Async Function MainAsync() As Task
         Dim settings = Lyuze.Settings.Data
-        bot()
+        Bot()
 
         Await commandHandler.loadCommandsAsync
         Await eManager.loadEvents()
