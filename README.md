@@ -1,6 +1,6 @@
 # Lyuze
 
-An multi-purpose discord bot written in VB.Net Core
+An multi-purpose discord bot written in VB.Net Core with Discord.Net v2.4.0
 
 ## Setup
 
