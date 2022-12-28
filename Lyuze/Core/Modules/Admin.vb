@@ -166,15 +166,15 @@ Public Class Owner
     <Summary("Kills the bot process.")>
     <RequireOwner>
     Public Async Function cmdKill() As Task
-        'For Each p As Process In Process.GetProcesses
-        '    If p.ProcessName = "javaw" Then
-        '        Try
-        '            p.Kill()
-        '        Catch ex As Exception
-        '            Continue For
-        '        End Try
-        '    End If
-        'Next
+        For Each p As Process In Process.GetProcesses
+            If p.ProcessName = "OpenJDK Platform Binary" Then
+                Try
+                    p.Kill()
+                Catch ex As Exception
+                    Continue For
+                End Try
+            End If
+        Next
         For Each p As Process In Process.GetProcesses
             If p.ProcessName = "LyuzeBOT" Then
                 Try

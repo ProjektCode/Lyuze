@@ -78,5 +78,32 @@ NotInheritable Class PlayerService
 
     End Function
 
+    Public Shared Async Function UpdateLevelNotify(user As SocketGuildUser, type As String) As Task(Of Embed)
+        Try
+            Select Case type.ToLower
+                Case "no"
+                    Dim _player As PlayerModel = Await Player.GetUser(user)
+                    _player.LevelNotify = False
+                    Await Player.UpdateUser(user, _player)
+
+                    Return embedHandler.basicEmbed("Profile Updated", $"Your level notifications has been set to {type}").Result
+                Case "yes"
+                    Dim _player As PlayerModel = Await Player.GetUser(user)
+                    _player.LevelNotify = True
+                    Await Player.UpdateUser(user, _player)
+
+                    Return embedHandler.basicEmbed("Profile Updated", $"Your level notifications has been set to {type}").Result
+                Case Else
+                    Dim _player As PlayerModel = Await Player.GetUser(user)
+                    _player.LevelNotify = True
+                    Await Player.UpdateUser(user, _player)
+
+                    Return embedHandler.basicEmbed("Profile Updated", $"Your level notifications has been set to {type} since you did not pick a viable answer. Please say yes or no.").Result
+            End Select
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("SET - LEVEL NOTIFY", ex.Message).Result
+        End Try
+    End Function
+
 
 End Class

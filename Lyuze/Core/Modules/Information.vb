@@ -60,4 +60,12 @@ Public Class SetInformation
         Await ReplyAsync(embed:=Await PlayerService.UpdateProfile(Context.User, state))
     End Function
 
+    <Command("levelnotify")>
+    <[Alias]("lnoti")>
+    <Summary("Configure your level notification status")>
+    <Remarks("\set lnoti no | either yes or no : default yes")>
+    Public Async Function ConfigLevelNotify(type As String) As Task
+        Await ReplyAsync(embed:=Await PlayerService.UpdateLevelNotify(Context.User, type))
+    End Function
+
 End Class

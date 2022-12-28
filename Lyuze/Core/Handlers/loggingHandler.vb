@@ -94,6 +94,8 @@ NotInheritable Class loggingHandler
                 Return "BACKG"
             Case "gifs"
                 Return "GIFSS"
+            Case "deleted"
+                Return "DELET"
             Case Else
                 Return src
         End Select

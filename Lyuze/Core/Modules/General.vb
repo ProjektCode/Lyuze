@@ -62,19 +62,19 @@ Public Class General
 
 
 
-        'Try
-        '    Dim settings = Lyuze.Settings.Data
-        '    'Dim channel = Context.Guild.GetTextChannel(settings.IDs.WelcomeId)
-        '    Dim msg = $"{Context.User.Username}#{Context.User.Discriminator} has joined the server"
-        '    Dim submsg = Context.Guild.MemberCount
-        '    Dim path = Await _img.CreateBannerImageAsync(Context.User, msg, submsg)
-        '    Await Context.Channel.SendFileAsync(path)
-        '    'Await ReplyAsync(path, String.Empty)
+        Try
+            Dim settings = Lyuze.Settings.Data
+            'Dim channel = Context.Guild.GetTextChannel(settings.IDs.WelcomeId)
+            Dim msg = $"{Context.User.Username}#{Context.User.Discriminator} has joined the server"
+            Dim submsg = Context.Guild.MemberCount
+            Dim path = Await _img.CreateBannerImageAsync(Context.User, msg, submsg)
+            Await Context.Channel.SendFileAsync(path)
+            'Await ReplyAsync(path, String.Empty)
 
-        '    File.Delete(path)
-        'Catch ex As Exception
-        '    ReplyAsync(ex.Message)
-        'End Try
+            File.Delete(path)
+        Catch ex As Exception
+            ReplyAsync(ex.Message)
+        End Try
 
     End Function
 End Class

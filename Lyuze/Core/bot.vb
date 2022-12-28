@@ -6,6 +6,7 @@ Imports Discord.Net.Providers.WS4Net
 Imports Microsoft.Extensions.DependencyInjection
 Imports System.Threading
 Imports JikanDotNet
+Imports Victoria
 
 Public Class Bot
     Private _client As DiscordSocketClient
@@ -18,7 +19,7 @@ Public Class Bot
             .DefaultRetryMode = RetryMode.AlwaysRetry,
             .WebSocketProvider = WS4NetProvider.Instance,
             .AlwaysDownloadUsers = True,
-            .MessageCacheSize = 1000,
+            .MessageCacheSize = 100,
             .ExclusiveBulkDelete = True
          })
 
@@ -32,6 +33,9 @@ Public Class Bot
         Dim collection = New ServiceCollection
         collection.AddSingleton(_client)
         collection.AddSingleton(_cmdService)
+        collection.AddLavaNode(Sub(LavaConfig)
+                                   LavaConfig.SelfDeaf = False
+                               End Sub)
         collection.AddSingleton(Of InteractiveService)
         collection.AddSingleton(Of IJikan, Jikan)
         collection.AddSingleton(Of Images)

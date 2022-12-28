@@ -18,6 +18,7 @@
     <PackageReference Include="Discord.Extensions.Interactive" Version="2.3.0" />
     <PackageReference Include="Discord.Net" Version="2.4.0" />
     <PackageReference Include="Discord.Net.Providers.WS4Net" Version="2.4.0" />
+    <PackageReference Include="Discord.Net.WebSocket" Version="2.4.0" />
     <PackageReference Include="Figgle" Version="0.4.0" />
     <PackageReference Include="JikanDotNet" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
@@ -30,6 +31,7 @@
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Windows.Extensions" Version="6.0.0" />
     <PackageReference Include="TenorClient" Version="1.0.3" />
+    <PackageReference Include="Victoria" Version="5.1.11" />
     <PackageReference Include="VL.ColorThief" Version="1.0.3" />
   </ItemGroup>
 

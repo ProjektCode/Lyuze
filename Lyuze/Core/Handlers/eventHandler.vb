@@ -5,10 +5,14 @@ Imports Microsoft.Extensions.DependencyInjection
 Imports System.Media
 Imports System.IO
 Imports System.Threading
+Imports Pastel
+Imports System.Drawing
+Imports Victoria
 
 NotInheritable Class eventHandler
     Inherits ModuleBase(Of SocketCommandContext)
 
+    Private Shared ReadOnly _lavaNode As LavaNode = serviceHandler.provider.GetRequiredService(Of LavaNode)
     Private Shared ReadOnly _client As DiscordSocketClient = serviceHandler.provider.GetRequiredService(Of DiscordSocketClient)
     Private Shared ReadOnly _cmdService As CommandService = serviceHandler.provider.GetRequiredService(Of CommandService)
     Private Shared ReadOnly _images As Images = serviceHandler.provider.GetRequiredService(Of Images)
@@ -20,10 +24,12 @@ NotInheritable Class eventHandler
         AddHandler _client.Log, AddressOf logAsync
         AddHandler _cmdService.Log, AddressOf logAsync
         AddHandler _client.Ready, AddressOf onReady
-        AddHandler _client.MessageReceived, AddressOf messageRecieved
+        AddHandler _client.MessageReceived, AddressOf onMessageRecieved
+        AddHandler _lavaNode.OnTrackEnded, AddressOf audioService.trackEnded
+        AddHandler _lavaNode.OnTrackStarted, AddressOf audioService.trackStart
         AddHandler _client.UserJoined, AddressOf onUserJoined
         AddHandler _client.UserLeft, AddressOf onUserLeave
-        'AddHandler _client.MessageDeleted, AddressOf onMessageDelete
+
         Return Task.CompletedTask
     End Function
 
@@ -34,6 +40,15 @@ NotInheritable Class eventHandler
     End Function
 
     Private Async Function onReady() As Task
+        If Not _lavaNode.IsConnected Then
+            Try
+                Await _lavaNode.ConnectAsync
+                Await loggingHandler.LogInformationAsync("victoria", "LavaNode Connected")
+            Catch ex As Exception
+                Throw ex
+            End Try
+        End If
+
         Await _client.SetStatusAsync(UserStatus.Online)
 
         Dim t = New Timer(Async Sub(__)
@@ -44,7 +59,7 @@ NotInheritable Class eventHandler
         SystemSounds.Asterisk.Play()
     End Function
 
-    Private Async Function messageRecieved(arg As SocketMessage) As Task
+    Private Async Function onMessageRecieved(arg As SocketMessage) As Task
 
         Dim message = TryCast(arg, SocketUserMessage)
         Dim context = New SocketCommandContext(_client, message)
@@ -87,6 +102,24 @@ NotInheritable Class eventHandler
 
     End Function
 
+    'Figure out a way to get messages that where not able to be cached by the bot by getting it from the audit logs.
+    Private Async Function onMessageDelete(msg As Cacheable(Of IMessage, ULong), chnl As ISocketMessageChannel) As Task
+        Try
+            Dim m = msg.GetOrDownloadAsync
+
+            If Not m.Status = TaskStatus.RanToCompletion Then
+                Await loggingHandler.LogInformationAsync("deleted", $"{"Message too old to be logged or bot was not running when the message was sent".Pastel(ColorTranslator.FromHtml("#DC143C"))}.")
+                Return
+            End If
+
+            'Console.WriteLine(m.Result.Content)
+            Await loggingHandler.LogInformationAsync("deleted", $"Message: {m.Result.Content.ToString.Pastel(ColorTranslator.FromHtml("#DC143C"))} - From: {chnl.Name.ToUpper}")
+            Return
+        Catch ex As Exception
+            loggingHandler.LogCriticalAsync("deleted", ex.Message)
+        End Try
+    End Function
+
     Private Async Function onUserJoined(arg As SocketGuildUser) As Task
         Dim settings = Lyuze.Settings.Data
         Try
@@ -115,29 +148,6 @@ NotInheritable Class eventHandler
         Catch ex As Exception
             loggingHandler.LogCriticalAsync("bot", ex.Message)
         End Try
-    End Function
-
-
-    Private Function onMessageDelete(msg As Cacheable(Of IMessage, ULong), chnl As ISocketMessageChannel) As Task
-
-        Dim content = msg.Value.Content
-
-        While content.Length > 500
-            content.Remove(content.Length - 10, 10)
-        End While
-
-
-        Dim embed As New EmbedBuilder With {
-            .Title = "Message Deleted on " + chnl.Name,
-            .Description = $"**Message Author:** {msg.Value.Author}#{msg.Value.Author.Discriminator}{Environment.NewLine}**Message ID:** {msg.Value.Id}{Environment.NewLine}**Message content:** {content}...{Environment.NewLine}**Attachments:** {If(msg.Value.Attachments, "N/A")}",
-            .Color = New Color(_utils.RandomEmbedColor),
-            .ThumbnailUrl = If(msg.Value.Author.GetAvatarUrl, msg.Value.Author.GetDefaultAvatarUrl)
-        }
-
-
-        Dim auditChnl = Context.Guild.GetTextChannel(962178654077591562)
-        auditChnl.SendMessageAsync(embed:=embed.Build)
-
     End Function
 
 #End Region

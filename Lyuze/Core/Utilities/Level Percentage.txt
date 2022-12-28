@@ -1,0 +1,4 @@
+*Find the Percentage of the level(Level 2 calculations)*
+percentage = (17/225) * 100 = 7.55 (take only 2 places after the decimal)
+*Get the Percentage of a Number for the xp bar)
+image.width = (percentage / 100) * 600 = 45.3 (the bar will be 600px while the fill bar will be only 45px(if not an integer round it))

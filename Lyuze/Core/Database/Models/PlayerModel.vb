@@ -16,6 +16,7 @@ Public Class PlayerModel
     Public Property FavChar() As String
     Public Property AboutMe() As String
     Public Property PublicProfile() As String
+    Public Property LevelNotify() As Boolean
 End Class
 
 Public Class Player
@@ -32,7 +33,8 @@ Public Class Player
             .Background = $"http://lyuze-api.projektcode.com/images/banners/info/profile/user-{num}",
             .AboutMe = "About me has not been set.",
             .FavChar = "Favorite Character has not been set.",
-            .PublicProfile = "Private"
+            .PublicProfile = "Private",
+            .LevelNotify = True
         }
         db.playerCollection.InsertOneAsync(player)
     End Function

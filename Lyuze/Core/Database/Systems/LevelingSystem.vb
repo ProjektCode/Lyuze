@@ -35,14 +35,18 @@ Public Class LevelingSystem
         _player.Level += 1
         _player.XP = 0
 
-        Dim embed As New EmbedBuilder With {
+        If _player.LevelNotify = True Then
+            Dim embed As New EmbedBuilder With {
             .Title = $"{user.Username} Has Reached Level {_player.Level}!",
             .Description = $"{LevelEquation(_player.Level)} XP needed for the next level!",
             .Color = New Color((Await _imgs.RandomColorFromURL(If(user.GetAvatarUrl, user.GetDefaultAvatarUrl)))),
             .ThumbnailUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl)
           }
-        Await Player.UpdateUser(user, _player)
-        Await ctx.Channel.SendMessageAsync(embed:=embed.Build)
+            Await Player.UpdateUser(user, _player)
+
+            Await ctx.Channel.SendMessageAsync(embed:=embed.Build)
+        End If
+
     End Function
 
     Public Async Function GiveXP(user As SocketGuildUser, xp As Integer) As Task

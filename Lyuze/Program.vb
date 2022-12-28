@@ -1,15 +1,15 @@
 Imports System.IO
 Imports System.Net
 Imports System.Threading.Thread
+Imports Discord
+
 
 #Region "-To-Do List / +Found Bugs"
 '-Find more commands/apis to use.(try for 50 commands.)
 '-Turn bannerasync into a command to make custom banners(this will require a nodejs server).
-'+Emote command is returning null on for each statement=found error more than likely was because I was adding an image file instead of a url
 '-Decided whether to add node server or not.
-'-Possibly add back victoria/Lavalink.
 '-Possibly make your own "what am I?" API.
-'+Found cropped images in main folder. don't know where they're from
+'+Found cropped images in main folder. don't know where they're from = possibly because bot was placed into a admin privilage folder when the bot isn't on elevated privilages.
 '-Possibly revert JikanAPI to before the Async Changes(this is to have all the anime commands working again)
 #End Region
 
@@ -17,14 +17,18 @@ Module Program
     ReadOnly basePath = AppDomain.CurrentDomain.BaseDirectory
     ReadOnly Resources = $"{basePath}Resources\"
     ReadOnly Settings = $"{Resources}Settings\"
+    ReadOnly vic = $"{Resources}Victoria\"
+    ReadOnly lavalink = $"{vic}Lavalink.jar"
+    ReadOnly app = $"{vic}application.yaml"
 
     ReadOnly _utils As New MasterUtils
+    ReadOnly process As New Process
 
     Sub Main()
         Console.Title = "Discord Bot - Multi-Purpose Discord Bot"
         If Not Directory.Exists(Resources) Then
             BotSetup()
-            loggingHandler.LogCriticalAsync("setup", "File structure has been created... Now go into Resources/Settings and open settings.json and fill in the required fields.")
+            loggingHandler.LogInformationAsync("setup", "File structure has been created... Now go into Resources/Settings and open settings.json and fill in the required fields.")
             Sleep(5000)
             Environment.Exit(0)
         End If
@@ -39,32 +43,48 @@ Module Program
             Sleep(5000)
             Environment.Exit(0)
         End If
+
         Console.Clear()
         Console.Title = $"{settings.Discord.Name} - Discord Bot"
         _utils.setBanner($"/ {settings.Discord.Name} Bot \", "#DC143C", "#00A36C")
-        Sleep(500)
+        Await loggingHandler.LogSetupAsync("setup", "Looking for Lavalink server...")
+
+        If Not File.Exists(Lavalink) Or Not File.Exists(app) Then
+            Await loggingHandler.LogCriticalAsync("setup", "Please add your Lavalink.jar and Application.yaml into the Victoria folder.")
+            Console.WriteLine()
+            Sleep(3000)
+            Environment.Exit(0)
+        Else
+            Await loggingHandler.LogSetupAsync("setup", "Lavalink server has been found. Now starting...")
+            Process.EnableRaisingEvents = False
+            Process.StartInfo.UseShellExecute = False
+            process.StartInfo.WorkingDirectory() = vic
+            process.StartInfo.FileName = "javaw"
+            process.StartInfo.Arguments = $"-jar {lavalink}"
+            process.Start()
+            Sleep(3000)
+            Await loggingHandler.LogSetupAsync("setup", "Lavalink has been launched now starting bot.")
+            Sleep(500)
 
 
-        Call New Bot().MainAsync().GetAwaiter().GetResult()
+            Call New Bot().MainAsync().GetAwaiter().GetResult()
+        End If
     End Function
 
     Private Sub BotSetup()
         Try
-            Dim settingsPath = $"{Settings}settings.json"
-            Dim settingsURL As String = $"http://lyuze-api.projektcode.com/data/settings"
 
-            loggingHandler.LogInformationAsync("setup", "Downloading and setting up file structure for the first time please wait...")
+            loggingHandler.LogInformationAsync("setup", "Setting up file structure for the first time please wait...")
+
             'Create the file structure.
             Directory.CreateDirectory(Resources)
             Directory.CreateDirectory(Settings)
-
-            Using client As New WebClient
-                loggingHandler.LogInformationAsync("setup", "Downloading settings.json")
-                client.DownloadFile(settingsURL, settingsPath)
-            End Using
+            Directory.CreateDirectory(vic)
 
         Catch ex As Exception
             loggingHandler.LogCriticalAsync("setup", ex.Message)
+            Sleep(2000)
+            Environment.Exit(0)
         End Try
     End Sub
 
