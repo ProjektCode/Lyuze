@@ -36,13 +36,19 @@ Public Class MasterUtils
 
 #Region "Color Options"
 
-    Public Function ConvertToDiscordColor(hex As String)
-        If hex.Contains("#") Then
-            hex = hex.Remove(0, 1)
-        End If
-        Dim colorInt As Integer = Integer.Parse(hex, NumberStyles.HexNumber)
-        Dim color As UInteger = Convert.ToInt32(colorInt)
-        Return color
+    Public Function ConvertToDiscordColor(hex As String) As UInteger
+        Try
+            If hex.Contains("#") Then
+                hex = hex.Remove(0, 1)
+            End If
+            Dim colorInt As Integer = Integer.Parse(hex, NumberStyles.HexNumber)
+            Dim color As UInteger = Convert.ToInt32(colorInt)
+            Return color
+        Catch ex As Exception
+            Dim whiteInt As Integer = Integer.Parse("ffffff", NumberStyles.HexNumber)
+            Dim white As UInteger = Convert.ToUInt32(whiteInt)
+            Return white
+        End Try
     End Function
 
     Public Function RandomEmbedColor()

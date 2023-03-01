@@ -66,22 +66,25 @@ NotInheritable Class FunService
     End Function
 
     Public Shared Async Function GetNeko() As Task(Of Embed)
-        Dim rand As New Random
-        Dim neko = rand.Next(1, 578)
-        Dim image As String
 
-        If neko >= 1 And neko < 10 Then
-            image = $"000{neko}"
+        Dim httpClient = _httpClientFactory.CreateClient
+        Dim response = Await httpClient.GetStringAsync("https://nekos.best/api/v2/neko")
+        Dim neko = Nekos.FromJson(response)
 
-        ElseIf neko >= 10 And neko < 100 Then
-            image = $"00{neko}"
-        Else
-            image = $"0{neko}"
+        If neko Is Nothing Then
+            Return embedHandler.errorEmbed("Neko", "An error occurred, please try again later.").Result
         End If
 
         Dim embed = New EmbedBuilder With {
-            .ImageUrl = $"https://nekos.best/api/v1/nekos/{ image }.jpg",
-            .Color = New Color(_utils.RandomEmbedColor)
+            .Title = neko.Results.FirstOrDefault.ArtistName,
+            .ImageUrl = neko.Results.FirstOrDefault.Url.AbsoluteUri,
+            .Color = New Color(Await _img.RandomColorFromURL(neko.Results.FirstOrDefault.Url.AbsoluteUri)),
+            .Url = neko.Results.FirstOrDefault.SourceUrl.AbsoluteUri,
+            .Timestamp = DateTime.Now,
+            .Footer = New EmbedFooterBuilder With {
+                .IconUrl = neko.Results.FirstOrDefault.Url.AbsoluteUri,
+                .Text = neko.Results.FirstOrDefault.ArtistName
+            }
         }
 
         Return embed.Build

@@ -14,7 +14,7 @@ Public Class General
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
     Private Shared ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
     Private Shared ReadOnly _img As Images = serviceHandler.provider.GetRequiredService(Of Images)
-    ' Private Shared ReadOnly _lvl As LevelingSystem = serviceHandler.provider.GetRequiredService(Of LevelingSystem)
+    Private Shared ReadOnly _lvl As LevelingSystem = serviceHandler.provider.GetRequiredService(Of LevelingSystem)
     'Private Shared ReadOnly _gold As GoldSystem = serviceHandler.provider.GetRequiredService(Of GoldSystem)
 
     <Command("emotes")>
@@ -33,10 +33,26 @@ Public Class General
     End Function
 
     <Command("url")>
-    <Summary("Gets the long url from url shorteners.")>
+    <Summary("Gets the long url from some url shorteners.")>
     <Remarks("\url https://bit.ly/3uqikrh | returns a mediafire link,")>
     Public Async Function GetUrl(url As String) As Task
         Await ReplyAsync(GeneralService.ReverseShortUrl(url))
+    End Function
+
+    <Command("rgb")>
+    <Summary("Returns the give Hex color in RGB format")>
+    <Remarks("\rgb #dc143c")>
+    Public Async Function GetRGB(hex As String) As Task
+        Dim color = System.Drawing.ColorTranslator.FromHtml(hex)
+        Dim RGB = $"({Convert.ToInt16(color.R)},{Convert.ToInt16(color.G)},{Convert.ToInt16(color.B)})"
+
+        Dim embed As New EmbedBuilder With {
+            .Title = " RGB Color",
+            .Description = $"Hex Code: {hex.ToUpper} {Environment.NewLine} RGB: {RGB}",
+            .Color = New Color(_utils.ConvertToDiscordColor(hex))
+            }
+
+        Await ReplyAsync(embed:=embed.Build)
     End Function
 
     <Command("test")>
@@ -62,19 +78,23 @@ Public Class General
 
 
 
-        Try
-            Dim settings = Lyuze.Settings.Data
-            'Dim channel = Context.Guild.GetTextChannel(settings.IDs.WelcomeId)
-            Dim msg = $"{Context.User.Username}#{Context.User.Discriminator} has joined the server"
-            Dim submsg = Context.Guild.MemberCount
-            Dim path = Await _img.CreateBannerImageAsync(Context.User, msg, submsg)
-            Await Context.Channel.SendFileAsync(path)
-            'Await ReplyAsync(path, String.Empty)
+        'Try
+        '    Dim settings = Lyuze.Settings.Data
+        '    'Dim channel = Context.Guild.GetTextChannel(settings.IDs.WelcomeId)
+        '    Dim msg = $"{Context.User.Username}#{Context.User.Discriminator} has joined the server"
+        '    Dim submsg = Context.Guild.MemberCount
+        '    Dim path = Await _img.CreateBannerImageAsync(Context.User, msg, submsg)
+        '    Await Context.Channel.SendFileAsync(path)
+        '    'Await ReplyAsync(path, String.Empty)
 
-            File.Delete(path)
-        Catch ex As Exception
-            ReplyAsync(ex.Message)
-        End Try
+        '    File.Delete(path)
+        'Catch ex As Exception
+        '    ReplyAsync(ex.Message)
+        'End Try
+
+        'Dim player As New Player
+        'Dim p As PlayerModel = Await Player.GetUser(Context.User)
+        'Await ReplyAsync(_lvl.LevelEquation(p.Level))
 
     End Function
 End Class

@@ -112,7 +112,6 @@ Public Class Admin
         Try
             Dim settings = Lyuze.Settings.Data
             Dim channel = Context.Guild.GetTextChannel(settings.IDs.KickId)
-
             Await user.KickAsync(reason)
             Await ReplyAsync(embed:=Await AdminService.Kick(user, reason, Context))
         Catch ex As Exception
@@ -134,8 +133,17 @@ Public Class Admin
     <Summary("Change the background of someone's profile")>
     <RequireUserPermission(GuildPermission.KickMembers)>
     <Remarks("\cbg @user https://i.imgur.com/5c0jfZS.png")>
-    Public Async Function ChangeBackground(user As SocketGuildUser, url As String) As Task
+    Public Async Function ChangeBackground(user As IGuildUser, url As String) As Task
         Await ReplyAsync(embed:=Await AdminService.ChangeBackground(user, url))
+    End Function
+
+    <Command("infraction")>
+    <Summary("Give a user a infraction, if max is reached it will ban them for 1 day")>
+    <Remarks("\infraction @user <message_id>")>
+    Public Async Function Infraction(user As SocketGuildUser, msgid As ULong) As Task
+
+        Await ReplyAsync(embed:=Await AdminService.Infraction(user, msgid, Context))
+
     End Function
 
 End Class
@@ -167,7 +175,7 @@ Public Class Owner
     <RequireOwner>
     Public Async Function cmdKill() As Task
         For Each p As Process In Process.GetProcesses
-            If p.ProcessName = "OpenJDK Platform Binary" Then
+            If p.ProcessName = "javaw" Then
                 Try
                     p.Kill()
                 Catch ex As Exception

@@ -1,5 +1,4 @@
-﻿Imports Discord.Commands
-Imports MongoDB.Driver
+﻿Imports MongoDB.Driver
 Imports MongoDB.Bson
 Imports MongoDB.Bson.Serialization.Attributes
 Imports Discord.WebSocket
@@ -17,6 +16,8 @@ Public Class PlayerModel
     Public Property AboutMe() As String
     Public Property PublicProfile() As String
     Public Property LevelNotify() As Boolean
+    Public Property InfractionCount() As Integer
+    Public Property InfractionMessages() As List(Of String)
 End Class
 
 Public Class Player
@@ -26,6 +27,7 @@ Public Class Player
 
     Public Shared Function CreateProfile(user As SocketGuildUser)
         Dim num As Integer = rand.Next(1, 3)
+        Dim strList As New List(Of String)
         Dim player As New PlayerModel With {
             .DiscordID = user.Id,
             .Level = 1,
@@ -34,7 +36,9 @@ Public Class Player
             .AboutMe = "About me has not been set.",
             .FavChar = "Favorite Character has not been set.",
             .PublicProfile = "Private",
-            .LevelNotify = True
+            .LevelNotify = True,
+            .InfractionCount = 0,
+            .InfractionMessages = strList
         }
         db.playerCollection.InsertOneAsync(player)
     End Function
@@ -61,7 +65,6 @@ Public Class Player
 
     Public Shared Async Function UpdateUser(user As SocketGuildUser, p As PlayerModel) As Task
         Dim filter = Builders(Of PlayerModel).Filter.Eq(Function(x) x.DiscordID, user.Id)
-        'Dim user = db._collection.Find(filter).FirstOrDefault
         Await db.playerCollection.ReplaceOneAsync(filter, p)
         Return
     End Function

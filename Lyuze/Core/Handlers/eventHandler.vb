@@ -72,7 +72,8 @@ NotInheritable Class eventHandler
 
         'Database
         Player.CheckProfile(user)
-        _lvl.MsgAntiSpam(user, context)
+        '_lvl.MsgAntiSpam(user, context)
+        _lvl.MsgCooldown(arg, context)
 
 
 

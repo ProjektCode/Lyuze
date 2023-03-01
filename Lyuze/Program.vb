@@ -1,16 +1,16 @@
 Imports System.IO
-Imports System.Net
 Imports System.Threading.Thread
-Imports Discord
 
 
 #Region "-To-Do List / +Found Bugs"
 '-Find more commands/apis to use.(try for 50 commands.)
-'-Turn bannerasync into a command to make custom banners(this will require a nodejs server).
-'-Decided whether to add node server or not.
 '-Possibly make your own "what am I?" API.
 '+Found cropped images in main folder. don't know where they're from = possibly because bot was placed into a admin privilage folder when the bot isn't on elevated privilages.
 '-Possibly revert JikanAPI to before the Async Changes(this is to have all the anime commands working again)
+'+Neko API seems to be broken, No image sent inside embed. = API was changed, updated to the most recent api, couldn't use nuget package since it only supports .net5/6
+'-In PlayerModel.CreateProfile Change Background URL to an imgur url
+'+Server command completely errors out = solved was background url that was using the heroku server, needs imgur image, also check if image exists if not result to using default image.
+'-Infraction command add temp ban(1 day)
 #End Region
 
 Module Program
@@ -28,7 +28,7 @@ Module Program
         Console.Title = "Discord Bot - Multi-Purpose Discord Bot"
         If Not Directory.Exists(Resources) Then
             BotSetup()
-            loggingHandler.LogInformationAsync("setup", "File structure has been created... Now go into Resources/Settings and open settings.json and fill in the required fields.")
+            loggingHandler.LogInformationAsync("setup", "File structure has been created... Now go into Resources/Settings and open settings.json and fill in the required fields, then go to Resources/Victoria and place your Lavalink.jar and application.yaml in the folder.")
             Sleep(5000)
             Environment.Exit(0)
         End If
@@ -38,7 +38,7 @@ Module Program
     Private Async Function SetUp() As Task
         Dim settings = Lyuze.Settings.Data
         'All sleep timers are there only for aesthetic no real reason for them to be there.
-        If settings.Discord.Token = "Token Here" Then
+        If settings.Discord.Token = "Token Here" Or settings.Discord.Token.Length < 25 Then
             loggingHandler.LogCriticalAsync("setup", "Please go into the settings file and configure the bot.")
             Sleep(5000)
             Environment.Exit(0)

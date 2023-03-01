@@ -8,10 +8,10 @@ Public Class LevelingSystem
     Private Shared ReadOnly _lvl As LevelingSystem = serviceHandler.provider.GetRequiredService(Of LevelingSystem)
     ' Private Shared ReadOnly _gold As GoldSystem = serviceHandler.provider.GetRequiredService(Of GoldSystem)
 
-    Private Shared ReadOnly MsgCooldownTimer As New List(Of DateTimeOffset)()
-    Private Shared ReadOnly MsgCooldownTarget As New List(Of SocketGuildUser)()
-    'Private Shared ReadOnly CmdCooldownTimer As New List(Of DateTimeOffset)()
-    'Private Shared ReadOnly CmdCooldownTarget As New List(Of SocketGuildUser)()
+    'Private Shared ReadOnly MsgCooldownTimer As New List(Of DateTimeOffset)()
+    'Private Shared ReadOnly MsgCooldownTarget As New List(Of SocketGuildUser)()
+    Private Shared ReadOnly MsgList As New List(Of Message)
+    Private Shared ReadOnly AuthorList As New List(Of ULong)
 
     'f(x) = (10 * x^2) f(x) is xp needed - x is level
     Public Function LevelEquation(lvl As Integer) As Double
@@ -32,8 +32,14 @@ Public Class LevelingSystem
 
     Public Async Function LevelUp(user As SocketGuildUser, ctx As SocketCommandContext) As Task
         Dim _player As PlayerModel = Await Player.GetUser(user)
+        Dim xp As Integer = 0
+        'Untested
+        If _player.XP > LevelEquation(_player.Level) Then
+            xp = _player.XP - LevelEquation(_player.Level)
+        End If
+
         _player.Level += 1
-        _player.XP = 0
+        _player.XP = xp
 
         If _player.LevelNotify = True Then
             Dim embed As New EmbedBuilder With {
@@ -45,8 +51,10 @@ Public Class LevelingSystem
             Await Player.UpdateUser(user, _player)
 
             Await ctx.Channel.SendMessageAsync(embed:=embed.Build)
+            Return
         End If
 
+        Await Player.UpdateUser(user, _player)
     End Function
 
     Public Async Function GiveXP(user As SocketGuildUser, xp As Integer) As Task
@@ -55,60 +63,63 @@ Public Class LevelingSystem
         Player.UpdateUser(user, _player)
     End Function
 
-    Public Async Sub MsgAntiSpam(user As SocketGuildUser, ctx As SocketCommandContext, Optional xp As Integer = 1)
-        'Anti-LevelSplan
-        If MsgCooldownTarget.Contains(TryCast(ctx.User, SocketGuildUser)) Then
-            'If they have used this command before, take the time the user last did something, add 3 seconds, and see if it's greater than this very moment.
-            If MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(3) >= DateTimeOffset.Now Then
-                'If enough time hasn't passed
-                Dim secondsLeft As Integer = Math.Truncate((MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(3) - DateTimeOffset.Now).TotalSeconds)
-            Else
-                'If enough time has passed, set the time for the user to right now.
-                MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))) = DateTimeOffset.Now
-                _lvl.GiveXP(user, xp)
-                '_gold.AntiSpam(ctx)
-                If Await _lvl.CanLevelUp(user) Then
-                    _lvl.LevelUp(user, ctx)
-                End If
-            End If
-        Else
-            'If they've never used this command before, add their username and when they just used this command.
-            MsgCooldownTarget.Add(TryCast(ctx.User, SocketGuildUser))
-            MsgCooldownTimer.Add(DateTimeOffset.Now)
-            _lvl.GiveXP(user, xp)
-            '_gold.AntiSpam(ctx)
-            If Await _lvl.CanLevelUp(user) Then
-                _lvl.LevelUp(user, ctx)
-            End If
-        End If
-    End Sub
-
-    'Public Async Sub CmdAntiSpam(ctx As SocketCommandContext, Optional xp As Integer = 1)
+    'Public Async Sub MsgAntiSpam(user As SocketGuildUser, ctx As SocketCommandContext, Optional xp As Integer = 1)
     '    'Anti-LevelSplan
-    '    If CmdCooldownTarget.Contains(TryCast(ctx.User, SocketGuildUser)) Then
+    '    If MsgCooldownTarget.Contains(TryCast(ctx.User, SocketGuildUser)) Then
     '        'If they have used this command before, take the time the user last did something, add 3 seconds, and see if it's greater than this very moment.
-    '        If CmdCooldownTimer(CmdCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(5) >= DateTimeOffset.Now Then
+    '        If MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(3) >= DateTimeOffset.Now Then
     '            'If enough time hasn't passed
-    '            Dim secondsLeft As Integer = Math.Truncate((CmdCooldownTimer(CmdCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(5) - DateTimeOffset.Now).TotalSeconds)
+    '            Dim secondsLeft As Integer = Math.Truncate((MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(3) - DateTimeOffset.Now).TotalSeconds)
     '        Else
     '            'If enough time has passed, set the time for the user to right now.
-    '            CmdCooldownTimer(CmdCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))) = DateTimeOffset.Now
-    '            _lvl.GiveXP(ctx, xp)
+    '            MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))) = DateTimeOffset.Now
+    '            _lvl.GiveXP(user, xp)
     '            '_gold.AntiSpam(ctx)
-    '            If Await _lvl.CanLevelUp(ctx) Then
-    '                _lvl.LevelUp(ctx)
+    '            If Await _lvl.CanLevelUp(user) Then
+    '                _lvl.LevelUp(user, ctx)
     '            End If
     '        End If
     '    Else
     '        'If they've never used this command before, add their username and when they just used this command.
-    '        CmdCooldownTarget.Add(TryCast(ctx.User, SocketGuildUser))
-    '        CmdCooldownTimer.Add(DateTimeOffset.Now)
-    '        _lvl.GiveXP(ctx, xp)
-    '        '_gold.AntiSpam(ctx)
-    '        If Await _lvl.CanLevelUp(ctx) Then
-    '            _lvl.LevelUp(ctx)
-    '        End If
+    '        MsgCooldownTarget.Add(TryCast(ctx.User, SocketGuildUser))
+    '        MsgCooldownTimer.Add(DateTimeOffset.Now)
+    '        LevelHelper(user, xp, ctx)
     '    End If
     'End Sub
 
+    Public Async Sub MsgCooldown(msg As IUserMessage, ctx As SocketCommandContext, Optional xp As Integer = 1)
+        Dim newMsg As New Message With {
+            .AuthorID = msg.Author.Id,
+            .Timestamp = msg.Timestamp
+        }
+
+        If AuthorList.Contains(msg.Author.Id) Then
+            'Check the current time and see if it's after 3 seconds of the last message.
+            Dim AuthorMsg = MsgList.Find(Function(x) x.AuthorID = newMsg.AuthorID)
+            If Not AuthorMsg.Timestamp.AddSeconds(3) >= DateTimeOffset.Now Then
+                AuthorList.Remove(msg.Author.Id)
+                MsgList.Remove(AuthorMsg)
+                LevelHelper(msg.Author, xp, ctx)
+            End If
+
+        Else
+            AuthorList.Add(msg.Author.Id)
+            MsgList.Add(newMsg)
+            LevelHelper(msg.Author, xp, ctx)
+        End If
+
+    End Sub
+
+    Public Async Sub LevelHelper(user As SocketGuildUser, xp As Integer, ctx As SocketCommandContext)
+        _lvl.GiveXP(user, xp)
+        If Await _lvl.CanLevelUp(user) Then
+            _lvl.LevelUp(user, ctx)
+        End If
+    End Sub
+
+End Class
+
+Partial Class Message
+    Public Property AuthorID As ULong
+    Public Property Timestamp As DateTimeOffset
 End Class

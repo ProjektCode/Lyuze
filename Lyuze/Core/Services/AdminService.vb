@@ -6,6 +6,7 @@ Imports Microsoft.Extensions.DependencyInjection
 NotInheritable Class AdminService
     Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
     Private Shared ReadOnly _imgs As Images = serviceHandler.provider.GetRequiredService(Of Images)
+    Private Shared ReadOnly _settings As Settings = serviceHandler.provider.GetRequiredService(Of Settings)
     Public Shared Async Function Report(id As ULong, ctx As SocketCommandContext) As Task(Of Embed)
         Try
             Dim message = ctx.Channel.GetMessageAsync(id)
@@ -112,6 +113,53 @@ NotInheritable Class AdminService
             Return embed.Build
         Catch ex As Exception
             Return embedHandler.errorEmbed("Admin - Change Background", ex.Message).Result
+        End Try
+    End Function
+
+    Public Shared Async Function Infraction(user As SocketGuildUser, msg As ULong, ctx As SocketCommandContext) As Task(Of Embed)
+
+        If user.Id = ctx.Channel.GetMessageAsync(msg).Result.Author.Id Then
+            Return embedHandler.errorEmbed("Infraction", "Can't report your own message.").Result
+        End If
+
+        Try
+            Dim p As PlayerModel = Await Player.GetUser(user)
+            If p.InfractionCount + 1 < 3 Then
+                p.InfractionMessages.Add(msg)
+                p.InfractionCount += 1
+                Dim em As New EmbedBuilder With {
+                    .Title = "Infraction given",
+                    .Description = $"An infraction has been given to {user.Mention}. Infraction has been sent to a mod channel.",
+                    .Color = New Color(_utils.ConvertToDiscordColor("#dc143c")),
+                    .Footer = New EmbedFooterBuilder With {
+                        .Text = "Infraction Given"
+                    }
+                }
+                Player.UpdateUser(user, p)
+
+                'Dim reportchannel = ctx.Guild.GetTextChannel(_settings.IDs.ReportId)
+                'reportchannel.SendMessageAsync(embed:=)
+
+                Return em.Build
+            Else
+                Dim infractionMsgs As String
+                For Each i In p.InfractionMessages
+                    infractionMsgs += $"{i}{Environment.NewLine}"
+                Next
+
+                Dim e As New EmbedBuilder With {
+                    .Title = $"Max Infractions For @{If(user.Nickname, user.Username)} Has Been Reached",
+                    .Color = New Color(_utils.ConvertToDiscordColor("#dc143c")),
+                    .Description = infractionMsgs,
+                    .Footer = New EmbedFooterBuilder With {
+                        .Text = "Infractions"
+                    }
+                }
+                Player.UpdateUser(user, p)
+                Return e.Build
+            End If
+        Catch ex As Exception
+
         End Try
     End Function
 End Class
