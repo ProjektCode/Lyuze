@@ -13,6 +13,8 @@ Partial Public Class Settings
 
 	<JsonProperty("Image Links")>
 	Public Property ImageLinks() As List(Of Uri)
+	<JsonProperty("Profile Banners")>
+	Public Property ProfileBanners() As List(Of Uri)
 
 	<JsonProperty("Welcome Message")>
 	Public Property WelcomeMessage() As List(Of String)

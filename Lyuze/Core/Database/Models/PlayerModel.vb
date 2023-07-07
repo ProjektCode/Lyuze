@@ -26,13 +26,13 @@ Public Class Player
     Shared ReadOnly rand As New Random
 
     Public Shared Function CreateProfile(user As SocketGuildUser)
-        Dim num As Integer = rand.Next(1, 3)
+        Dim num As Integer = rand.Next(Settings.Data.ProfileBanners.Count)
         Dim strList As New List(Of String)
         Dim player As New PlayerModel With {
             .DiscordID = user.Id,
             .Level = 1,
             .XP = 0,
-            .Background = $"http://lyuze-api.projektcode.com/images/banners/info/profile/user-{num}",
+            .Background = Settings.Data.ProfileBanners(num).AbsoluteUri,
             .AboutMe = "About me has not been set.",
             .FavChar = "Favorite Character has not been set.",
             .PublicProfile = "Private",

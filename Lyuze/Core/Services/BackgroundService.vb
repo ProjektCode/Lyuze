@@ -33,7 +33,7 @@ NotInheritable Class BackgroundService
 
             Dim embed = New EmbedBuilder With {
                 .Title = $"{unsplash.User.Name} - {unsplash.Width}x{unsplash.Height}",
-                .ImageUrl = download.Url.AbsolutePath,
+                .ImageUrl = download.Url.AbsoluteUri,
                 .Url = unsplash.User.Links.Portfolio.AbsoluteUri,
                 .Footer = New EmbedFooterBuilder With {
                     .Text = $"ID: {unsplash.Id} - ⬆️{unsplash.Likes} - ⏬{unsplash.Downloads} - Powered by Unsplash.com"
