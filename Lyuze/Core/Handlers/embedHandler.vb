@@ -32,37 +32,12 @@ NotInheritable Class embedHandler
         Return embed
     End Function
 
-    Public Shared Async Function ColdWarZombiesClass(user As SocketUser, weapon As String, optic As String, muzzle As String, barrel As String, body As String, under As String, magazine As String, handle As String, stock As String) As Task(Of Embed)
-        Dim embed As New EmbedBuilder With {
-            .Title = $"{user.Username}'s Class",
-            .ThumbnailUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl),
-            .Description = $"{user.Mention}'s Randomly generated class. Have fun!",
-            .Color = Color.Purple,
-            .Footer = New EmbedFooterBuilder With {
-                .IconUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl),
-                .Text = "Random Cold War Zombies Class"
-            }
-        }
-        embed.AddField("Weapon", weapon, True)
-        embed.AddField("Optic", optic, True)
-        embed.AddField("Muzzle", muzzle, True)
-        embed.AddField("Barrel", barrel, True)
-        embed.AddField("Body", body, True)
-        embed.AddField("UnderBarrel", under, True)
-        embed.AddField("Magazine", magazine, True)
-        embed.AddField("Handle", handle, True)
-        embed.AddField("Stock", stock, True)
-
-
-        Return embed.Build
-    End Function
-
     Public Shared Async Function ProfileEmbed(user As SocketGuildUser, ctx As SocketCommandContext, p As PlayerModel, lvl As LevelingSystem) As Task(Of Embed)
         Dim embed As New EmbedBuilder With {
             .Title = $"{user.Username}'s Profile | Level - {p.Level}",
             .ImageUrl = p.Background,
             .Color = New Color(Await _imgs.RandomColorFromURL(p.Background)),
-            .ThumbnailUrl = user.GetAvatarUrl(ImageFormat.Auto, 256),
+            .ThumbnailUrl = If(user.GetAvatarUrl(ImageFormat.Auto, 256), user.GetDefaultAvatarUrl()),
             .Timestamp = ctx.Message.Timestamp,
             .Footer = New EmbedFooterBuilder With {
                 .Text = "Profile Data",
@@ -70,9 +45,9 @@ NotInheritable Class embedHandler
             }
         }
         If user.Nickname IsNot Nothing Then
-            embed.AddField("Nickname",
-                            user.Nickname, True)
+            embed.AddField("Nickname", user.Nickname, True)
         End If
+
         embed.AddField("XP",
                        $"{p.XP}/{lvl.LevelEquation(p.Level)}", True)
         embed.AddField("Account Creation",

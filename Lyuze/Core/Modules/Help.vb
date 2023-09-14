@@ -37,6 +37,7 @@ Public Class cmdHelp
 
             Await PagedReplyAsync(pages)
         Else
+            'See if there's a better way to filter through commands to find the one mentioned in name
             For Each mods In _service.Modules
                 For Each command In mods.Commands
                     If name = command.Name Then

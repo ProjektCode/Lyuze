@@ -46,8 +46,8 @@ NotInheritable Class AdminService
         Return embed.Build
     End Function
 
-    Public Shared Async Function Ban(user As IGuildUser, <Remainder> reason As String, ctx As SocketCommandContext) As Task(Of Embed)
-        Await ctx.Guild.AddBanAsync(user, 1, reason)
+    Public Shared Async Function Ban(user As IGuildUser, days As Integer, <Remainder> reason As String, ctx As SocketCommandContext) As Task(Of Embed)
+        Await ctx.Guild.AddBanAsync(user, days, reason)
         Dim embed As New EmbedBuilder With {
             .Description = $":hammer: {user.Mention} was banned by {ctx.User.Mention}.{Environment.NewLine} **Reason** {reason}",
             .ThumbnailUrl = If(user.GetAvatarUrl, user.GetDefaultAvatarUrl),
@@ -116,50 +116,38 @@ NotInheritable Class AdminService
         End Try
     End Function
 
-    Public Shared Async Function Infraction(user As SocketGuildUser, msg As ULong, ctx As SocketCommandContext) As Task(Of Embed)
+    Public Shared Async Function Infraction(msgid As ULong, ctx As SocketCommandContext, Optional user As SocketGuildUser) As Task(Of Embed)
 
-        If user.Id = ctx.Channel.GetMessageAsync(msg).Result.Author.Id Then
+        'If user.Id = ctx.Channel.GetMessageAsync(msg).Result.Author.Id Then
+        '    Return embedHandler.errorEmbed("Infraction", "Can't report your own message.").Result
+        'End If
+        Dim msg = Await ctx.Channel.GetMessageAsync(msgid)
+
+        If msg.Author.Id = user.Id Then
             Return embedHandler.errorEmbed("Infraction", "Can't report your own message.").Result
         End If
 
         Try
             Dim p As PlayerModel = Await Player.GetUser(user)
-            If p.InfractionCount + 1 < 3 Then
-                p.InfractionMessages.Add(msg)
-                p.InfractionCount += 1
-                Dim em As New EmbedBuilder With {
-                    .Title = "Infraction given",
-                    .Description = $"An infraction has been given to {user.Mention}. Infraction has been sent to a mod channel.",
-                    .Color = New Color(_utils.ConvertToDiscordColor("#dc143c")),
-                    .Footer = New EmbedFooterBuilder With {
-                        .Text = "Infraction Given"
-                    }
+            p.InfractionMessages.Add(msg.Content)
+            p.InfractionCount += 1
+            Dim em As New EmbedBuilder With {
+                .Title = "Infraction given",
+                .Description = $"An infraction has been given to ***{msg.Author}***. Infraction message '*{msg.Content}*'.",
+                .Color = New Color(_utils.ConvertToDiscordColor("#dc143c")),
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = "Infraction Given"
                 }
-                Player.UpdateUser(user, p)
+             }
+            Player.UpdateUser(user, p)
 
-                'Dim reportchannel = ctx.Guild.GetTextChannel(_settings.IDs.ReportId)
-                'reportchannel.SendMessageAsync(embed:=)
+            Dim reportchannel = ctx.Guild.GetTextChannel(_settings.IDs.ReportId)
+            reportchannel.SendMessageAsync(embed:=em.Build)
 
-                Return em.Build
-            Else
-                Dim infractionMsgs As String
-                For Each i In p.InfractionMessages
-                    infractionMsgs += $"{i}{Environment.NewLine}"
-                Next
-
-                Dim e As New EmbedBuilder With {
-                    .Title = $"Max Infractions For @{If(user.Nickname, user.Username)} Has Been Reached",
-                    .Color = New Color(_utils.ConvertToDiscordColor("#dc143c")),
-                    .Description = infractionMsgs,
-                    .Footer = New EmbedFooterBuilder With {
-                        .Text = "Infractions"
-                    }
-                }
-                Player.UpdateUser(user, p)
-                Return e.Build
-            End If
-        Catch ex As Exception
-
-        End Try
+            Return em.Build
+            Catch ex As Exception
+                Return embedHandler.errorEmbed("Infraction", ex.Message).Result
+            End Try
     End Function
+
 End Class

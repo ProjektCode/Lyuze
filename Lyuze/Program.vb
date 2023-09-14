@@ -1,18 +1,14 @@
 Imports System.IO
 Imports System.Threading.Thread
-Imports MongoDB.Bson.IO
 Imports Newtonsoft.Json
 
 
 #Region "-To-Do List / +Found Bugs"
 '-Find more commands/apis to use.(try for 50 commands.)
 '-Possibly make your own "what am I?" API.
-'+Found cropped images in main folder. don't know where they're from = possibly because bot was placed into a admin privilage folder when the bot isn't on elevated privilages.
 '-Possibly revert JikanAPI to before the Async Changes(this is to have all the anime commands working again)
-'+Neko API seems to be broken, No image sent inside embed. = API was changed, updated to the most recent api, couldn't use nuget package since it only supports .net5/6
-'-In PlayerModel.CreateProfile Change Background URL to an imgur url
-'+Server command completely errors out = solved was background url that was using the heroku server, needs imgur image, also check if image exists if not result to using default image.
-'-Infraction command add temp ban(1 day)
+'-For certain music commands check if user has the DJ role
+'-For anime radio see if you could implement LISTEN.MOE api.
 #End Region
 
 Module Program

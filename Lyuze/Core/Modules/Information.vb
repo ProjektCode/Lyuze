@@ -55,7 +55,7 @@ Public Class SetInformation
 
     <Command("profile")>
     <Summary("Configure your profile's publicity state.")>
-    <Remarks("\set profile public. | your profile would be set to public having other users view your profile.")>
+    <Remarks("\set profile public. | your profile would be set to public having other users view your profile. : default - private")>
     Public Async Function ConfigProfile(state As String) As Task
         Await ReplyAsync(embed:=Await PlayerService.UpdateProfile(Context.User, state))
     End Function
@@ -63,7 +63,7 @@ Public Class SetInformation
     <Command("levelnotify")>
     <[Alias]("lnoti")>
     <Summary("Configure your level notification status")>
-    <Remarks("\set lnoti no | either yes or no : default yes")>
+    <Remarks("\set lnoti no | either yes or no : default - yes")>
     Public Async Function ConfigLevelNotify(type As String) As Task
         Await ReplyAsync(embed:=Await PlayerService.UpdateLevelNotify(Context.User, type))
     End Function

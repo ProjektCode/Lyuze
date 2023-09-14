@@ -14,6 +14,7 @@ Public Class Admin
     <Command("purge")>
     <Summary("Purge messages from the last 14 days.")>
     <RequireBotPermission(GuildPermission.ManageMessages)>
+    <RequireUserPermission(GuildPermission.ManageMessages)>
     <Remarks("\purge <number> | 1-1000 could leave blank to delete 1000 messages.")>
     Public Async Function purgeCmd(Optional amount As Integer = 1000) As Task(Of RuntimeResult)
         'Changes bot's avatar > Context.Client.CurrentUser.ModifyAsync(Function(x) x.Avatar = TryCast("a", Drawing.Image))
@@ -82,11 +83,11 @@ Public Class Admin
     End Function
 
     <Command("ban")>
-    <Summary("Ban the mentioned user.")>
+    <Summary("Ban the mentioned user for a specified time.")>
     <RequireUserPermission(GuildPermission.BanMembers)>
     <RequireBotPermission(GuildPermission.BanMembers)>
     <Remarks("\ban @user <reason> | reason is optional")>
-    Public Async Function cmdBanMember(user As IGuildUser, <Remainder> Optional reason As String = Nothing) As Task
+    Public Async Function cmdBanMember(user As IGuildUser, days As Integer, <Remainder> Optional reason As String = Nothing) As Task
 
         Try
 
@@ -96,7 +97,7 @@ Public Class Admin
                 reason = "No reason given."
             End If
 
-            Await ReplyAsync(embed:=Await AdminService.Ban(user, reason, Context))
+            Await ReplyAsync(embed:=Await AdminService.Ban(user, days, reason, Context))
         Catch ex As Exception
             ReplyAsync(ex.Message)
         End Try
@@ -138,11 +139,12 @@ Public Class Admin
     End Function
 
     <Command("infraction")>
-    <Summary("Give a user a infraction, if max is reached it will ban them for 1 day")>
+    <Summary("Give a user a infraction.")>
+    <RequireUserPermission(GuildPermission.BanMembers)>
     <Remarks("\infraction @user <message_id>")>
-    Public Async Function Infraction(user As SocketGuildUser, msgid As ULong) As Task
+    Public Async Function Infraction(msgid As ULong, Optional user As SocketGuildUser = Nothing) As Task
 
-        Await ReplyAsync(embed:=Await AdminService.Infraction(user, msgid, Context))
+        Await ReplyAsync(embed:=Await AdminService.Infraction(msgid, Context, user))
 
     End Function
 

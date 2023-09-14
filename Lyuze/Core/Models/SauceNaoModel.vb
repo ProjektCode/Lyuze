@@ -1,5 +1,4 @@
 ﻿Imports Newtonsoft.Json
-Imports SauceNET.Model
 
 Partial Public Class SauceNaoModel
     <JsonProperty("results")>

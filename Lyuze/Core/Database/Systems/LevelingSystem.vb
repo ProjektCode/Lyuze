@@ -8,8 +8,6 @@ Public Class LevelingSystem
     Private Shared ReadOnly _lvl As LevelingSystem = serviceHandler.provider.GetRequiredService(Of LevelingSystem)
     ' Private Shared ReadOnly _gold As GoldSystem = serviceHandler.provider.GetRequiredService(Of GoldSystem)
 
-    'Private Shared ReadOnly MsgCooldownTimer As New List(Of DateTimeOffset)()
-    'Private Shared ReadOnly MsgCooldownTarget As New List(Of SocketGuildUser)()
     Private Shared ReadOnly MsgList As New List(Of Message)
     Private Shared ReadOnly AuthorList As New List(Of ULong)
 
@@ -19,6 +17,7 @@ Public Class LevelingSystem
         Return xp
     End Function
 
+    'Checks if the user can be leveled up
     Public Async Function CanLevelUp(user As SocketGuildUser) As Task(Of Boolean)
         Dim _player As PlayerModel = Await Player.GetUser(user)
         Dim needXP As Double = LevelEquation(_player.Level)
@@ -30,6 +29,7 @@ Public Class LevelingSystem
         Return False
     End Function
 
+    'If the previous function returns true go through the leveling process
     Public Async Function LevelUp(user As SocketGuildUser, ctx As SocketCommandContext) As Task
         Dim _player As PlayerModel = Await Player.GetUser(user)
         Dim xp As Integer = 0
@@ -57,36 +57,14 @@ Public Class LevelingSystem
         Await Player.UpdateUser(user, _player)
     End Function
 
+    'Gives the user a set amount of experience
     Public Async Function GiveXP(user As SocketGuildUser, xp As Integer) As Task
         Dim _player As PlayerModel = Await Player.GetUser(user)
         _player.XP += xp
         Player.UpdateUser(user, _player)
     End Function
 
-    'Public Async Sub MsgAntiSpam(user As SocketGuildUser, ctx As SocketCommandContext, Optional xp As Integer = 1)
-    '    'Anti-LevelSplan
-    '    If MsgCooldownTarget.Contains(TryCast(ctx.User, SocketGuildUser)) Then
-    '        'If they have used this command before, take the time the user last did something, add 3 seconds, and see if it's greater than this very moment.
-    '        If MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(3) >= DateTimeOffset.Now Then
-    '            'If enough time hasn't passed
-    '            Dim secondsLeft As Integer = Math.Truncate((MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(3) - DateTimeOffset.Now).TotalSeconds)
-    '        Else
-    '            'If enough time has passed, set the time for the user to right now.
-    '            MsgCooldownTimer(MsgCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))) = DateTimeOffset.Now
-    '            _lvl.GiveXP(user, xp)
-    '            '_gold.AntiSpam(ctx)
-    '            If Await _lvl.CanLevelUp(user) Then
-    '                _lvl.LevelUp(user, ctx)
-    '            End If
-    '        End If
-    '    Else
-    '        'If they've never used this command before, add their username and when they just used this command.
-    '        MsgCooldownTarget.Add(TryCast(ctx.User, SocketGuildUser))
-    '        MsgCooldownTimer.Add(DateTimeOffset.Now)
-    '        LevelHelper(user, xp, ctx)
-    '    End If
-    'End Sub
-
+    'A cooldown system to prevent to farm experience. Set to 3 seconds > Should cooldown be customizable?
     Public Async Sub MsgCooldown(msg As IUserMessage, ctx As SocketCommandContext, Optional xp As Integer = 1)
         Dim newMsg As New Message With {
             .AuthorID = msg.Author.Id,
@@ -110,6 +88,7 @@ Public Class LevelingSystem
 
     End Sub
 
+    'Helper function needed with the introduction to the cooldown system
     Public Async Sub LevelHelper(user As SocketGuildUser, xp As Integer, ctx As SocketCommandContext)
         _lvl.GiveXP(user, xp)
         If Await _lvl.CanLevelUp(user) Then
@@ -119,6 +98,7 @@ Public Class LevelingSystem
 
 End Class
 
+'Class for to store messages for the Cooldown function
 Partial Class Message
     Public Property AuthorID As ULong
     Public Property Timestamp As DateTimeOffset

@@ -5,6 +5,7 @@ Imports Victoria
 Imports Victoria.Enums
 Imports Microsoft.Extensions.DependencyInjection
 
+'Make a command that grabs the DJ role and make certain commands require that role
 <Name("Music")>
 <Summary("Lets play some music!")>
 Public Class Music
@@ -21,7 +22,7 @@ Public Class Music
 
     <Command("play")>
     <Summary("Plays song - Can be done by text search or YouTube Playlist/Song URL.")>
-    <Remarks("/play <YouTube URL> | Villians by k/da")>
+    <Remarks("\play <YouTube URL> | \play Villians by k/da")>
     Public Async Function PlayAsync(<Remainder> searchQuery As String) As Task
         If String.IsNullOrWhiteSpace(searchQuery) Then
             Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Play", "Please provide search terms."))
@@ -158,7 +159,8 @@ Public Class Music
         Await ReplyAsync(embed:=Await audioService.repeatAsync(Context.Guild, Context.Channel))
     End Function
 
-    <Command("radio")>
+    <Command("animeradio")>
+    <[Alias]("aradio")>
     <Summary("Plays a raw 24/7 Anime music stream from LISTEN.Moe")>
     Public Async Function Radio() As Task
         PlayAsync("https://listen.moe/stream")

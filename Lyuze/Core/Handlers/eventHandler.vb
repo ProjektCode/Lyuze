@@ -103,29 +103,11 @@ NotInheritable Class eventHandler
 
     End Function
 
-    'Figure out a way to get messages that where not able to be cached by the bot by getting it from the audit logs.
-    Private Async Function onMessageDelete(msg As Cacheable(Of IMessage, ULong), chnl As ISocketMessageChannel) As Task
-        Try
-            Dim m = msg.GetOrDownloadAsync
-
-            If Not m.Status = TaskStatus.RanToCompletion Then
-                Await loggingHandler.LogInformationAsync("deleted", $"{"Message too old to be logged or bot was not running when the message was sent".Pastel(ColorTranslator.FromHtml("#DC143C"))}.")
-                Return
-            End If
-
-            'Console.WriteLine(m.Result.Content)
-            Await loggingHandler.LogInformationAsync("deleted", $"Message: {m.Result.Content.ToString.Pastel(ColorTranslator.FromHtml("#DC143C"))} - From: {chnl.Name.ToUpper}")
-            Return
-        Catch ex As Exception
-            loggingHandler.LogCriticalAsync("deleted", ex.Message)
-        End Try
-    End Function
-
     Private Async Function onUserJoined(arg As SocketGuildUser) As Task
         Dim settings = Lyuze.Settings.Data
         Try
             Dim channel = arg.Guild.GetTextChannel(settings.IDs.WelcomeId)
-            Dim msg = $"{arg.Username}#{arg.Discriminator} has joined the server"
+            Dim msg = $"{arg.Username} has joined the server"
             Dim submsg = arg.Guild.MemberCount
             Dim path = Await _images.CreateBannerImageAsync(arg, msg, submsg)
             Await channel.SendFileAsync(path, String.Empty)
@@ -140,7 +122,7 @@ NotInheritable Class eventHandler
         Dim settings = Lyuze.Settings.Data
         Try
             Dim channel = arg.Guild.GetTextChannel(settings.IDs.LeaveId)
-            Dim msg = $"{arg.Username}#{arg.Discriminator} Has left the server"
+            Dim msg = $"{arg.Username} Has left the server"
             Dim submsg = $"May thy user have thy peace"
             Dim path = Await _images.CreateBannerImageAsync(arg, msg, submsg)
             Await channel.SendFileAsync(path, String.Empty)

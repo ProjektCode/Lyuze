@@ -35,8 +35,8 @@ NotInheritable Class InformationService
     End Function
 
     Public Shared Async Function GetServer(g As IGuild, ctx As SocketCommandContext) As Task(Of Embed)
-        Dim number = rand.Next(1, 3)
-        Dim url = Defaults.defaultImage.ToString
+        Dim number = rand.Next(Settings.Data.ImageLinks.Count)
+        Dim url = Settings.Data.ImageLinks(number).AbsoluteUri
 
         Try
 
@@ -52,10 +52,10 @@ NotInheritable Class InformationService
                 }
             }
 
-            embed.AddField("Server's Creation Date", g.CreatedAt.DateTime.ToShortDateString(), True)
+            embed.AddField("Creation Date", g.CreatedAt.DateTime.ToShortDateString(), True)
             embed.AddField("Preferred Locale", g.PreferredLocale, True)
             embed.AddField("Nitro Tier", g.PremiumTier, True)
-            embed.AddField("Nitro Boosters", g.PremiumSubscriptionCount, True)
+            embed.AddField("Nitro Boost Count", g.PremiumSubscriptionCount, True)
             embed.AddField("Role Count", g.Roles.Count, True)
             embed.AddField("User Count", ctx.Guild.MemberCount, True)
             embed.AddField("Emote Count", g.Emotes.Count, True)

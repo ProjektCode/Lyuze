@@ -25,9 +25,10 @@ Public Class Player
     'Shared ReadOnly db As New DatabaseContext
     Shared ReadOnly rand As New Random
 
+    'Creates user's profile
     Public Shared Function CreateProfile(user As SocketGuildUser)
         Dim num As Integer = rand.Next(Settings.Data.ProfileBanners.Count)
-        Dim strList As New List(Of String)
+        Dim InfractionList As New List(Of String)
         Dim player As New PlayerModel With {
             .DiscordID = user.Id,
             .Level = 1,
@@ -38,11 +39,12 @@ Public Class Player
             .PublicProfile = "Private",
             .LevelNotify = True,
             .InfractionCount = 0,
-            .InfractionMessages = strList
+            .InfractionMessages = InfractionList
         }
         db.playerCollection.InsertOneAsync(player)
     End Function
 
+    'Checks if user has a profile
     Public Shared Function HasProfile(user As SocketGuildUser) As Boolean
         Dim result = db.playerCollection.Find(Function(x) x.DiscordID = user.Id)
         If result.CountDocuments = 1 Then
@@ -51,18 +53,21 @@ Public Class Player
         Return False
     End Function
 
+    'Gets user from the database using a filter
     Public Shared Async Function GetUser(user As SocketGuildUser) As Task(Of PlayerModel)
         Dim filter = Builders(Of PlayerModel).Filter.Eq(Function(x) x.DiscordID, user.Id)
         Dim u = db.playerCollection.Find(filter).FirstOrDefault
         Return u
     End Function
 
+    'Checks if user has profile if not goes to create
     Public Shared Function CheckProfile(user As SocketGuildUser)
         If Not HasProfile(user) Then
             CreateProfile(user)
         End If
     End Function
 
+    'Updates user's profile
     Public Shared Async Function UpdateUser(user As SocketGuildUser, p As PlayerModel) As Task
         Dim filter = Builders(Of PlayerModel).Filter.Eq(Function(x) x.DiscordID, user.Id)
         Await db.playerCollection.ReplaceOneAsync(filter, p)
