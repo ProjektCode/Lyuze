@@ -172,20 +172,6 @@ Public Class Fun
 
     Inherits ModuleBase(Of SocketCommandContext)
 
-    <Command("animememe")>
-    <[Alias]("ameme")>
-    <Summary("Get a meme from a random Anime subreddit")>
-    Public Async Function animeRedditMeme() As Task
-        Await ReplyAsync(embed:=Await FunService.AnimeRedit(Context))
-    End Function
-
-    <Command("regularmememe")>
-    <[Alias]("rmeme")>
-    <Summary("Get a meme from a random Meme subreddit")>
-    Public Async Function regularRedditMeme() As Task
-        Await ReplyAsync(embed:=Await FunService.RegularRedit(Context))
-    End Function
-
     <Command("neko")>
     <Summary("Get a random neko image")>
     Public Async Function getNeko() As Task

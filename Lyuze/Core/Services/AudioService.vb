@@ -2,12 +2,12 @@
 Imports System.Threading
 Imports System.Collections.Concurrent
 Imports Discord
-Imports Discord.Commands
 Imports Discord.Addons.Interactive
 Imports Victoria
 Imports Victoria.Enums
 Imports Victoria.EventArgs
 Imports Microsoft.Extensions.DependencyInjection
+Imports Discord.WebSocket
 
 NotInheritable Class audioService
 
@@ -21,8 +21,10 @@ NotInheritable Class audioService
     Private Shared ReadOnly _listLimit = 10
 
     Public Shared _channel As ITextChannel
+    Public Shared _djRole As SocketRole
 
-    Public Shared Async Function joinAsync(guild As IGuild, voiceState As IVoiceState, channel As ITextChannel) As Task(Of Embed)
+
+    Public Shared Async Function joinAsync(guild As IGuild, voiceState As IVoiceState, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         Try
             If _lavaNode.HasPlayer(guild) Then
@@ -33,18 +35,24 @@ NotInheritable Class audioService
             End If
 
             Try
-                Await _lavaNode.JoinAsync(voiceState.VoiceChannel, channel)
-                _channel = channel
-                Dim embed As New EmbedBuilder With {
-                    .Description = $":white_check_mark: Joined {voiceState.VoiceChannel.Name}
+
+                If user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
+                    Await _lavaNode.JoinAsync(voiceState.VoiceChannel, channel)
+                    _channel = channel
+                    Dim embed As New EmbedBuilder With {
+                        .Description = $":white_check_mark: Joined {voiceState.VoiceChannel.Name}
                     {Environment.NewLine}Commands are locked to <#{channel.Id}>.",
-                    .Color = Color.Green,
-                    .Footer = New EmbedFooterBuilder With {
-                        .Text = "Joined Voice Channel"
+                        .Color = Color.Green,
+                        .Footer = New EmbedFooterBuilder With {
+                            .Text = "Joined Voice Channel"
+                        }
                     }
-                }
-                Await loggingHandler.LogInformationAsync("victoria", $"Joined {voiceState.VoiceChannel}")
-                Return embed.Build
+                    Await loggingHandler.LogInformationAsync("victoria", $"Joined {voiceState.VoiceChannel}")
+                    Return embed.Build
+                Else
+                    Return embedHandler.errorEmbed("Audio - Join", "You do not have the DJ role.").Result
+                End If
+
             Catch ex As Exception
                 Return embedHandler.errorEmbed("Audio - Join", ex.Message).Result
             End Try
@@ -54,15 +62,15 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function leaveAsync(guild As IGuild, voiceState As IVoiceState, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function leaveAsync(guild As IGuild, voiceState As IVoiceState, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
                 'Checks if the text channel id the command was executed from matches the channel ID where the join command was
-                '   executed. if it matches it leaves the voice channel if not it will since a embed saying the command cannot be
-                '       used in the text channel.
-                If channel.Id = _channel.Id Then
+                'executed. if it matches it leaves the voice channel if not it will send an embed saying the command cannot be
+                'used in the text channel.
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     Dim player = _lavaNode.GetPlayer(guild)
 
@@ -107,12 +115,12 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function setVolumeAsync(guild As IGuild, vol As Integer, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function setVolumeAsync(guild As IGuild, vol As Integer, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
-                If channel.Id = _channel.Id Then
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     If vol > 150 Or vol <= 0 Then 'Limits the volume to only be between 1 and 150
                         Return embedHandler.errorEmbed("Audio - Volume", "Please make sure the value is between 1-150.").Result
@@ -147,13 +155,13 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function togglePauseAsync(guild As IGuild, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function togglePauseAsync(guild As IGuild, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
 
-                If channel.Id = _channel.Id Then
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     Dim player = _lavaNode.GetPlayer(guild)
 
@@ -201,13 +209,13 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function skipTrack(guild As IGuild, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function skipTrack(guild As IGuild, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
 
-                If channel.Id = _channel.Id Then
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     Dim player = _lavaNode.GetPlayer(guild)
                     If player Is Nothing Then 'Check is the player is null
@@ -319,13 +327,13 @@ NotInheritable Class audioService
         End If
     End Function
 
-    Public Shared Async Function clearTracks(guild As IGuild, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function clearTracks(guild As IGuild, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
 
-                If channel.Id = _channel.Id Then
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     Dim player = _lavaNode.GetPlayer(guild)
                     Dim sBuilder = New StringBuilder
@@ -371,13 +379,13 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function stopAsync(guild As IGuild, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function stopAsync(guild As IGuild, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
 
-                If channel.Id = _channel.Id Then
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     Dim player = _lavaNode.GetPlayer(guild)
                     If player Is Nothing Then
@@ -411,13 +419,13 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function restartAsync(guild As IGuild, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function restartAsync(guild As IGuild, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
 
-                If channel.Id = _channel.Id Then
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     Dim player = _lavaNode.GetPlayer(guild)
                     If player Is Nothing Then
@@ -455,13 +463,13 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function seekAsync(guild As IGuild, timeSpan As TimeSpan, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function seekAsync(guild As IGuild, timeSpan As TimeSpan, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
 
-                If channel.Id = _channel.Id Then
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     Dim player = _lavaNode.GetPlayer(guild)
                     If player Is Nothing Then
@@ -499,13 +507,13 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function shuffleAsync(guild As IGuild, voiceState As IVoiceState, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function shuffleAsync(guild As IGuild, voiceState As IVoiceState, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
             Try
 
-                If channel.Id = _channel.Id Then
+                If channel.Id = _channel.Id And user.Roles.Contains(guild.GetRole(Settings.Data.IDs.DjId)) Then
 
                     Dim player = _lavaNode.GetPlayer(guild)
                     If player Is Nothing Then
@@ -540,7 +548,7 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function nowPlayingAsync(g As IGuild, ctx As SocketCommandContext, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function nowPlayingAsync(g As IGuild, channel As ITextChannel) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
@@ -572,11 +580,11 @@ NotInheritable Class audioService
 
     End Function
 
-    Public Shared Async Function repeatAsync(g As IGuild, channel As ITextChannel) As Task(Of Embed)
+    Public Shared Async Function repeatAsync(g As IGuild, channel As ITextChannel, user As SocketGuildUser) As Task(Of Embed)
 
         If _channel IsNot Nothing Then
 
-            If channel.Id = _channel.Id Then
+            If channel.Id = _channel.Id And user.Roles.Contains(g.GetRole(Settings.Data.IDs.DjId)) Then
 
                 Try
                     If Not _lavaNode.HasPlayer(g) Then
@@ -648,9 +656,18 @@ NotInheritable Class audioService
         End If
 
         Dim player = args.Player
-        Dim queueable As LavaTrack
+        Dim queueable As LavaTrack = args.Track
         If Not player.Queue.TryDequeue(queueable) Then
-            Await args.Player.TextChannel.SendMessageAsync("Playback Finished")
+            Dim embed As New EmbedBuilder With {
+                .Title = "Playback has finished",
+                .Description = "There are no more songs to play.",
+                .Color = Color.Green,
+                .Footer = New EmbedFooterBuilder With {
+                    .Text = DateTime.Now.ToShortTimeString
+                }
+            }
+
+            Await args.Player.TextChannel.SendMessageAsync(embed:=embed.Build)
             Return
         End If
         Dim tempVar As Boolean = TypeOf queueable Is LavaTrack

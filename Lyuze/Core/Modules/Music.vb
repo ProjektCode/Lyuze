@@ -4,6 +4,7 @@ Imports Discord.Addons.Interactive
 Imports Victoria
 Imports Victoria.Enums
 Imports Microsoft.Extensions.DependencyInjection
+Imports Discord.WebSocket
 
 'Make a command that grabs the DJ role and make certain commands require that role
 <Name("Music")>
@@ -12,18 +13,24 @@ Public Class Music
     Inherits InteractiveBase(Of SocketCommandContext)
 
     ReadOnly _lavaNode As LavaNode = serviceHandler.provider.GetRequiredService(Of LavaNode)
-    ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
+    Private _user As SocketGuildUser
 
     <Command("join")>
     <Summary("Joins your voice channel.")>
     Public Async Function cmdJoin() As Task
-        Await ReplyAsync(embed:=Await audioService.joinAsync(Context.Guild, DirectCast(Context.User, IVoiceState), Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.joinAsync(Context.Guild, DirectCast(Context.User, IVoiceState), Context.Channel, Context.User))
     End Function
 
     <Command("play")>
     <Summary("Plays song - Can be done by text search or YouTube Playlist/Song URL.")>
     <Remarks("\play <YouTube URL> | \play Villians by k/da")>
     Public Async Function PlayAsync(<Remainder> searchQuery As String) As Task
+        _user = Context.User
+        If Not _user.Roles.Contains(Context.Guild.GetRole(Settings.Data.IDs.DjId)) Then
+            Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Play", "You do not have the DJ role."))
+            Return
+        End If
+
         If String.IsNullOrWhiteSpace(searchQuery) Then
             Await ReplyAsync(embed:=Await embedHandler.errorEmbed("Audio - Play", "Please provide search terms."))
             Return
@@ -77,14 +84,14 @@ Public Class Music
                 Await ReplyAsync(embed:=Await embedHandler.victoriaNowPlayingEmbed(track))
             End If
         End If
-        Await audioService.setVolumeAsync(Context.Guild, 25, Context.Channel)
+        Await audioService.setVolumeAsync(Context.Guild, 25, Context.Channel, _user)
     End Function
 
     <Command("disconnect")>
     <[Alias]("leave")>
     <Summary("Leaves voice channel.")>
     Public Async Function cmdLeave() As Task
-        Await ReplyAsync(embed:=Await audioService.leaveAsync(Context.Guild, TryCast(Context.User, IVoiceState), Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.leaveAsync(Context.Guild, TryCast(Context.User, IVoiceState), Context.Channel, Context.User))
     End Function
 
     <Command("volume")>
@@ -92,20 +99,20 @@ Public Class Music
     <Summary("Set the volume of the bot. Default is 25.")>
     <Remarks("\vol 25 | range is 0 - 150")>
     Public Async Function cmdVol(vol As Integer) As Task
-        Await ReplyAsync(embed:=Await audioService.setVolumeAsync(Context.Guild, vol, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.setVolumeAsync(Context.Guild, vol, Context.Channel, Context.User))
     End Function
 
     <Command("pause")>
     <[Alias]("resume")>
     <Summary("A toggle command to pause/resume. Could be used both ways.")>
     Public Async Function cmdPause() As Task
-        Await ReplyAsync(embed:=Await audioService.togglePauseAsync(Context.Guild, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.togglePauseAsync(Context.Guild, Context.Channel, Context.User))
     End Function
 
     <Command("skip")>
     <Summary("Skips the current song.")>
     Public Async Function cmdSkip() As Task
-        Await ReplyAsync(embed:=Await audioService.skipTrack(Context.Guild, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.skipTrack(Context.Guild, Context.Channel, Context.User))
     End Function
 
     <Command("queue")>
@@ -118,19 +125,19 @@ Public Class Music
     <Command("clear")>
     <Summary("Clears current queue.")>
     Public Async Function cmdClear() As Task
-        Await ReplyAsync(embed:=Await audioService.clearTracks(Context.Guild, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.clearTracks(Context.Guild, Context.Channel, Context.User))
     End Function
 
     <Command("stop")>
     <Summary("Stops playback completely.")>
     Public Async Function cmdStop() As Task
-        Await ReplyAsync(embed:=Await audioService.stopAsync(Context.Guild, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.stopAsync(Context.Guild, Context.Channel, Context.User))
     End Function
 
     <Command("restart")>
     <Summary("Restarts the current song.")>
     Public Async Function cmdRestart() As Task
-        Await ReplyAsync(embed:=Await audioService.restartAsync(Context.Guild, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.restartAsync(Context.Guild, Context.Channel, Context.User))
     End Function
 
     <Command("seek")>
@@ -138,25 +145,25 @@ Public Class Music
     <[Alias]("sk")>
     <Remarks("\sk <Option> - seeks to the given time on the given video | Options = 1s,1m,1h")>
     Public Async Function cmdSeek(<Remainder> time As TimeSpan) As Task
-        Await ReplyAsync(embed:=Await audioService.seekAsync(Context.Guild, time, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.seekAsync(Context.Guild, time, Context.Channel, Context.User))
     End Function
 
     <Command("shuffle")>
     <Summary("Shuffles current queue if there are enough songs.")>
     Public Async Function cmdShuffle() As Task
-        Await ReplyAsync(embed:=Await audioService.shuffleAsync(Context.Guild, Context.User, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.shuffleAsync(Context.Guild, Context.User, Context.Channel, Context.User))
     End Function
 
     <Command("np")>
     <Summary("Shows the current song.")>
     Public Async Function cmdNowPlaying() As Task
-        Await ReplyAsync(embed:=Await audioService.nowPlayingAsync(Context.Guild, Context, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.nowPlayingAsync(Context.Guild, Context.Channel))
     End Function
 
     <Command("repeat")>
     <Summary("repeats current song.")>
     Public Async Function cmdRepeat() As Task
-        Await ReplyAsync(embed:=Await audioService.repeatAsync(Context.Guild, Context.Channel))
+        Await ReplyAsync(embed:=Await audioService.repeatAsync(Context.Guild, Context.Channel, Context.User))
     End Function
 
     <Command("animeradio")>

@@ -91,17 +91,13 @@ Public Class MasterUtils
     End Function
 
 #Region "status"
-    Public sList() As String = {
-                "Anime Music | /help",
-                "Anime | /help",
-                "Hentai | /help",
-                "My owner at https://github.com/Projekt-Dev| /Help",
-                "William being a cunt | /help",
-                "Arknights is love, Arknights is life | /help",
-                "If anyone is gonna boost the server | /help",
-                "My Owner trying to debug me | /help"
-             }
-    Public sIndex As Integer = rand.Next(sList.Length)
+    Public Function RandomListIndex(list As List(Of String))
+        Dim i = rand.Next(list.Count)
+        Return i
+    End Function
+
+    Public sList As List(Of String) = Settings.Data.Status
+    'Public sIndex As Integer = rand.Next(sList.Count)
 
 #End Region
 

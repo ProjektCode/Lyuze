@@ -116,13 +116,15 @@ NotInheritable Class AdminService
         End Try
     End Function
 
-    Public Shared Async Function Infraction(msgid As ULong, ctx As SocketCommandContext, Optional user As SocketGuildUser) As Task(Of Embed)
+    Public Shared Async Function Infraction(msgid As ULong, ctx As SocketCommandContext, Optional user As SocketGuildUser = Nothing) As Task(Of Embed)
 
         'If user.Id = ctx.Channel.GetMessageAsync(msg).Result.Author.Id Then
         '    Return embedHandler.errorEmbed("Infraction", "Can't report your own message.").Result
         'End If
         Dim msg = Await ctx.Channel.GetMessageAsync(msgid)
-
+        If user Is Nothing Then
+            user = msg.Author
+        End If
         If msg.Author.Id = user.Id Then
             Return embedHandler.errorEmbed("Infraction", "Can't report your own message.").Result
         End If
@@ -145,9 +147,9 @@ NotInheritable Class AdminService
             reportchannel.SendMessageAsync(embed:=em.Build)
 
             Return em.Build
-            Catch ex As Exception
-                Return embedHandler.errorEmbed("Infraction", ex.Message).Result
-            End Try
+        Catch ex As Exception
+            Return embedHandler.errorEmbed("Infraction", ex.Message).Result
+        End Try
     End Function
 
 End Class

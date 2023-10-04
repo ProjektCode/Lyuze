@@ -50,10 +50,10 @@ NotInheritable Class eventHandler
         End If
 
         Await _client.SetStatusAsync(UserStatus.Online)
-
+        Dim i = _utils.RandomListIndex(Settings.Data.Status)
         Dim t = New Timer(Async Sub(__)
-                              Await _client.SetGameAsync(_utils.sList.ElementAtOrDefault(_utils.sIndex), type:=ActivityType.Watching)
-                              _utils.sIndex = If(_utils.sIndex + 1 = _utils.sList.Count, 0, _utils.sIndex + 1)
+                              Await _client.SetGameAsync(_utils.sList.ElementAtOrDefault(i), type:=ActivityType.Listening)
+                              i = If(i + 1 = _utils.sList.Count, 0, i + 1)
                           End Sub, Nothing, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(120))
         '_utils.winHide()
         SystemSounds.Asterisk.Play()
@@ -72,7 +72,6 @@ NotInheritable Class eventHandler
 
         'Database
         Player.CheckProfile(user)
-        '_lvl.MsgAntiSpam(user, context)
         _lvl.MsgCooldown(arg, context)
 
 
@@ -107,7 +106,7 @@ NotInheritable Class eventHandler
         Dim settings = Lyuze.Settings.Data
         Try
             Dim channel = arg.Guild.GetTextChannel(settings.IDs.WelcomeId)
-            Dim msg = $"{arg.Username} has joined the server"
+            Dim msg = $"{arg.Username} {settings.WelcomeMessage(_utils.RandomListIndex(settings.WelcomeMessage))}"
             Dim submsg = arg.Guild.MemberCount
             Dim path = Await _images.CreateBannerImageAsync(arg, msg, submsg)
             Await channel.SendFileAsync(path, String.Empty)
@@ -123,7 +122,7 @@ NotInheritable Class eventHandler
         Try
             Dim channel = arg.Guild.GetTextChannel(settings.IDs.LeaveId)
             Dim msg = $"{arg.Username} Has left the server"
-            Dim submsg = $"May thy user have thy peace"
+            Dim submsg = $"{settings.GoodbyeMessage(_utils.RandomListIndex(settings.GoodbyeMessage))}"
             Dim path = Await _images.CreateBannerImageAsync(arg, msg, submsg)
             Await channel.SendFileAsync(path, String.Empty)
 

@@ -19,22 +19,6 @@ NotInheritable Class GifService
         End If
         Dim rand As New Random
 
-        If tag = "horny" Then
-            Dim hrny As String() = {
-                "oppai",
-                "boobs",
-                "booty",
-                "horny",
-                "ecchi",
-                "lewd",
-                "ass",
-                "tits",
-                "boobies"
-            }
-
-            tag = hrny(rand.Next(hrny.Length))
-        End If
-
         Try
             Dim config = New TenorConfiguration With {
             .ApiKey = settings.ApIs.Tenor,
@@ -65,7 +49,7 @@ NotInheritable Class GifService
     Public Shared Async Function WaifuPicsSFW(tag As String) As Task(Of String)
         Try
             Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync($"https://api.waifu.pics/sfw/{ tag}")
+            Dim response = Await httpClient.GetStringAsync($"https://api.waifu.pics/sfw/{tag}")
             Dim pic = WaifuPics.FromJson(response)
 
             If pic Is Nothing Then

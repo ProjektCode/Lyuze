@@ -6,26 +6,8 @@ Imports Microsoft.Extensions.DependencyInjection
 <Summary("To get all your wallpaper needs. [Getting reworked]")>
 Public Class Backgrounds
     Inherits ModuleBase(Of SocketCommandContext)
-    Dim _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
-    <Command("search")>
-    <Summary("Returns a link of wallpapers with your chosen keyword [Will be reworked since some websites don't have any results on a given keyword]")>
-    <Remarks("\wall search league of legends")>
-    Public Async Function wallpaperCmd(<Remainder> text As String) As Task
-        Await ReplyAsync(embed:=Await BackgroundService.SearchWallpaper(text, Context))
-    End Function
-
-    <Command("rwall")>
-    <Summary("Returns a random link with a random keyword")>
-    Public Async Function randomWallpaperCmd() As Task
-        Await ReplyAsync(embed:=Await BackgroundService.RandomWallpaper(Context))
-    End Function
-
-    <Command("list")>
-    <Summary("Gives a list of all of our keywords for our wallpaper command")>
-    Public Async Function cmdList() As Task 'Rework with pagination
-        ReplyAsync(embed:=Await BackgroundService.ListKeywords(Context.Guild, Context))
-    End Function
+    ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     <Command("unsplash")>
     <Summary("Get a random high-quality wallpaper with a given keyword from unsplash.com")>

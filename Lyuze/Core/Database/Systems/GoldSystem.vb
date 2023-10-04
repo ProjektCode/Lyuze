@@ -10,7 +10,7 @@ Public Class GoldSystem
     Private Shared ReadOnly CmdCooldownTarget As New List(Of SocketGuildUser)()
 
     Public Shared Async Function GiveGold(ctx As SocketCommandContext, gold As Integer) As Task
-        Dim _player As PlayerModel = Await Player.GetUser(ctx)
+        Dim _player As PlayerModel = Await Player.GetUser(ctx.User)
         '_player.Gold += gold
         'Player.UpdateUser(ctx, _player)
     End Function

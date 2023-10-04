@@ -10,61 +10,6 @@ NotInheritable Class FunService
     Private Shared ReadOnly _img As Images = serviceHandler.provider.GetRequiredService(Of Images)
     Private Shared ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
 
-
-    Public Shared Async Function AnimeRedit(ctx As SocketCommandContext) As Task(Of Embed)
-        Try
-            Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync("https://reddit.com/r/" + _utils.getAnimeMeme + "/random.json?limit=1")
-            Dim meme = Reddit.FromJson(response)
-            If meme Is Nothing Then
-                Return embedHandler.errorEmbed("Fun - Anime Meme", "An error occurred. Please try again later.").Result
-            End If
-
-            Dim memeFormat = meme.First.Data.Children.First
-            Dim embed = New EmbedBuilder With {
-                .Title = memeFormat.Data.Title,
-                .Color = New Color(_utils.RandomEmbedColor),
-                .ImageUrl = memeFormat.Data.Thumbnail.AbsoluteUri,
-                .Url = "https://reddit.com" + memeFormat.Data.Permalink,
-                .Footer = New EmbedFooterBuilder With {
-                    .Text = $"🗨{memeFormat.Data.NumComments} - ⬆️{memeFormat.Data.Ups}",
-                    .IconUrl = ctx.Guild.IconUrl
-                }
-            }
-
-            Return embed.Build
-        Catch ex As Exception
-            Return embedHandler.errorEmbed("Reddit", ex.Message).Result
-        End Try
-    End Function
-
-    Public Shared Async Function RegularRedit(ctx As SocketCommandContext) As Task(Of Embed)
-        Try
-            Dim httpClient = _httpClientFactory.CreateClient
-            Dim response = Await httpClient.GetStringAsync("https://reddit.com/r/" + _utils.getMeme + "/random.json?limit=1")
-            Dim meme = Reddit.FromJson(response)
-            If meme Is Nothing Then
-                Return embedHandler.errorEmbed("Fun - Regular Meme", "An error occurred. Please try again later.").Result
-            End If
-
-            Dim memeFormat = meme.First.Data.Children.First
-            Dim embed = New EmbedBuilder With {
-                .Title = memeFormat.Data.Title,
-                .Color = New Color(_utils.RandomEmbedColor),
-                .ImageUrl = memeFormat.Data.Thumbnail.AbsoluteUri,
-                .Url = "https://reddit.com" + memeFormat.Data.Permalink,
-                .Footer = New EmbedFooterBuilder With {
-                    .Text = $"🗨{memeFormat.Data.NumComments} - ⬆️{memeFormat.Data.Ups}",
-                    .IconUrl = ctx.Guild.IconUrl
-                }
-            }
-
-            Return embed.Build
-        Catch ex As Exception
-            Return embedHandler.errorEmbed("Reddit", ex.Message).Result
-        End Try
-    End Function
-
     Public Shared Async Function GetNeko() As Task(Of Embed)
 
         Dim httpClient = _httpClientFactory.CreateClient

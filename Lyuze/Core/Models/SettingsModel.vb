@@ -19,10 +19,13 @@ Partial Public Class Settings
 	<JsonProperty("Welcome Message")>
 	Public Property WelcomeMessage() As List(Of String)
 
-    <JsonProperty("Goodbye Message")>
-    Public Property GoodbyeMessage() As List(Of String)
+	<JsonProperty("Goodbye Message")>
+	Public Property GoodbyeMessage() As List(Of String)
 
-    <JsonProperty("Database", NullValueHandling:=NullValueHandling.Ignore)>
+	<JsonProperty("Status")>
+	Public Property Status() As List(Of String)
+
+	<JsonProperty("Database", NullValueHandling:=NullValueHandling.Ignore)>
     Public Property Database() As Database
 
 
@@ -68,6 +71,9 @@ Partial Public Class IDs
 
 	<JsonProperty("Leave ID")>
 	Public Property LeaveId() As ULong
+
+	<JsonProperty("DJ ID")>
+	Public Property DjId() As ULong
 End Class
 
 Partial Public Class Database

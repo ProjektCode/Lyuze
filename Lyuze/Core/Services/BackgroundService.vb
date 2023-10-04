@@ -5,7 +5,6 @@ Imports Microsoft.Extensions.DependencyInjection
 
 NotInheritable Class BackgroundService
     Private Shared ReadOnly _httpClientFactory As IHttpClientFactory = serviceHandler.provider.GetRequiredService(Of IHttpClientFactory)
-    Private Shared ReadOnly _utils As MasterUtils = serviceHandler.provider.GetRequiredService(Of MasterUtils)
 
     Public Shared Async Function UnsplashRandomImage(ctx As SocketCommandContext, <Remainder> tag As String) As Task(Of Embed)
         Dim settings = Lyuze.Settings.Data
@@ -50,75 +49,6 @@ NotInheritable Class BackgroundService
             Return embedHandler.errorEmbed("Backgrounds", "An error has occurred and has been logged.").Result
         End Try
 
-    End Function
-
-    Public Shared Async Function SearchWallpaper(text As String, ctx As SocketCommandContext) As Task(Of Embed)
-        Dim _text As String = Replace(text, " ", "+")
-        Dim embed = New EmbedBuilder With {
-            .Title = _text,
-            .Description = Wallpapers.getSite.Result + _text,
-            .Color = _utils.RandomEmbedColor,
-            .Footer = New EmbedFooterBuilder With {
-                .Text = ctx.Message.Timestamp.Date.ToShortDateString,
-                .IconUrl = ctx.Guild.CurrentUser.GetAvatarUrl
-            }
-        }
-
-        Return embed.Build
-    End Function
-
-    Public Shared Async Function RandomWallpaper(ctx As SocketCommandContext) As Task(Of Embed)
-        Dim text As String = Replace(Await Wallpapers.getWord, " ", "+")
-        Dim embed = New EmbedBuilder With {
-            .Title = text,
-            .Description = Await Wallpapers.getSite + text,
-            .Color = _utils.RandomEmbedColor,
-            .Footer = New EmbedFooterBuilder With {
-                .Text = ctx.Message.Timestamp.Date.ToShortDateString,
-                .IconUrl = ctx.Guild.CurrentUser.GetAvatarUrl
-            }
-        }
-
-        Return embed.Build
-    End Function
-
-    Public Shared Async Function ListKeywords(g As IGuild, ctx As SocketCommandContext) As Task(Of Embed)
-        Dim embed As New EmbedBuilder With {
-            .Title = $"Wallpaper keyword list",
-            .ImageUrl = "https://i.imgur.com/vc241Ku.jpeg",
-            .Description = "The full list of keywords in our random wallpaper list",
-            .Color = New Color(_utils.RandomEmbedColor),
-            .ThumbnailUrl = g.IconUrl,
-            .Timestamp = ctx.Message.Timestamp,
-            .Footer = New EmbedFooterBuilder With {
-                    .Text = "Keyword Data",
-                    .IconUrl = g.IconUrl
-                }
-            }
-
-        Dim row As Integer = 0
-        Dim words As String = String.Empty
-
-        For Each keyword As String In Wallpapers.keywords
-            'If appending the keyword to the list of words exceeds 256
-            'don't append, but instead add the existing words to a field.
-            If words.Length + keyword.Length + 7 > 256 Then
-                row += 1
-                embed.AddField($"List #{row}", words, True) 'Add words to field
-
-                'reset words
-                words = String.Empty
-            End If
-
-            words = words + keyword + " **|** "
-        Next
-
-        'The add condition within the for loop is only entered when we are
-        'about to exceed to field length. Any string under the max 
-        'length would exit the loop without being added. Add it here
-        embed.AddField($"List #{row + 1}", words, True)
-
-        Return embed.Build()
     End Function
 
 End Class
