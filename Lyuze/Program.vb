@@ -5,7 +5,6 @@ Imports Newtonsoft.Json
 
 #Region "-To-Do List / +Found Bugs"
 '-Find more commands/apis to use.(try for 50 commands.)
-'-Possibly make your own "what am I?" API.
 '-Possibly revert JikanAPI to before the Async Changes(this is to have all the anime commands working again)
 '+Music will not play if it's a single song. only when in a list.
 #End Region

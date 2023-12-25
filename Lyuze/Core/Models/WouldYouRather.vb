@@ -1,5 +1,4 @@
 ﻿Imports Newtonsoft.Json
-Imports Newtonsoft.Json.Converters
 
 Partial Public Class WouldYouRather
 	<JsonProperty("id", NullValueHandling:=NullValueHandling.Ignore)>

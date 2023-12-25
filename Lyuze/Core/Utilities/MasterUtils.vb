@@ -54,7 +54,7 @@ Public Class MasterUtils
     Public Function RandomEmbedColor()
         Dim rand As New Random
         Dim colors() As String = {
-            "DC143C", ' Crimson
+            "DC143C", 'Crimson
             "C3E4E8", 'Light Cyan
             "FF5733", 'Light Green
             "E6E6FA", 'Lavender
@@ -62,10 +62,10 @@ Public Class MasterUtils
             "5865F2", 'Discord Blurple
             "D2042D", 'Cherry Red
             "8DB600", 'Apple Green
-            "87CEEB" 'Sky Blue
+            "87CEEB"  'Sky Blue
         }
 
-        Dim colorPicker As String = colors(rand.Next(0, colors.Length))
+        Dim colorPicker As String = colors(rand.Next(colors.Length))
         Dim colorInt As Integer = Integer.Parse(colorPicker, NumberStyles.HexNumber)
         Dim color As UInteger = Convert.ToInt32(colorInt)
 
@@ -99,31 +99,6 @@ Public Class MasterUtils
     Public sList As List(Of String) = Settings.Data.Status
     'Public sIndex As Integer = rand.Next(sList.Count)
 
-#End Region
-
-#Region "Memes"
-    ReadOnly aniMemesReddits As String() = {
-    "GoodAnimemes",
-    "Animemes",
-    "animememes",
-    "AnimeMeme",
-    "goodanimememes",
-    "AnimemesHQ"
-}
-    ReadOnly memesReddits As String() = {
-        "memes",
-        "dankchristianmemes",
-        "funny"
-    }
-
-    Public Function getAnimeMeme()
-        Dim reddit As String = aniMemesReddits(rand.Next(0, aniMemesReddits.Length))
-        Return reddit
-    End Function
-    Public Function getMeme()
-        Dim reddit As String = memesReddits(rand.Next(0, memesReddits.Length))
-        Return reddit
-    End Function
 #End Region
 
 #End Region

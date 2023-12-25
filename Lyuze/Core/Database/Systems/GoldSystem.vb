@@ -16,7 +16,7 @@ Public Class GoldSystem
     End Function
 
     Public Shared Async Sub AntiSpam(ctx As SocketCommandContext, Optional gold As Integer = 1)
-        'Anti-LevelSplan
+        'Anti-Level Spam
         If CmdCooldownTarget.Contains(TryCast(ctx.User, SocketGuildUser)) Then
             'If they have used this command before, take the time the user last did something, add 3 seconds, and see if it's greater than this very moment.
             If CmdCooldownTimer(CmdCooldownTarget.IndexOf(TryCast(ctx.Message.Author, SocketGuildUser))).AddSeconds(10) >= DateTimeOffset.Now Then
